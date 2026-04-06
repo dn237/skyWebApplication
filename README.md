@@ -39,6 +39,19 @@ Follow these steps to get the project running on your local machine:
 * **Individual Folders**: Work only inside your assigned app (e.g., `messaging/`, `teams/`).
 
 ---
+### 👥 Team Folder Assignments
+
+To keep our database synchronized and avoid code conflicts, please work strictly within your assigned app folders:
+
+* Student 1 (Teams): Use folder teams/
+* Student 2 (Organisation): Use folder organisation/
+* Student 3 (Messages): Use folder messaging/
+* Student 4 (Schedule): Use folder schedules/
+* Student 5 (Reports & System Core): Use folders reports/ and coreApp/
+
+⚠️ IMPORTANT: Please do NOT modify any files in the coreApp/ folder. This folder contains the master settings for the entire project.
+
+---
 
 ## 🎨 How to Build Your Pages
 
