@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sky Management Dashboard</title>
+    <style>
+        body { display: flex; margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f7fe; }
+        .sidebar { width: 250px; background: #6C63FF; color: white; height: 100vh; padding: 30px; position: fixed; }
+        .sidebar a { display: block; color: rgba(255,255,255,0.8); padding: 15px 0; text-decoration: none; font-weight: 500; }
+        .sidebar a:hover { color: white; }
+        .main-content { margin-left: 310px; padding: 40px; width: 100%; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1 style="margin-bottom: 50px;">sky</h1>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="/organizations/">Organisation</a>
+        <a href="/teams/">Teams</a>
+        <a href="/messages/">Messages</a>
+        <a href="/schedules/">Schedule</a>
+        <a href="/admin/" style="margin-top: 50px; font-size: 0.8em;">Admin Panel</a>
+    </div>
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
