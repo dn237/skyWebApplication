@@ -1,4 +1,4 @@
-# 🚀 Sky Management System
+# Sky Management System
 
 This is a collaborative Django-based management platform. 
 The project uses a **Hub-and-Spoke architecture** with a centralized Dashboard and independent functional modules.
