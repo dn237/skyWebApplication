@@ -19,7 +19,8 @@ Follow these steps to get the project running on your local machine:
    ```
 
 3. **Launch the System**:
-   You don't need to run migrations because the database is included! Just start the server:
+   Important: I've already included the database, so you DON'T need to run migrate or create superuser.
+   Just start the server:
    ```bash
    python manage.py runserver
    ```
