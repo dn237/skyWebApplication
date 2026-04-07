@@ -147,3 +147,13 @@ body {
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0,0,0,0.1);
 }
+
+.contact-button {
+    background: #5B87D8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
