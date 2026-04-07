@@ -3,5 +3,5 @@ from django.http import HttpResponse
 
 
 # Create your views here.
-def teamsPage(request):
-    return HttpResponse("<h1>Teams App</h1><p>Setup Successful! Student 1, start coding here.</p>")
+def teamsHome(request):
+    return render(request, 'teams/team_list.html')
