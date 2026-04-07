@@ -1,0 +1,125 @@
+/* All Figma Menu styles go here --->*/
+/* Подключаем шрифт Inter, если его нет в системе */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+    --sidebar-bg: radial-gradient(388.04% 136.3% at -204.14% -1.75%, rgba(255, 126, 12, 0.225) 0%, rgba(255, 65, 61, 0.25) 19.71%, rgba(255, 1, 100, 0.25) 36.06%, rgba(223, 5, 178, 0.25) 53.85%, rgba(162, 11, 234, 0.25) 70.67%, rgba(96, 52, 255, 0.25) 85.58%, rgba(91, 135, 216, 0.25) 100%), #5B87D8;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar Container */
+.sidebar {
+    border-radius: 0 60px 60px 0;
+    position: fixed;
+    width: 217px;
+    left: 0;
+    top: 50px;
+    bottom: 50px;
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    box-sizing: border-box;
+    color: #FFFFFF;
+}
+
+/* Logo/Menu Icon Area (Top) */
+.sidebar-header {
+    padding: 80px 18px 40px 18px;
+}
+
+.menu-icon {
+    width: 35px;
+    height: 35px;
+    border: 3.5px solid #F3F3F3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+/* Navigation Links (Middle) */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px; /* gap из Figma */
+    flex-grow: 1;
+}
+
+.smart-button {
+    width: 189px;
+    height: 50px;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding-left: 25px; /* Примерный отступ для текста */
+    font-size: 19px;
+    font-weight: 400;
+    border-radius: 12px;
+    transition: background 0.3s;
+    box-sizing: border-box;
+}
+
+.smart-button.active {
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.smart-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* User Profile Section (Bottom) */
+.user-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 24px 40px 24px;
+    gap: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #ccc; /* Заглушка, если нет фото */
+    background-image: url('https://via.placeholder.com/48'); /* Сюда вставь фото */
+    background-size: cover;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 23px;
+}
+
+.log-off-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.log-off-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.logout-icon {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
+}
