@@ -2,124 +2,148 @@
 /* Подключаем шрифт Inter, если его нет в системе */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
+/* GLOBAL SETTINGS */
 :root {
-    --sidebar-bg: radial-gradient(388.04% 136.3% at -204.14% -1.75%, rgba(255, 126, 12, 0.225) 0%, rgba(255, 65, 61, 0.25) 19.71%, rgba(255, 1, 100, 0.25) 36.06%, rgba(223, 5, 178, 0.25) 53.85%, rgba(162, 11, 234, 0.25) 70.67%, rgba(96, 52, 255, 0.25) 85.58%, rgba(91, 135, 216, 0.25) 100%), #5B87D8;
+    --top-height: 70px;      /* Height of the white top bar */
+    --bottom-height: 50px;   /* Height of the white bottom bar */
+    --sidebar-width: 217px;  /* Width of the menu from Figma */
+    
+    /* Complex Gradient from Figma */
+    --sidebar-gradient: radial-gradient(388.04% 136.3% at -204.14% -1.75%, rgba(255, 126, 12, 0.225) 0%, rgba(255, 65, 61, 0.25) 19.71%, rgba(255, 1, 100, 0.25) 36.06%, rgba(223, 5, 178, 0.25) 53.85%, rgba(162, 11, 234, 0.25) 70.67%, rgba(96, 52, 255, 0.25) 85.58%, rgba(91, 135, 216, 0.25) 100%), #5B87D8;
 }
 
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
+    background: #F6F6F6; /* Light gray background for the whole app */
+    overflow-x: hidden;  /* Prevent accidental horizontal scrolling */
 }
 
-/* Sidebar Container */
+/* HEADER STYLE (Rectangle 1) */
+.top-bar {
+    height: var(--top-height);
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    position: fixed; /* Keeps it locked at the top */
+    top: 0;
+    width: 100%;
+    z-index: 1001;   /* Keeps it above the sidebar */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+}
+
+/* FOOTER STYLE (Rectangle 31) */
+.bottom-bar {
+    height: var(--bottom-height);
+    background: #FFFFFF;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 40px;
+    position: fixed; /* Keeps it locked at the bottom */
+    bottom: 0;
+    width: 100%;
+    z-index: 1001;
+    box-sizing: border-box;
+}
+
+/* SIDEBAR STYLE (Menu Panel) */
 .sidebar {
-    border-radius: 0 60px 60px 0;
+    border-radius: 0 60px 60px 0; /* Rounded right side as per Figma */
     position: fixed;
-    width: 217px;
+    width: var(--sidebar-width);
+    background: var(--sidebar-gradient);
+    
+    /* Centering Sidebar vertically between Header and Footer */
+    top: 50%;
+    transform: translateY(-50%); 
+    height: 75%;
     left: 0;
-    top: 50px;
-    bottom: 50px;
-    background: var(--sidebar-bg);
     display: flex;
     flex-direction: column;
-    padding: 0;
     box-sizing: border-box;
     color: #FFFFFF;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 
-/* Logo/Menu Icon Area (Top) */
-.sidebar-header {
-    padding: 80px 18px 40px 18px;
-}
-
-.menu-icon {
-    width: 35px;
-    height: 35px;
-    border: 3.5px solid #F3F3F3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-}
-
-/* Navigation Links (Middle) */
+/* MENU BUTTONS */
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 26px; /* gap из Figma */
+    gap: 15px; /* Spacing between buttons */
     flex-grow: 1;
+    margin-top: 120px;
 }
 
 .smart-button {
-    width: 189px;
-    height: 50px;
+    width: 180px;
+    height: 45px;
     text-decoration: none;
     color: white;
     display: flex;
     align-items: center;
-    padding-left: 25px; /* Примерный отступ для текста */
-    font-size: 19px;
-    font-weight: 400;
+    padding-left: 20px;
+    font-size: 16px;
     border-radius: 12px;
-    transition: background 0.3s;
-    box-sizing: border-box;
-}
-
-.smart-button.active {
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.1);
+    transition: 0.3s ease; /* Smooth hover effect */
 }
 
 .smart-button:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* User Profile Section (Bottom) */
+/* MAIN CONTENT AREA (Rectangle 422) */
+.page-content {
+    /* Push content to the right so it doesn't hide under the Sidebar */
+    margin-left: var(--sidebar-width); 
+    
+    /* Offset content so it doesn't hide under the Header/Footer */
+    margin-top: var(--top-height);
+    margin-bottom: var(--bottom-height);
+    
+    padding: 40px;
+    min-height: calc(100vh - var(--top-height) - var(--bottom-height));
+    box-sizing: border-box;
+}
+
+/* ADAPTIVE CONTAINER: Keeps content from stretching too wide on 4K monitors */
+.content-container {
+    width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto;
+}
+
+/* USER PROFILE STYLES */
 .user-footer {
+    padding: 20px;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    padding: 20px 24px 40px 24px;
-    gap: 16px;
+    gap: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .avatar {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #ccc; /* Заглушка, если нет фото */
-    background-image: url('https://via.placeholder.com/48'); /* Сюда вставь фото */
+    background: #ddd;
     background-size: cover;
 }
 
-.user-info {
-    display: flex;
-    flex-direction: column;
+.card { 
+    background: white; 
+    border-radius: 15px; 
+    padding: 20px; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-.user-name {
-    font-weight: 600;
-    font-size: 19px;
-    line-height: 23px;
-}
-
-.log-off-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-}
-
-.log-off-text {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.logout-icon {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    border-radius: 2px;
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
 }
