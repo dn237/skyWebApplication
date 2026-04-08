@@ -2,11 +2,14 @@
 
 {% block content %}
     <div class = "page-header">
-        <div class = "search-bar">
-            <input type="text" placeholder="Search teams...">
-        </div>
+        <form>
+            <div class = "search-bar">
+                <span class="search-icon-style material-symbols-outlined">search</span>
+                <input class="search-input" type="search" placeholder="Search teams...">
+            </div>
+        </form>
         <div class="dropdown">
-            <button class="dropdown-button">All Departments ▼</button>
+            <button class="dropdown-button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
             <div class="dropdown-content">
                 {% for department in departments %}
                     <label class="dropdown-option" for="department-{{ forloop.counter }}">
@@ -16,6 +19,27 @@
                 {% empty %}
                     <div class="dropdown-empty">No departments available</div>
                 {% endfor %}
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropdown-button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
+            <div class="dropdown-content">
+                <label class="dropdown-option" for="sort-name-asc">
+                    <input type="radio" id="sort-name-asc" name="sort" value="name_asc">
+                    <span>Name (A-Z)</span>
+                </label>
+                <label class="dropdown-option" for="sort-name-desc">
+                    <input type="radio" id="sort-name-desc" name="sort" value="name_desc">
+                    <span>Name (Z-A)</span>
+                </label>
+                <label class="dropdown-option" for="sort-date-newest">
+                    <input type="radio" id="sort-date-newest" name="sort" value="date_newest">
+                    <span>Date Created (Newest)</span>
+                </label>
+                <label class="dropdown-option" for="sort-date-oldest">
+                    <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest">
+                    <span>Date Created (Oldest)</span>
+                </label>
             </div>
         </div>
     </div>

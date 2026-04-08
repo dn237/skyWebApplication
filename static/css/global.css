@@ -77,6 +77,9 @@ a {
 .dropdown:hover .dropdown-content {
     display: flex;
 }
+.dropdown-option:hover {
+    background: rgba(91, 135, 216, 0.08);
+}
 
 
 
@@ -293,34 +296,49 @@ a {
     margin-bottom: 30px;
 }
 /* Search bar container. We use a container to align the search bar to the right side of the page */
-.search-bar input[type=text] {
-  float: right;
-  padding: 6px;
-  border: none;
-  margin-top: 8px;
-  margin-right: 16px;
-  font-size: 17px;
+.search-bar {
+    --padding: 14px;
+
+    width: max-content;
+    display: flex;
+    align-items: center;
+    padding: var(--padding);
+    border-radius: 28px;
+    background: #e3e1ff;
 }
+.search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    margin-left:  var(--padding);
+    color: #333333;
+}
+
 
 /* Dropdown container - needed to position the dropdown content */
 .dropdown {
-  position: relative;
+  display: flex;
+    position: relative;
+    gap: 12px;
+    align-items: center;
 }
 
 .dropdown-button {
   background-color: #5B87D8;
   color: white;
   font-size: medium;
+  display: flex;
   padding: 10px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 28px;
   cursor: pointer;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 2px); /* Positions it just below the button with a small gap */
     left: 0;
     background-color: #f9f9f9;
     min-width: 160px;
@@ -332,6 +350,7 @@ a {
     flex-direction: column;
     gap: 4px;
     z-index: 20;
+    transition-duration: 1s;
 }
 
 .dropdown-content .dropdown-option {
@@ -365,6 +384,10 @@ a {
     padding: 6px 0;
     color: #666666;
     font-size: 14px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
 
