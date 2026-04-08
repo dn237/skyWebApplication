@@ -1,22 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class = "page-header">
+        <div class = "search-bar">
+            <input type="text" placeholder="Search teams...">
+            <button class="search-button">Search</button>
+        </div>
+        <button class="add-button">+ Add Team</button>
+    </div>
+    
+
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
         <div class="card">
-            <h3>Team Management</h3>
-            <p style="color: gray;"></p>
-            <nav
+            <h3>Team 1</h3>
+            <p style="color: gray;">(details will be added here)</p>
+        </div>
+            <div class="card">
+                <h3>Team 2</h3>
+                <p style="color: gray;">(details will be added here)</p>
             </div>
-
-        </div>
-        <div class="card">
-            <h3>Team 2</h3>
-            <p style="color: gray;">(logic)</p>
-        </div>
-        <div class="card">
-            <h3>Team 3</h3>
-            <p style="color: gray;">(logic)</p>
-        </div>
+            <div class="card">
+                <h3>Team 3</h3>
+                <p style="color: gray;">(details will be added here)</p>
+            </div>
     </div>
 
     

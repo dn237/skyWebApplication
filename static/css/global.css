@@ -1,14 +1,15 @@
 /* All Figma Menu styles go here --->*/
-/* Подключаем шрифт Inter, если его нет в системе */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 /* GLOBAL SETTINGS */
 :root {
-    --top-height: 70px;      /* Height of the white top bar */
+    --top-height: 60px;      /* Height of the white top bar */
     --bottom-height: 50px;   /* Height of the white bottom bar */
-    --sidebar-width: 217px;  /* Width of the menu from Figma */
+    --sidebar-width: 200px;  /* Width of the menu from Figma */
+    --sidebar-active-cut: 18px;
+    --sidebar-active-opacity: 0.18;
+    --sidebar-active-radius: 10px;
     
-    /* Complex Gradient from Figma */
+    /* Gradient from Figma */
     --sidebar-gradient: radial-gradient(388.04% 136.3% at -204.14% -1.75%, rgba(255, 126, 12, 0.225) 0%, rgba(255, 65, 61, 0.25) 19.71%, rgba(255, 1, 100, 0.25) 36.06%, rgba(223, 5, 178, 0.25) 53.85%, rgba(162, 11, 234, 0.25) 70.67%, rgba(96, 52, 255, 0.25) 85.58%, rgba(91, 135, 216, 0.25) 100%), #5B87D8;
 }
 
@@ -17,6 +18,70 @@ body {
     font-family: 'Inter', sans-serif;
     background: #F6F6F6; /* Light gray background for the whole app */
     overflow-x: hidden;  /* Prevent accidental horizontal scrolling */
+}
+
+/* 1. GLOBAL RESET & BOX MODEL */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* BASE LINK RESET - Apply this to every <a> tag in the app */
+a {
+    text-decoration: none; /* No underlines by default */
+    color: inherit;       /* Use the color of the parent container */
+    cursor: pointer;
+}
+
+.bottom-bar .footer-group a.footer-links {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333333;
+    text-decoration: none;
+}
+
+/* 2. INTERACTIVE ELEMENTS GROUP (The Hover Logic) */
+/* We group every element who needs "smoothness" here */
+.smart-button, 
+.card, 
+.contact-button, 
+.bottom-bar .footer-links,
+.contact-support {
+    transition: all 0.3s ease;
+}
+
+/* 3. HOVER ACTIONS */
+/* Grouping the actual movements and color changes */
+.smart-button:hover { 
+    background: rgba(255, 255, 255, 0.2); 
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.contact-button:hover {
+    background: #4A6FB4; /* Slightly darker than #5B87D8 */
+}
+
+.bottom-bar .footer-links:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
+/* 4. ACTIVE STATES */
+/* Helps users know which page they are currently visiting */
+.smart-button.active {
+    background: rgba(255, 255, 255, var(--sidebar-active-opacity));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 14px rgba(26, 45, 117, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    color: #FFFFFF;
+    font-weight: 600;
+    margin-left: calc(-1 * var(--sidebar-active-cut));
+    width: calc(100% + var(--sidebar-active-cut));
+    border-radius: 0 var(--sidebar-active-radius) var(--sidebar-active-radius) 0;
+    padding-left: calc(20px + var(--sidebar-active-cut));
 }
 
 /* HEADER STYLE (Rectangle 1) */
@@ -32,7 +97,29 @@ body {
     width: 100%;
     z-index: 1001;   /* Keeps it above the sidebar */
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    box-sizing: border-box;
+}
+
+.logo img {
+    display: block;
+    height: 40px;
+    width: auto;
+}
+
+.top-nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.contact-support {
+    font-weight: 600;
+    color: #333333;
+}
+
+.language-picker {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5B87D8;
 }
 
 /* FOOTER STYLE (Rectangle 31) */
@@ -47,7 +134,6 @@ body {
     bottom: 0;
     width: 100%;
     z-index: 1001;
-    box-sizing: border-box;
 }
 
 /* SIDEBAR STYLE (Menu Panel) */
@@ -64,7 +150,6 @@ body {
     left: 0;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
     color: #FFFFFF;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
@@ -74,14 +159,17 @@ body {
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px; /* Spacing between buttons */
     flex-grow: 1;
     margin-top: 120px;
+    width: 100%;
+    padding-left: var(--sidebar-active-cut);
+    padding-right: 12px;
 }
 
 .smart-button {
-    width: 180px;
+    width: 100%;
     height: 45px;
     text-decoration: none;
     color: white;
@@ -90,11 +178,10 @@ body {
     padding-left: 20px;
     font-size: 16px;
     border-radius: 12px;
-    transition: 0.3s ease; /* Smooth hover effect */
 }
 
-.smart-button:hover {
-    background: rgba(255, 255, 255, 0.2);
+.app-body {
+    width: 100%;
 }
 
 /* MAIN CONTENT AREA (Rectangle 422) */
@@ -108,7 +195,6 @@ body {
     
     padding: 40px;
     min-height: calc(100vh - var(--top-height) - var(--bottom-height));
-    box-sizing: border-box;
 }
 
 /* ADAPTIVE CONTAINER: Keeps content from stretching too wide on 4K monitors */
@@ -135,17 +221,42 @@ body {
     background-size: cover;
 }
 
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.log-off-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.log-off-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.logout-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
 .card { 
     background: white; 
     border-radius: 15px; 
     padding: 20px; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
     border: 1px solid rgba(0,0,0,0.02);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
 }
 
 .contact-button {
@@ -155,5 +266,147 @@ body {
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s ease;
 }
+
+/* Container that aligns the links to the right side of the footer */
+.footer-group {
+    display: flex;
+    gap: 40px; /* This creates that exact spacing between the words */
+    align-items: center;
+}
+
+.page-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+
+
+
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 180px;
+    }
+
+    .top-bar,
+    .bottom-bar {
+        padding: 0 20px;
+    }
+
+    .sidebar {
+        border-radius: 0 32px 32px 0;
+    }
+
+    .smart-button {
+        width: 152px;
+        font-size: 15px;
+    }
+
+    .page-content {
+        padding: 24px;
+    }
+
+    .footer-group {
+        gap: 20px;
+    }
+
+    .bottom-bar .footer-group a.footer-links {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --top-height: 64px;
+        --bottom-height: 64px;
+    }
+
+    .top-bar {
+        padding: 0 14px;
+    }
+
+    .logo img {
+        height: 30px;
+    }
+
+    .top-nav {
+        gap: 12px;
+    }
+
+    .contact-support {
+        font-size: 13px;
+    }
+
+    .language-picker {
+        font-size: 12px;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 58px;
+        top: var(--top-height);
+        transform: none;
+        border-radius: 0;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 10px;
+        overflow-x: auto;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-header,
+    .user-footer {
+        display: none;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        margin-top: 0;
+        gap: 8px;
+        width: max-content;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .smart-button {
+        width: auto;
+        height: 40px;
+        padding: 0 14px;
+        border-radius: 999px;
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    .smart-button.active {
+        margin-left: 0;
+        width: auto;
+        border-radius: 999px;
+        padding-left: 14px;
+    }
+
+    .page-content {
+        margin-left: 0;
+        margin-top: calc(var(--top-height) + 58px);
+        margin-bottom: var(--bottom-height);
+        padding: 16px;
+    }
+
+    .bottom-bar {
+        justify-content: center;
+        padding: 0 12px;
+    }
+
+    .footer-group {
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .bottom-bar .footer-group a.footer-links {
+        font-size: 14px;
+    }
+}
+
+

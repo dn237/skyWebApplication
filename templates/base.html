@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body class="main-theme">
-
     <header class="top-bar">
         <div class="logo">
             <img src="{% static 'images/sky_logo.png' %}" alt="Sky">
@@ -26,12 +25,12 @@
             </div>
         </div>
         <nav class="sidebar-nav">
-            <a href="/" class="smart-button">Dashboard</a>
-            <a href="/organisation/" class="smart-button">Organisation</a>
-            <a href="/teams/" class="smart-button">Teams</a>
-            <a href="/messages/" class="smart-button">Messages</a>
-            <a href="/schedule/" class="smart-button">Schedule</a>
-            <a href="/settings/" class="smart-button">Settings</a>
+            <a href="/" class="smart-button{% if request.path == '/' %} active{% endif %}">Dashboard</a>
+            <a href="/organisation/" class="smart-button{% if request.path|slice:':14' == '/organisation/' %} active{% endif %}">Organisation</a>
+            <a href="/teams/" class="smart-button{% if request.path|slice:':7' == '/teams/' %} active{% endif %}">Teams</a>
+            <a href="/messages/" class="smart-button{% if request.path|slice:':10' == '/messages/' %} active{% endif %}">Messages</a>
+            <a href="/schedule/" class="smart-button{% if request.path|slice:':10' == '/schedule/' %} active{% endif %}">Schedule</a>
+            <a href="/settings/" class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">Settings</a>
         </nav>
 
         <div class="user-footer">
@@ -55,12 +54,13 @@
     </div>
 
     <footer class="bottom-bar">
-        <div class="footer-links">
-            <a href="#">Privacy policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Security</a>
+        <div class="footer-group">
+            <a href="#" class="footer-links">Privacy policy</a>
+            <a href="#" class="footer-links">Terms of Service</a>
+            <a href="#" class="footer-links">Security</a>
         </div>
     </footer>
 
 </body>
 </html>
+
