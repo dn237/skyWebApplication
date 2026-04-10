@@ -50,10 +50,12 @@
             {% for team in teams %}
                 <div class="card-item">
                     <div class="card-header">
-                        <h3>{{ team.name }}</h3>
+                        <h3>{{ team.team_name }}</h3>
+                        <a href="{% url 'teamsProfile' team.team_id %}" class="view-details-link">View Details</a>
                     </div>
                     <div class="card-body">
-                        <p>{{ team.description }}</p>
+                        <p>{{ team.mission_statement }}</p>
+                        <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
                     </div>
                 </div>
             {% empty %}

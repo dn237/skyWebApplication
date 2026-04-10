@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Department
+
+
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+	list_display = ("dept_id", "dept_name")
+	search_fields = ("dept_name",)

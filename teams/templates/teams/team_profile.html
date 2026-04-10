@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Team Profile</h1>
+    <p>Details about the team will go here.</p>
+    <p>Team ID: {{ team.team_id }}</p>
+    <p>Team Name: {{ team.team_name }}</p>
+    <p>Mission Statement: {{ team.mission_statement }}</p>
+    <p>Workstream MF: {{ team.workstream_mf }}</p>
+    <p>Focus Areas: {{ team.focus_areas }}</p>
+    <p>Skills/Technologies: {{ team.skills_technologies }}</p>
+    <p>Slack Channels: {{ team.slack_channels }}</p>
+    <p>Standup Details: {{ team.standup_details }}</p>
+    <p>Agile Practices: {{ team.agile_practices }}</p>
+    <p>Team Wiki: {{ team.team_wiki }}</p>
+    <p>Status: {{ team.status }}</p>
+    <p>Department: {{ team.dept.dept_name }}</p>
+    <p>Lead User: {{ team.lead_user }}</p>
+
+{% endblock %}
