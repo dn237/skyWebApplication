@@ -65,8 +65,29 @@ To ensure the sidebar and design stay consistent, start every HTML file with:
 
 ---
 
-## 🔄 Git Workflow (Rule of Three)
-
-1. **PULL**: Always "Pull" before starting to get the latest updates.
-2. **COMMIT**: Save your changes with a clear message.
-3. **PUSH**: Upload your work so the rest of the team can see it.
+_*FULL GITHUB WORKFLOW GUIDE 🛠*_
+                         <<<<<<-------------------------------------------->>>>>>
+🏁 PHASE 1: INITIALIZATION (Do this ONLY ONCE)
+After you have cloned the repository, you need to create your own workspace:
+1. Create the branch locally:
+> `git checkout -b student-yourName-yourTaskName` 
+2. Make a small change (e.g., add a comment in a file or create your app folder).
+3. Commit and Push (to appear in the Contributors list):
+> `git add .`
+> `git commit -m "First commit to my individual branch"`
+> `git push -u origin student-HerName-TaskName`
+(This links your branch to GitHub so you don't have to type the name ever again.)
+--------------------------------------------------------------------------------------------------------------------------
+*🔄 PHASE 2: DAILY ROUTINE (Every time you work)*
+📌📌*The Git Rule: Pull → Commit → Push*📌📌
+Once your branch is set up, follow the Pull → Commit → Push loop:
+1. *STARTING YOUR WORK (Pull):*
+`git pull origin main`
+Do this first! It gets the latest updates from me (new CSS, DB models) so your code stays compatible with the main project.
+2. *DURING WORK (Commit):*
+`git add .`
+`git commit -m "Brief description of what you added"`
+Do this often to save your progress locally.
+3. *FINISHING YOUR WORK (Push):*
+`git push`
+(Since your branch is already linked, this is all you need!)
