@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Schedule Meetings</h1>
+
+    <div class="row">
+        {% for schedule in schedules %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ schedule.title }}</h5>
+                    <p><strong>Message:</strong> {{ schedule.message }}</p>
+                    <p><strong>Date:</strong> {{ schedule.date }}</p>
+                    <p><strong>Time:</strong> {{ schedule.time }}</p>
+                    <p><strong>Platform:</strong> {{ schedule.platform }}</p>
+                    <p><strong>Type:</strong> {{ schedule.schedule_type }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No schedules available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
