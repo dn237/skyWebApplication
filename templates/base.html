@@ -62,6 +62,46 @@
         </div>
     </footer>
 
+    <script>
+        (function () {
+            var mediaQuery = window.matchMedia('(max-width: 768px)');
+            var lastScrollY = window.scrollY;
+            var threshold = 8;
+
+            function applyTopBarBehavior() {
+                if (!mediaQuery.matches) {
+                    document.body.classList.remove('mobile-topbar-hidden');
+                    lastScrollY = window.scrollY;
+                    return;
+                }
+
+                var currentY = window.scrollY;
+
+                if (currentY <= 12) {
+                    document.body.classList.remove('mobile-topbar-hidden');
+                    lastScrollY = currentY;
+                    return;
+                }
+
+                var delta = currentY - lastScrollY;
+
+                if (delta > threshold) {
+                    document.body.classList.add('mobile-topbar-hidden');
+                } else if (delta < -threshold) {
+                    document.body.classList.remove('mobile-topbar-hidden');
+                }
+
+                lastScrollY = currentY;
+            }
+
+            window.addEventListener('scroll', applyTopBarBehavior, { passive: true });
+            window.addEventListener('resize', applyTopBarBehavior);
+            window.addEventListener('orientationchange', applyTopBarBehavior);
+
+            applyTopBarBehavior();
+        })();
+    </script>
+
 </body>
 </html>
 

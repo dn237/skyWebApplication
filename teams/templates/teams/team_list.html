@@ -1,74 +1,75 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class = "page-header">
-        <form>
+    <div class="page-header section-header">
+        <form class="section-search">
             <div class = "search-bar">
                 <span class="search-icon-style material-symbols-outlined">search</span>
                 <input class="search-input" type="search" placeholder="Search teams...">
             </div>
         </form>
-        <div class="dropdown">
-            <button class="dropdown-button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
-            <div class="dropdown-content">
-                {% for department in departments %}
-                    <label class="dropdown-option" for="department-{{ forloop.counter }}">
-                        <input type="checkbox" id="department-{{ forloop.counter }}" name="departments" value="{{ department }}">
-                        <span>{{ department }}</span>
+        <div class="section-actions">
+            <div class="dropdown">
+                <button class="dropdown-button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
+                <div class="dropdown-content">
+                    {% for department in departments %}
+                        <label class="dropdown-option" for="department-{{ forloop.counter }}">
+                            <input type="checkbox" id="department-{{ forloop.counter }}" name="departments" value="{{ department }}">
+                            <span>{{ department }}</span>
+                        </label>
+                    {% empty %}
+                        <div class="dropdown-empty">No departments available</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
+                <div class="dropdown-content">
+                    <label class="dropdown-option" for="sort-name-asc">
+                        <input type="radio" id="sort-name-asc" name="sort" value="name_asc">
+                        <span>Name (A-Z)</span>
                     </label>
-                {% empty %}
-                    <div class="dropdown-empty">No departments available</div>
-                {% endfor %}
+                    <label class="dropdown-option" for="sort-name-desc">
+                        <input type="radio" id="sort-name-desc" name="sort" value="name_desc">
+                        <span>Name (Z-A)</span>
+                    </label>
+                    <label class="dropdown-option" for="sort-date-newest">
+                        <input type="radio" id="sort-date-newest" name="sort" value="date_newest">
+                        <span>Date Created (Newest)</span>
+                    </label>
+                    <label class="dropdown-option" for="sort-date-oldest">
+                        <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest">
+                        <span>Date Created (Oldest)</span>
+                    </label>
+                </div>
             </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropdown-button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
-            <div class="dropdown-content">
-                <label class="dropdown-option" for="sort-name-asc">
-                    <input type="radio" id="sort-name-asc" name="sort" value="name_asc">
-                    <span>Name (A-Z)</span>
-                </label>
-                <label class="dropdown-option" for="sort-name-desc">
-                    <input type="radio" id="sort-name-desc" name="sort" value="name_desc">
-                    <span>Name (Z-A)</span>
-                </label>
-                <label class="dropdown-option" for="sort-date-newest">
-                    <input type="radio" id="sort-date-newest" name="sort" value="date_newest">
-                    <span>Date Created (Newest)</span>
-                </label>
-                <label class="dropdown-option" for="sort-date-oldest">
-                    <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest">
-                    <span>Date Created (Oldest)</span>
-                </label>
+            <div class = "page-view-toggle">
+                <button class="view-toggle-button" aria-label="Grid view" data-tooltip="Grid view">
+                    <i class="material-symbols-outlined">grid_view</i>
+                </button>
+                <button class="view-toggle-button" aria-label="List view" data-tooltip="List view">
+                    <i class="material-symbols-outlined">list</i>
+                </button>
             </div>
-        </div>
-        <div class = "page-view-toggle">
-            <button class="view-toggle-button" aria-label="Grid view" data-tooltip="Grid view">
-                <i class="material-symbols-outlined">grid_view</i>
-            </button>
-            <button class="view-toggle-button" aria-label="List view" data-tooltip="List view">
-                <i class="material-symbols-outlined">list</i>
-            </button>
         </div>
     </div>
     
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
-        <div class="card">
-            {% for team in teams %}
-                <div class="card-item">
-                    <div class="card-header">
-                        <h3>{{ team.team_name }}</h3>
-                        <a href="{% url 'teamsProfile' team.team_id %}" class="view-details-link">View Details</a>
-                    </div>
-                    <div class="card-body">
-                        <p>{{ team.mission_statement }}</p>
-                        <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
-                    </div>
+    <div class="responsive-grid teams-grid">
+        {% for team in teams %}
+            <div class="card card-item">
+                <div class="card-header">
+                    <h3>{{ team.team_name }}</h3>
+                    <a href="{% url 'teamsProfile' team.team_id %}" class="view-details-link">View Details</a>
                 </div>
-            {% empty %}
-                <p>No teams found.</p>
-            {% endfor %}
+                <div class="card-body">
+                    <p>{{ team.mission_statement }}</p>
+                    <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No teams found.</p>
+        {% endfor %}
     </div>
 
     
