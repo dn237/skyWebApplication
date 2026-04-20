@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
 
+
 {% block content %}
-    <h1>Team Profile</h1>
-    <p>Details about the team will go here.</p>
-    <p>Team ID: {{ team.team_id }}</p>
-    <p>Team Name: {{ team.team_name }}</p>
-    <p>Mission Statement: {{ team.mission_statement }}</p>
-    <p>Workstream MF: {{ team.workstream_mf }}</p>
-    <p>Focus Areas: {{ team.focus_areas }}</p>
-    <p>Skills/Technologies: {{ team.skills_technologies }}</p>
-    <p>Slack Channels: {{ team.slack_channels }}</p>
-    <p>Standup Details: {{ team.standup_details }}</p>
-    <p>Agile Practices: {{ team.agile_practices }}</p>
-    <p>Team Wiki: {{ team.team_wiki }}</p>
-    <p>Status: {{ team.status }}</p>
-    <p>Department: {{ team.dept.dept_name }}</p>
-    <p>Lead User: {{ team.lead_user }}</p>
+    <div class="page-stack">
+        <h1 class="page-title">Team Profile</h1>
+        <p class="muted-text">Details about the team.</p>
+
+        <div class="card">
+            <p><strong>Team ID:</strong> {{ team.team_id }}</p>
+            <p><strong>Team Name:</strong> {{ team.team_name }}</p>
+            <p><strong>Mission Statement:</strong> {{ team.mission_statement }}</p>
+            <p><strong>Workstream MF:</strong> {{ team.workstream_mf }}</p>
+            <p><strong>Focus Areas:</strong> {{ team.focus_areas }}</p>
+            <p><strong>Skills/Technologies:</strong> {{ team.skills_technologies }}</p>
+            <p><strong>Slack Channels:</strong> {{ team.slack_channels }}</p>
+            <p><strong>Standup Details:</strong> {{ team.standup_details }}</p>
+            <p><strong>Agile Practices:</strong> {{ team.agile_practices }}</p>
+            <p><strong>Team Wiki:</strong> {{ team.team_wiki }}</p>
+            <p><strong>Status:</strong> {{ team.status }}</p>
+            <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
+            <p><strong>Lead User:</strong> {{ team.lead_user }}</p>
+        </div>
+    </div>
 
 {% endblock %}
