@@ -1,24 +1,346 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="page-stack">
-    <h1 class="page-title">Schedule Meetings</h1>
+<style>
+    .scheduler-page {
+        width: 100%;
+    }
 
-    <div class="responsive-grid">
-        {% for schedule in schedules %}
-        <div class="card card-item">
-                <div class="card-body">
-                    <h3>{{ schedule.title }}</h3>
-                    <p><strong>Message:</strong> {{ schedule.message }}</p>
-                    <p><strong>Date:</strong> {{ schedule.date }}</p>
-                    <p><strong>Time:</strong> {{ schedule.time }}</p>
-                    <p><strong>Platform:</strong> {{ schedule.platform }}</p>
-                    <p><strong>Type:</strong> {{ schedule.schedule_type }}</p>
-                </div>
+    .scheduler-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .scheduler-title {
+        margin: 0 0 8px 0;
+        font-size: 42px;
+        font-weight: 700;
+        color: #111111;
+    }
+
+    .scheduler-subtitle {
+        margin: 0;
+        font-size: 18px;
+        color: #666666;
+    }
+
+    .scheduler-btn {
+        background: #5B87D8;
+        color: #FFFFFF !important;
+        padding: 12px 22px;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(91, 135, 216, 0.22);
+        display: inline-block;
+    }
+
+    .scheduler-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .scheduler-main-card,
+    .scheduler-side-card {
+        background: #FFFFFF;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .scheduler-main-card {
+        min-height: 700px;
+    }
+
+    .scheduler-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .scheduler-card-top h2,
+    .scheduler-side-card h3 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #111111;
+    }
+
+    .scheduler-switches {
+        display: flex;
+        gap: 10px;
+    }
+
+    .scheduler-switch {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .scheduler-switch.secondary {
+        background: #EEF2FB;
+        color: #333333;
+    }
+
+    .scheduler-switch.active {
+        background: #5B87D8;
+        color: #FFFFFF;
+    }
+
+    .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .calendar-weekdays div {
+        text-align: center;
+        font-weight: 600;
+        color: #6B7280;
+        padding-bottom: 8px;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+    }
+
+    .calendar-day {
+        background: #F8FAFF;
+        border: 1px solid #E8EDF7;
+        border-radius: 18px;
+        min-height: 110px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .day-number {
+        font-size: 13px;
+        font-weight: 700;
+        color: #7A7A7A;
+    }
+
+    .calendar-event {
+    background: #5B87D8;
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 6px 8px;
+    font-size: 11px;
+    margin-top: 6px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    }
+
+    .calendar-event span {
+        font-size: 11px;
+        opacity: 0.95;
+    }
+
+    .scheduler-side {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .upcoming-item {
+        background: #F8FAFF;
+        border: 1px solid #E8EDF7;
+        border-radius: 18px;
+        padding: 16px;
+        margin-top: 14px;
+    }
+
+    .upcoming-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111111;
+        margin-bottom: 6px;
+    }
+
+    .upcoming-meta {
+        font-size: 14px;
+        color: #666666;
+        margin-bottom: 4px;
+    }
+
+    .upcoming-badge {
+        display: inline-block;
+        margin-top: 8px;
+        background: #E9EEFB;
+        color: #365DA8;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .today-date,
+    .empty-text {
+        color: #666666;
+        font-size: 15px;
+        margin-top: 12px;
+    }
+    .scheduler-layout {
+    display: grid;
+    grid-template-columns: 260px 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.scheduler-actions-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.scheduler-actions-card h3 {
+    margin: 0 0 18px 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #5B87D8;
+}
+
+.action-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #A9B4FF;
+    color: #242424 !important;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.action-btn span {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+    @media (max-width: 1100px) {
+        .scheduler-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .scheduler-title {
+            font-size: 30px;
+        }
+
+        .scheduler-subtitle {
+            font-size: 15px;
+        }
+
+        .calendar-weekdays,
+        .calendar-grid {
+            gap: 8px;
+        }
+
+        .calendar-day {
+            min-height: 90px;
+            padding: 10px;
+        }
+    }
+</style>
+
+<div class="scheduler-page">
+    <div class="scheduler-header">
+        <div>
+            <h1 class="scheduler-title">Meeting Scheduler</h1>
+            <p class="scheduler-subtitle">Manage your meetings, deadlines, and upcoming events.</p>
         </div>
-        {% empty %}
-        <p>No schedules available.</p>
-        {% endfor %}
+        <a href="{% url 'create_schedule' %}" class="scheduler-btn">+ New Meeting</a>
+    </div>
+
+    <div class="scheduler-layout">
+        <div class="scheduler-actions-card">
+            <h3>I would like to...</h3>
+
+            <a href="#" class="action-btn">Create Event <span>+</span></a>
+            <a href="#" class="action-btn">Cancel Event <span>⊗</span></a>
+            <a href="#" class="action-btn">Share Event <span>➤</span></a>
+            <a href="{% url 'create_schedule' %}" class="action-btn">Add Meeting <span>+</span></a>
+            <a href="#" class="action-btn">Share Meeting <span>➤</span></a>
+            <a href="#" class="action-btn">Add Reminder <span>+</span></a>
+            <a href="#" class="action-btn">Share Reminder <span>➤</span></a>
+        </div>
+
+    <div class="scheduler-main-card">
+        <div class="scheduler-card-top">
+            <h2>Calendar Overview</h2>
+            <div class="scheduler-switches">
+                <button class="scheduler-switch secondary" type="button">Week</button>
+                <button class="scheduler-switch active" type="button">Month</button>
+            </div>
+        </div>
+
+        <div class="calendar-weekdays">
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+            <div>Sun</div>
+        </div>
+
+        <div class="calendar-grid">
+            {% for i in "1234567890123456789012345678901" %}
+                <div class="calendar-day">
+                    <div class="day-number">{{ forloop.counter }}</div>
+
+                    {% for schedule in schedules %}
+                        {% if schedule.date.day == forloop.parentloop.counter %}
+                            <div class="calendar-event">
+                                <strong>{{ schedule.title }}</strong>
+                                <span>{{ schedule.time }}</span>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="scheduler-side">
+        <div class="scheduler-side-card">
+            <h3>Upcoming Meetings</h3>
+
+            {% for schedule in upcoming_schedules %}
+                <div class="upcoming-item">
+                    <div class="upcoming-title">{{ schedule.title }}</div>
+                    <div class="upcoming-meta">{{ schedule.date }} • {{ schedule.time }}</div>
+                    <div class="upcoming-meta">{{ schedule.platform }}</div>
+                    <div class="upcoming-badge">{{ schedule.schedule_type|title }}</div>
+                </div>
+            {% empty %}
+                <p class="empty-text">No upcoming meetings.</p>
+            {% endfor %}
+        </div>
+
+        <div class="scheduler-side-card">
+            <h3>Today</h3>
+            <p class="today-date">{{ today }}</p>
+        </div>
     </div>
 </div>
 {% endblock %}
