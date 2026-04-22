@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# Force Django to print emails to the VS Code terminal
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Application definition
 
@@ -127,4 +129,6 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_REDIRECT_URL = 'dashboard'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
