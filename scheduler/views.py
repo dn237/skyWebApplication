@@ -24,7 +24,7 @@ def create_schedule(request):
         form = ScheduleForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('schedule_list')
+            return redirect('scheduler:schedule_list')
     else:
         form = ScheduleForm()
 
