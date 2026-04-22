@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log In | Sky Web Application</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+<body class="auth-figma-body">
+    <main class="auth-figma-shell">
+        <section class="auth-figma-panel" aria-label="Log in panel">
+            <div class="auth-card-shell login-card-shell">
+                <div class="auth-card login-card">
+                    <div class="auth-header-row">
+                        <h1 class="auth-title auth-title-left">Log In</h1>
+                        <a href="{% url 'accounts:password_reset' %}" class="forgot-link">Forget your password?</a>
+                    </div>
+
+                    <form method="post" class="auth-form">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="auth-alert">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-body">
+                            {% for field in form %}
+                                <div class="auth-field-row">
+                                    {% if field.name == 'password' %}
+                                        <div class="password-label-row">
+                                            <label class="sky-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                            <button type="button" class="password-toggle" id="passwordToggle" aria-controls="id_password" aria-pressed="false">
+                                                <span class="material-symbols-outlined">visibility_off</span>
+                                                <span id="passwordToggleText">Hide</span>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <label class="sky-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {% endif %}
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <small class="auth-error">{{ field.errors.0 }}</small>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" class="signup-button-figma login-button">Login</button>
+                    </form>
+
+                    <div class="auth-divider" aria-hidden="true">
+                        <span class="auth-divider-line"></span>
+                        <span class="auth-divider-text">First time here?</span>
+                        <span class="auth-divider-line"></span>
+                    </div>
+
+                    <div class="auth-footer">
+                        <a href="{% url 'accounts:signup' %}" class="secondary-auth-button">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById('passwordToggle');
+            var input = document.getElementById('id_password');
+            var label = document.getElementById('passwordToggleText');
+
+            if (!toggle || !input || !label) {
+                return;
+            }
+
+            toggle.addEventListener('click', function () {
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                label.textContent = isHidden ? 'Show' : 'Hide';
+                toggle.querySelector('.material-symbols-outlined').textContent = isHidden ? 'visibility' : 'visibility_off';
+                toggle.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+            });
+        })();
+    </script>
+</body>
+</html>

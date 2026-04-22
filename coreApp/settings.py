@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "organizations",  # STUDENT 2
     "messaging",  # STUDENT 3
     "scheduler",  # STUDENT 4
-    "reports",  # STUDENT 5
+    "reports",  # STUDENT 5 
+    "accounts",  # STUDENT 1 (for authentication)   
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,6 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+LOGIN_REDIRECT_URL = 'dashboard'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
