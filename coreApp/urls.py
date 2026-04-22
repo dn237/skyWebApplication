@@ -40,10 +40,13 @@ from .views import dashboard
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', dashboard, name='dashboard'), # This makes dashboard the Home Page
+    path("accounts/", include("accounts.urls")),  # For authentication
+
+    path('', dashboard, name='dashboard'), # This makes dashboard the Home Page 
     path("teams/", include("teams.urls")),  # STUDENT 1
     path("organizations/", include("organizations.urls")),  # STUDENT 2 
     path("messages/", include("messaging.urls")),  # STUDENT 3
     path("schedules/", include("scheduler.urls")),  # STUDENT 4
     path("reports/", include("reports.urls")),  # STUDENT 5
+
 ]
