@@ -60,7 +60,7 @@
             <div class="card card-item">
                 <div class="card-header">
                     <h3>{{ team.team_name }}</h3>
-                    <a href="{% url 'teamsProfile' team.team_id %}" class="view-details-link">View Details</a>
+                    <a href="{% url 'teams:detail' team.team_id %}" class="view-details-link">View Details</a>
                 </div>
                 <div class="card-body">
                     <p>{{ team.mission_statement }}</p>
