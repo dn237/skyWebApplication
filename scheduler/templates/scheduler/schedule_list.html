@@ -268,7 +268,7 @@
             <h1 class="scheduler-title">Meeting Scheduler</h1>
             <p class="scheduler-subtitle">Manage your meetings, deadlines, and upcoming events.</p>
         </div>
-        <a href="{% url 'create_schedule' %}" class="scheduler-btn">+ New Meeting</a>
+        <a href="{% url 'scheduler:create_schedule' %}" class="scheduler-btn">+ New Meeting</a>
     </div>
 
     <div class="scheduler-layout">
@@ -278,7 +278,7 @@
             <a href="#" class="action-btn">Create Event <span>+</span></a>
             <a href="#" class="action-btn">Cancel Event <span>⊗</span></a>
             <a href="#" class="action-btn">Share Event <span>➤</span></a>
-            <a href="{% url 'create_schedule' %}" class="action-btn">Add Meeting <span>+</span></a>
+            <a href="{% url 'scheduler:create_schedule' %}" class="action-btn">Add Meeting <span>+</span></a>
             <a href="#" class="action-btn">Share Meeting <span>➤</span></a>
             <a href="#" class="action-btn">Add Reminder <span>+</span></a>
             <a href="#" class="action-btn">Share Reminder <span>➤</span></a>
