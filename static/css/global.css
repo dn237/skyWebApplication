@@ -183,9 +183,15 @@ a {
     color: white;
     display: flex;
     align-items: center;
+    gap: 10px;
     padding-left: 20px;
     font-size: 16px;
     border-radius: 12px;
+}
+
+.smart-button .material-symbols-outlined {
+    font-size: 20px;
+    line-height: 1;
 }
 
 .app-body {
@@ -523,6 +529,50 @@ a {
     white-space: nowrap;
 }
 
+@media (min-width: 1440px) {
+    :root {
+        --sidebar-width: 230px;
+    }
+
+    .page-content {
+        padding: 44px;
+    }
+
+    .content-container {
+        max-width: 1360px;
+    }
+
+    .sidebar-nav {
+        margin-top: 110px;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 1366px) and (min-width: 1025px) {
+    :root {
+        --sidebar-width: 188px;
+    }
+
+    .sidebar-nav {
+        margin-top: 104px;
+        gap: 12px;
+    }
+
+    .smart-button {
+        height: 42px;
+        font-size: 15px;
+        gap: 8px;
+    }
+
+    .smart-button .material-symbols-outlined {
+        font-size: 18px;
+    }
+
+    .page-content {
+        padding: 28px;
+    }
+}
+
 
 
 @media (max-width: 1024px) {
@@ -542,6 +592,10 @@ a {
     .smart-button {
         width: 152px;
         font-size: 15px;
+    }
+
+    .smart-button .material-symbols-outlined {
+        font-size: 18px;
     }
 
     .page-content {
@@ -651,6 +705,7 @@ a {
         width: max-content;
         padding-left: 0;
         padding-right: 0;
+        padding-bottom: 4px;
         scroll-snap-type: x proximity;
     }
 
@@ -661,7 +716,12 @@ a {
         border-radius: 999px;
         white-space: nowrap;
         font-size: 14px;
+        gap: 6px;
         scroll-snap-align: start;
+    }
+
+    .smart-button .material-symbols-outlined {
+        font-size: 18px;
     }
 
     .smart-button.active {
