@@ -2,9 +2,6 @@ gitfrom django.conf import settings
 from django.db import models
 
 
-from django.db import models
-from django.conf import settings
-
 class Team(models.Model):
     team_id = models.AutoField(primary_key=True, db_column="id")
     team_name = models.CharField(max_length=100, default="", db_column="name")
@@ -55,3 +52,52 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+class TeamDependency(models.Model):
+    source_team = models.ForeignKey(
+        'teams.Team',
+        on_delete=models.CASCADE,
+        related_name='downstream_dependencies'
+    )
+
+    target_team = models.ForeignKey(
+        'teams.Team',
+        on_delete=models.CASCADE,
+        related_name='upstream_dependencies'
+    )
+
+    dependency_type = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    def __str__(self):
+        return f"{self.source_team} → {self.target_team} ({self.dependency_type})"
+
+
+class Project(models.Model):
+    project_id = models.AutoField(primary_key=True)
+
+    name = models.CharField(max_length=200)
+
+    description = models.TextField(blank=True)
+
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    status = models.CharField(max_length=50, blank=True)
+
+    team = models.ForeignKey(
+        'teams.Team',
+        on_delete=models.CASCADE,
+        related_name='projects',
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return self.name
+
+

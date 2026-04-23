@@ -96,3 +96,10 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
     )
     
+
+    from .models import TeamDependency
+
+    @admin.register(TeamDependency)
+    class TeamDependencyAdmin(admin.ModelAdmin):
+    list_display = ("source_team", "target_team", "dependency_type")
+    search_fields = ("source_team__team_name", "target_team__team_name")
