@@ -8,6 +8,7 @@ app_name = 'accounts'
 urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
     path(
         'password-reset/',
         auth_views.PasswordResetView.as_view(
@@ -40,5 +41,4 @@ urlpatterns = [
         ),
         name='password_reset_complete',
     ),
-   # path('logout/', views.logout, name='logout'),
 ]
