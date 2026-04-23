@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Sky Organization Structure</h2>
+        <span class="badge bg-primary rounded-pill">{{ departments.count }} Departments</span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for dept in departments %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ dept.dept_name }}</h5>
+                    <p class="card-text text-muted mb-0">Manager / Head:</p>
+                    <p class="fw-semibold">{{ dept.head_user }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-3">
+                    <small class="text-muted">Part of Sky Registry</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No departments found in the system.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

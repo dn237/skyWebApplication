@@ -1,9 +1,11 @@
+# accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CustomUserCreationForm
-from django.contrib.auth import authenticate, login as auth_login
+# ADDED 'logout' to the import list below:
+from django.contrib.auth import authenticate, login as auth_login, logout 
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.mail import send_mail 
+from django.core.mail import send_mail
 
 def signup(request):
     if request.method == 'POST':
@@ -65,3 +67,7 @@ def login(request):
             })
     
     return render(request, 'accounts/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request) # Now 'logout' is correctly imported and can be used
+    return redirect('accounts:login')
