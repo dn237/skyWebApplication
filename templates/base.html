@@ -49,6 +49,10 @@
                 class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
                 <span class="material-symbols-outlined">schedule</span> Scheduler
             </a>
+            <a href="{% url 'summary' %}" 
+            class="smart-button {% if 'reports' in request.path %}active{% endif %}">
+            <span class="material-symbols-outlined">description</span> Reports
+            </a>
             <a href="/settings/" 
                 class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
                 <span class="material-symbols-outlined">settings</span> Settings
