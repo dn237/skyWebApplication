@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CustomUserCreationForm
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail 
+from django.views.decorators.http import require_POST
 
 def signup(request):
     if request.method == 'POST':
@@ -65,3 +66,11 @@ def login(request):
             })
     
     return render(request, 'accounts/login.html', {'form': form})
+
+
+@require_POST
+def logout(request):
+    # Keep logout POST-only to prevent accidental or cross-site sign-outs.
+    auth_logout(request)
+    messages.info(request, 'You have been logged out successfully.')
+    return redirect('accounts:login')
