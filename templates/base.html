@@ -23,53 +23,60 @@
         </div>
     </header>
 
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="menu-icon">
+    {% block sidebar %}
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="menu-icon"></div>
             </div>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="{% url 'dashboard' %}" 
-                class="smart-button {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                <span class="material-symbols-outlined">dashboard</span> Dashboard
-            </a>
-            <a href="{% url 'teams:index' %}" 
-                class="smart-button {% if 'teams' in request.path %}active{% endif %}">
-                <span class="material-symbols-outlined">groups</span> Teams
-            </a>
-            <a href="{% url 'messages:inbox' %}" 
-                class="smart-button {% if 'messages' in request.path %}active{% endif %}" >
-                <span class="material-symbols-outlined">mail</span> Messages
-            </a>
-            <a href="{% url 'organizations:dept' %}" 
-                class="smart-button{% if request.resolver_match.namespace == 'organizations' %} active{% endif %}">
-                <span class="material-symbols-outlined">apartment</span> Organisation
-            </a>
-            <a href="{% url 'scheduler:schedule_list' %}" 
-                class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
-                <span class="material-symbols-outlined">schedule</span> Scheduler
-            </a>
-            <a href="{% url 'summary' %}" 
-            class="smart-button {% if 'reports' in request.path %}active{% endif %}">
-            <span class="material-symbols-outlined">description</span> Reports
-            </a>
-            <a href="/settings/" 
-                class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
-                <span class="material-symbols-outlined">settings</span> Settings
-            </a>
-        </nav>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" 
+                    class="smart-button {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <span class="material-symbols-outlined">dashboard</span> Dashboard
+                </a>
+                <a href="{% url 'teams:index' %}" 
+                    class="smart-button {% if 'teams' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">groups</span> Teams
+                </a>
+                <a href="{% url 'messages:inbox' %}" 
+                    class="smart-button {% if 'messages' in request.path %}active{% endif %}" >
+                    <span class="material-symbols-outlined">mail</span> Messages
+                </a>
+                <a href="{% url 'organizations:dept' %}" 
+                    class="smart-button{% if request.resolver_match.namespace == 'organizations' %} active{% endif %}">
+                    <span class="material-symbols-outlined">apartment</span> Organisation
+                </a>
+                <a href="{% url 'scheduler:schedule_list' %}" 
+                    class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">schedule</span> Scheduler
+                </a>
+                <a href="{% url 'summary' %}" 
+                    class="smart-button {% if 'reports' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">description</span> Reports
+                </a>
+                <a href="/settings/" 
+                    class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
+                    <span class="material-symbols-outlined">settings</span> Settings
+                </a>
+            </nav>
 
-        <div class="user-footer">
-            <div class="avatar"></div>
-            <div class="user-info">
-                <span class="user-name">John Doe</span>
-                <div class="log-off-group">
-                    <span class="log-off-text">Log off</span>
-                    <div class="logout-icon"></div>
+            <div class="user-footer">
+                {% if user.is_authenticated %}
+                    <div class="user-info">
+                    <span class="user-name">{{ user.username }}</span> 
+                    <div class="log-off-group">
+                        <form method="post" action="{% url 'accounts:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="log-off-text log-off-button">Log off</button>
+                        </form>
+                        <div class="logout-icon"></div>
+                    </div>
                 </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login</a>
+                {% endif %}
             </div>
-        </div>
     </aside>
+    {% endblock sidebar %}
 
     <div class="app-body">
         <main class="page-content">
