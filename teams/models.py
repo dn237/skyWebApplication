@@ -1,4 +1,4 @@
-gitfrom django.conf import settings
+from django.conf import settings
 from django.db import models
 
 
@@ -38,22 +38,6 @@ class Team(models.Model):
 
     def __str__(self):
         return self.team_name
-
-
-        class Project(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-
-    team = models.ForeignKey(
-        Team,
-        on_delete=models.CASCADE,
-        related_name="projects"
-    )
-
-    def __str__(self):
-        return self.name
-
-
 
 class TeamDependency(models.Model):
     source_team = models.ForeignKey(

@@ -7,14 +7,12 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = (
         'team_name',
         'dept',
-        'project',
         'lead_user',
         'status',
     )
 
     list_filter = (
         'dept',
-        'project',
         'status',
     )
 
@@ -26,7 +24,7 @@ class TeamAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Basic Info", {
-            'fields': ('team_name', 'dept', 'project', 'lead_user', 'status')
+            'fields': ('team_name', 'dept', 'lead_user', 'status')
         }),
 
         ("Team Details", {
@@ -63,7 +61,6 @@ from .models import Project
 class ProjectAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'jira_name',
         'status',
         'start_date',
         'end_date',
@@ -76,19 +73,17 @@ class ProjectAdmin(admin.ModelAdmin):
 
     search_fields = (
         'name',
-        'jira_name',
         'description',
-        'objectives',
     )
 
     
     fieldsets = (
         ("Basic Info", {
-            'fields': ('name', 'jira_name', 'status')
+            'fields': ('name', 'status', 'team')
         }),
 
         ("Project Details", {
-            'fields': ('description', 'objectives')
+            'fields': ('description',)
         }),
 
         ("Timeline", {
@@ -101,5 +96,5 @@ class ProjectAdmin(admin.ModelAdmin):
 
     @admin.register(TeamDependency)
     class TeamDependencyAdmin(admin.ModelAdmin):
-    list_display = ("source_team", "target_team", "dependency_type")
-    search_fields = ("source_team__team_name", "target_team__team_name")
+        list_display = ("source_team", "target_team", "dependency_type")
+        search_fields = ("source_team__team_name", "target_team__team_name")
