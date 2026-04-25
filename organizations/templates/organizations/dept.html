@@ -1,10 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="page-stack">
-        <h1 class="page-title">Departments</h1>
-        <div class="card">
-            <p class="muted-text">Department page content will appear here.</p>
+<div class="container py-5">
+    <a href="{% url 'organizations:dept' %}" class="btn btn-link mb-4 text-decoration-none">
+        <span class="material-symbols-outlined align-middle">arrow_back</span> Back to Organization List
+    </a>
+
+    <div class="bg-white p-5 rounded-4 shadow-sm border-top border-primary border-5">
+        <h6 class="text-uppercase text-primary fw-bold mb-2">Department Profile</h6>
+        <h1 class="display-4 fw-bold text-dark mb-4">{{ department.dept_name }}</h1>
+        
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="p-4 bg-light rounded-4">
+                    <p class="text-muted mb-1 small fw-bold">HEAD OF DEPARTMENT</p>
+                    <h4 class="fw-bold mb-0">{{ department.head_user }}</h4>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-4 border rounded-4">
+                    <h5 class="fw-bold mb-3">System Information</h5>
+                    <p class="mb-1 text-muted">Internal ID: #{{ department.id }}</p>
+                    <p class="mb-0 text-muted">Status: <span class="badge bg-success">Active</span></p>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}
