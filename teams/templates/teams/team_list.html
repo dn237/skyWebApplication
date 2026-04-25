@@ -1,77 +1,138 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="page-header section-header">
-        <form class="section-search">
-            <div class = "search-bar">
-                <span class="search-icon-style material-symbols-outlined">search</span>
-                <input class="search-input" type="search" placeholder="Search teams...">
+    <form class="teams-filters-form" method="get">
+        <div class="page-header section-header">
+            <div class="section-search">
+                <div class = "search-bar">
+                    <span class="search-icon-style material-symbols-outlined">search</span>
+                    <input class="search-input" type="search" name="q" value="{{ search_query }}" placeholder="Search teams...">
+                </div>
             </div>
-        </form>
-        <div class="section-actions">
-            <div class="dropdown">
-                <button class="dropdown-button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
-                <div class="dropdown-content">
-                    {% for department in departments %}
-                        <label class="dropdown-option" for="department-{{ forloop.counter }}">
-                            <input type="checkbox" id="department-{{ forloop.counter }}" name="departments" value="{{ department }}">
-                            <span>{{ department }}</span>
+            <div class="section-actions">
+                <div class="dropdown">
+                    <button class="dropdown-button" type="button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
+                    <div class="dropdown-content">
+                        {% for department in departments %}
+                            <label class="dropdown-option" for="department-{{ forloop.counter }}">
+                                <input type="checkbox" id="department-{{ forloop.counter }}" name="departments" value="{{ department }}" {% if department in selected_departments %}checked{% endif %}>
+                                <span>{{ department }}</span>
+                            </label>
+                        {% empty %}
+                            <div class="dropdown-empty">No departments available</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-button" type="button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
+                    <div class="dropdown-content">
+                        <label class="dropdown-option" for="sort-name-asc">
+                            <input type="radio" id="sort-name-asc" name="sort" value="name_asc" {% if selected_sort == 'name_asc' %}checked{% endif %}>
+                            <span>Name (A-Z)</span>
                         </label>
-                    {% empty %}
-                        <div class="dropdown-empty">No departments available</div>
-                    {% endfor %}
+                        <label class="dropdown-option" for="sort-name-desc">
+                            <input type="radio" id="sort-name-desc" name="sort" value="name_desc" {% if selected_sort == 'name_desc' %}checked{% endif %}>
+                            <span>Name (Z-A)</span>
+                        </label>
+                        <label class="dropdown-option" for="sort-date-newest">
+                            <input type="radio" id="sort-date-newest" name="sort" value="date_newest" {% if selected_sort == 'date_newest' %}checked{% endif %}>
+                            <span>Date Created (Newest)</span>
+                        </label>
+                        <label class="dropdown-option" for="sort-date-oldest">
+                            <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest" {% if selected_sort == 'date_oldest' %}checked{% endif %}>
+                            <span>Date Created (Oldest)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class = "page-view-toggle">
+                    <button class="view-toggle-button" type="button" aria-label="Grid view" data-tooltip="Grid view">
+                        <i class="material-symbols-outlined">grid_view</i>
+                    </button>
+                    <button class="view-toggle-button" type="button" aria-label="List view" data-tooltip="List view">
+                        <i class="material-symbols-outlined">list</i>
+                    </button>
                 </div>
             </div>
-            <div class="dropdown">
-                <button class="dropdown-button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
-                <div class="dropdown-content">
-                    <label class="dropdown-option" for="sort-name-asc">
-                        <input type="radio" id="sort-name-asc" name="sort" value="name_asc">
-                        <span>Name (A-Z)</span>
-                    </label>
-                    <label class="dropdown-option" for="sort-name-desc">
-                        <input type="radio" id="sort-name-desc" name="sort" value="name_desc">
-                        <span>Name (Z-A)</span>
-                    </label>
-                    <label class="dropdown-option" for="sort-date-newest">
-                        <input type="radio" id="sort-date-newest" name="sort" value="date_newest">
-                        <span>Date Created (Newest)</span>
-                    </label>
-                    <label class="dropdown-option" for="sort-date-oldest">
-                        <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest">
-                        <span>Date Created (Oldest)</span>
-                    </label>
-                </div>
-            </div>
-            <div class = "page-view-toggle">
-                <button class="view-toggle-button" aria-label="Grid view" data-tooltip="Grid view">
-                    <i class="material-symbols-outlined">grid_view</i>
-                </button>
-                <button class="view-toggle-button" aria-label="List view" data-tooltip="List view">
-                    <i class="material-symbols-outlined">list</i>
-                </button>
-            </div>
-        </div>
     </div>
+    </form>
     
 
-    <div class="responsive-grid teams-grid">
-        {% for team in teams %}
-            <div class="card card-item">
-                <div class="card-header">
-                    <h3>{{ team.team_name }}</h3>
-                    <a href="{% url 'teams:detail' team.team_id %}" class="view-details-link">View Details</a>
+<div class="responsive-grid">
+    {% for team in teams %}
+        <div class="card card-item">
+            <div class="card-header-figma"> 
+                <h3 style="color:#5A60C4; font-weight: 600;">{{ team.team_name }}</h3>
+                <p class="team-subtitle">
+                    {% if team.lead_user %}
+                        {{ team.lead_user.first_name|default:team.lead_user.username }}
+                    {% else %}
+                        Assigning...
+                    {% endif %}
+                </p>
+            </div>
+            
+            <div class="card-body-figma">
+                <div class="info-row">
+                    <span class="material-symbols-outlined">person</span>
+                    <p>Team Leader:
+                        <strong>
+                            {% if team.lead_user %}
+                                {{ team.lead_user.first_name|default:team.lead_user.username }}
+                            {% else %}
+                                Assigning...
+                            {% endif %}
+                        </strong>
+                    </p>
                 </div>
-                <div class="card-body">
-                    <p>{{ team.mission_statement }}</p>
-                    <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
+
+                <div class="info-row">
+                    <span class="material-symbols-outlined">groups</span>
+                    <p>{{ team.member_count|default:"0" }} Members</p>
+                </div>
+
+                <div class="info-row">
+                    <span class="material-symbols-outlined">account_tree</span>
+                    <p>{{ team.repo_count|default:"0" }} Repositories</p>
+                </div>
+
+                <div class="info-row status-row {% if team.status|lower == 'active' %}active-status{% endif %}">
+                    <span class="material-symbols-outlined">radio_button_checked</span>
+                    <p>{% if team.status %}{{ team.status|capfirst }}{% else %}Inactive{% endif %}</p>
                 </div>
             </div>
-        {% empty %}
+
+            <div class="card-footer-figma">
+                <a href="{% url 'teams:detail' team.team_id %}" class="contact-button contact-button-figma">
+                    <span class="material-symbols-outlined">mail</span>
+                    Contact
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-data-alert">
             <p>No teams found.</p>
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
+</div>
+
+    <script>
+        (function () {
+            const form = document.querySelector('.teams-filters-form');
+            if (!form) {
+                return;
+            }
+
+            form.querySelectorAll('input[name="departments"], input[name="sort"]').forEach(function (input) {
+                input.addEventListener('change', function () {
+                    form.submit();
+                });
+            });
+        })();
+    </script>
 
     
 
 {% endblock %}
+
+
+
