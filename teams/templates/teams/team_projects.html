@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="team-projects-page">
+    <h1 class="team-projects-title">Projects</h1>
+    <p class="team-projects-subtitle">Explore the projects our team is working on.</p>
+
+    <div class="team-projects-list">
+        {% for project in projects %}
+        <div class="team-project-card">
+            <h2 class="team-project-name">{{ project.name }}</h2>
+            <p class="team-project-description">{{ project.description }}</p>
+            <a href="{% url 'project_detail' project.id %}" class="btn-action-primary">View Details</a>
+        </div>
+        {% empty %}
+        <p>No projects found for this team.</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}

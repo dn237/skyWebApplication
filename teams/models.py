@@ -84,4 +84,28 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+class Engineer(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True, blank=True, null=True)
+    
+    # Link to Team
+    team = models.ForeignKey(
+        'teams.Team', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name='engineers'
+    )
+    
+    #Link to a User if they ever create an account
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='engineer_profile'
+    )
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 

@@ -6,24 +6,22 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'coreApp.settings')
 django.setup()
 
 from django.contrib.auth.models import User
-from teams.models import Team, TeamDependency, Project
+from teams.models import Engineer, Team, TeamDependency, Project
 from organizations.models import Department
 
-df = pd.read_excel("Agile Project Module UofW - Team Registry (3).xlsx")
+df = pd.read_excel("Agile Project Module UofW - Team Registry.xlsx")
 
-
-# 1. Departments + Teams
-
+# 1. Departments + Teams + Engineers
 for _, row in df.iterrows():
     dept_name = str(row.get("Department", "")).strip()
     team_name = str(row.get("Team Name", "")).strip()
     head_name = str(row.get("Department Head", "")).strip()
     lead_name = str(row.get("Team Leader", "")).strip()
 
-    if not team_name:
+    if not team_name or team_name == "nan":
         continue
 
-    # Department Head
+    # --- Department Head ---
     manager = None
     if head_name and head_name != "nan":
         username = head_name.replace(" ", "").lower()
@@ -32,7 +30,7 @@ for _, row in df.iterrows():
             defaults={"first_name": head_name}
         )
 
-    # Team Leader
+    # --- Team Leader ---
     lead_user = None
     if lead_name and lead_name != "nan":
         username = lead_name.replace(" ", "").lower()
@@ -41,13 +39,13 @@ for _, row in df.iterrows():
             defaults={"first_name": lead_name}
         )
 
-    # Department
+    # --- Department ---
     dept, _ = Department.objects.get_or_create(
         dept_name=dept_name,
         defaults={"manager": manager}
     )
 
-    # Team
+    # --- Team ---
     team, _ = Team.objects.get_or_create(
         team_name=team_name,
         defaults={
@@ -60,9 +58,19 @@ for _, row in df.iterrows():
             "standup_details": str(row.get("Daily Standup Time and Link", "")),
             "agile_practices": str(row.get("Agile Practices", "")),
             "team_wiki": str(row.get("Team Wiki", "")),
-            "status": str(row.get("Status", ""))
+            "status": "Active" # Установим Active, чтобы иконка в Figma была зеленой
         }
     )
+    if lead_name and lead_name != "nan":
+        parts = lead_name.split()
+        f_name = parts[0]
+        l_name = " ".join(parts[1:]) if len(parts) > 1 else "Leader"
+        
+        Engineer.objects.get_or_create(
+            first_name=f_name,
+            last_name=l_name,
+            team=team
+        )
 
 
 # 2. Projects

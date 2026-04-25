@@ -13,8 +13,9 @@ def teamsHome(request):
     selected_sort = request.GET.get("sort", "name_asc")
 
     teams = Team.objects.select_related("dept", "lead_user").annotate(
-        member_count=Count("userprofile", distinct=True),
-        repo_count=Count("projects", distinct=True),
+        # name must match what used in HTML
+        computed_count=Count("engineers", distinct=True), 
+        repo_count=Count("projects", distinct=True) 
     )
 
     if search_query:
@@ -45,6 +46,7 @@ def teamsHome(request):
         .distinct()
     )
 
+
     # 3. Add 'view_type' to the Context
     return render(request, "teams/team_list.html", {
         "teams": teams,
@@ -52,9 +54,59 @@ def teamsHome(request):
         "search_query": search_query,
         "selected_departments": selected_departments,
         "selected_sort": selected_sort,
-        "view_type": view_type, # <--- NEW: Tells HTML which layout to use
+        "view_type": view_type, # <--- Tells HTML which layout to use
     })
 
+from django.db.models import Count
+
 def teamsProfile(request, team_id):
+    team = get_object_or_404(
+        Team.objects.select_related("dept", "lead_user").annotate(
+            computed_member_count=Count("engineers", distinct=True),
+            computed_repo_count=Count("projects", distinct=True)
+        ), 
+        pk=team_id
+    )
+    # Get dependencies for the sidebar
+    dependencies = team.downstream_dependencies.all()
+    
+    return render(request, 'teams/team_profile.html', {
+        'team': team,
+        'dependencies': dependencies
+    })
+
+def teamMembers(request, team_id):
     team = get_object_or_404(Team, pk=team_id)
-    return render(request, 'teams/team_profile.html', {'team': team})
+    members = team.engineers.select_related('user').all()
+    
+    return render(request, 'teams/team_members.html', {
+        'team': team,
+        'members': members
+    })
+
+def teamProjects(request, team_id):
+    team = get_object_or_404(Team, pk=team_id)
+    projects = team.projects.all()
+    
+    return render(request, 'teams/team_projects.html', {
+        'team': team,
+        'projects': projects
+    })
+
+def teamDependencies(request, team_id):
+    team = get_object_or_404(Team, pk=team_id)
+    dependencies = team.downstream_dependencies.select_related('target_team').all()
+    
+    return render(request, 'teams/team_dependencies.html', {
+        'team': team,
+        'dependencies': dependencies
+    })
+
+def teamRepositories(request, team_id):
+    team = get_object_or_404(Team, pk=team_id)
+    repositories = team.projects.filter(description__icontains="github.com").all()
+
+    return render(request, 'teams/team_repositories.html', {
+        'team': team,
+        'repositories': repositories
+    })

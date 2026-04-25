@@ -44,30 +44,31 @@
                         </label>
                     </div>
                 </div>
-                <div class = "page-view-toggle">
-                    <button class="view-toggle-button" type="button" aria-label="Grid view" data-tooltip="Grid view">
+                <div class="page-view-toggle">
+                    <button type="button" class="view-toggle-button active" id="grid-btn" onclick="toggleView('grid')" aria-label="Grid view" data-tooltip="Grid view" >
                         <i class="material-symbols-outlined">grid_view</i>
                     </button>
-                    <button class="view-toggle-button" type="button" aria-label="List view" data-tooltip="List view">
+                    <button type="button" class="view-toggle-button" id="list-btn" onclick="toggleView('list')" aria-label="Grid view" data-tooltip="Grid view">
                         <i class="material-symbols-outlined">list</i>
                     </button>
                 </div>
             </div>
     </div>
-    </form>
+</form>
     
-
-<div class="responsive-grid">
+    
+<div class="teams-container grid-mode" id="teams-container">
     {% for team in teams %}
         <div class="card card-item">
             <div class="card-header-figma"> 
                 <h3 style="color:#5A60C4; font-weight: 600;">{{ team.team_name }}</h3>
                 <p class="team-subtitle">
-                    {% if team.lead_user %}
-                        {{ team.lead_user.first_name|default:team.lead_user.username }}
+                    {% if team.dept.head_user %}
+                        Deparment Head: 
+                        <strong>{{team.dept.head_user}} </strong>
                     {% else %}
                         Assigning...
-                    {% endif %}
+                    {% endif %} 
                 </p>
             </div>
             
@@ -87,12 +88,12 @@
 
                 <div class="info-row">
                     <span class="material-symbols-outlined">groups</span>
-                    <p>{{ team.member_count|default:"0" }} Members</p>
+                    <p>{{ team.computed_count }} Members</p>
                 </div>
 
                 <div class="info-row">
                     <span class="material-symbols-outlined">account_tree</span>
-                    <p>{{ team.repo_count|default:"0" }} Repositories</p>
+                    <p>{{ team.repo_count }} Repositories</p>
                 </div>
 
                 <div class="info-row status-row {% if team.status|lower == 'active' %}active-status{% endif %}">
@@ -102,9 +103,8 @@
             </div>
 
             <div class="card-footer-figma">
-                <a href="{% url 'teams:detail' team.team_id %}" class="contact-button contact-button-figma">
-                    <span class="material-symbols-outlined">mail</span>
-                    Contact
+                <a href="{% url 'teams:detail' team.team_id %}" class="profile-button">
+                    View Profile<span class="material-symbols-outlined">expand_content</span>
                 </a>
             </div>
         </div>
@@ -114,25 +114,52 @@
         </div>
     {% endfor %}
 </div>
-
-    <script>
-        (function () {
-            const form = document.querySelector('.teams-filters-form');
-            if (!form) {
-                return;
-            }
-
-            form.querySelectorAll('input[name="departments"], input[name="sort"]').forEach(function (input) {
-                input.addEventListener('change', function () {
-                    form.submit();
-                });
-            });
-        })();
-    </script>
-
-    
-
 {% endblock %}
 
+{% block extra_js %}
+<script>
+    // --- SCRIPT 1: AUTO-SUBMIT FILTERS ---
+    (function () {
+        const form = document.querySelector('.teams-filters-form');
+        if (!form) return;
+
+        form.querySelectorAll('input[name="departments"], input[name="sort"]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                form.submit();
+            });
+        });
+    })();
+
+    // --- SCRIPT 2: GRID/LIST VIEW TOGGLE ---
+    function toggleView(mode) {
+        const container = document.getElementById('teams-container');
+        const gridBtn = document.getElementById('grid-btn');
+        const listBtn = document.getElementById('list-btn');
+        
+        if (!container) return;
+
+        if (mode === 'grid') {
+            container.classList.remove('list-mode');
+            container.classList.add('grid-mode');
+            if(gridBtn) gridBtn.classList.add('active');
+            if(listBtn) listBtn.classList.remove('active');
+        } else {
+            container.classList.remove('grid-mode');
+            container.classList.add('list-mode');
+            if(listBtn) listBtn.classList.add('active');
+            if(gridBtn) gridBtn.classList.remove('active');
+        }
+        
+        // Save choice so it doesn't reset when Script 1 submits the form
+        localStorage.setItem('teamViewPreference', mode);
+    }
+
+    // Initialize View on Page Load
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedMode = localStorage.getItem('teamViewPreference') || 'grid';
+        toggleView(savedMode);
+    });
+</script>
+{% endblock %}
 
 

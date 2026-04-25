@@ -1,100 +1,70 @@
 from django.contrib import admin
-from .models import Team
+from .models import Team, Engineer, Project, TeamDependency
 
+# --- 1. Engineer Administration ---
+@admin.register(Engineer)
+class EngineerAdmin(admin.ModelAdmin):
+    """
+    Configuration for the Engineer admin interface.
+    Allows managing staff members independently of User accounts.
+    """
+    list_display = ('first_name', 'last_name', 'team')
+    list_filter = ('team',)
+    search_fields = ('first_name', 'last_name')
 
+# --- 2. Team Administration ---
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = (
-        'team_name',
-        'dept',
-        'lead_user',
-        'status',
-    )
-
-    list_filter = (
-        'dept',
-        'status',
-    )
-
-    search_fields = (
-        'team_name',
-        'mission_statement',
-        'focus_areas',
-    )
+    """
+    Main Team configuration. 
+    Organizes team metadata, tools, and processes into logical fieldsets.
+    """
+    list_display = ('team_name', 'dept', 'lead_user', 'status')
+    list_filter = ('dept', 'status')
+    search_fields = ('team_name', 'mission_statement', 'focus_areas')
 
     fieldsets = (
-        ("Basic Info", {
+        ("Basic Identification", {
             'fields': ('team_name', 'dept', 'lead_user', 'status')
         }),
-
-        ("Team Details", {
-            'fields': (
-                'mission_statement',
-                'workstream_mf',
-                'focus_areas',
-                'skills_technologies',
-            )
+        ("Strategic Details", {
+            'fields': ('mission_statement', 'workstream_mf', 'focus_areas', 'skills_technologies')
         }),
-
-        ("Tools & Resources", {
-            'fields': (
-                'github_url',
-                'jira_board_link',
-                'software_owned',
-                'team_wiki',
-            )
+        ("External Integration", {
+            'fields': ('github_url', 'jira_board_link', 'team_wiki')
         }),
-
-        ("Communication & Process", {
-            'fields': (
-                'slack_channels',
-                'standup_details',
-                'agile_practices',
-            )
+        ("Operational Workflow", {
+            'fields': ('slack_channels', 'standup_details', 'agile_practices')
         }),
     )
-    
-from .models import Project
 
-
+# --- 3. Project Administration ---
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'status',
-        'start_date',
-        'end_date',
-    )
-
-    list_filter = (
-        'status',
-        'start_date',
-    )
-
-    search_fields = (
-        'name',
-        'description',
-    )
-
+    """
+    Tracking for specific initiatives assigned to Teams.
+    """
+    list_display = ('name', 'status', 'team', 'start_date', 'end_date')
+    list_filter = ('status', 'start_date', 'team')
+    search_fields = ('name', 'description')
     
     fieldsets = (
-        ("Basic Info", {
+        ("General Info", {
             'fields': ('name', 'status', 'team')
         }),
-
-        ("Project Details", {
+        ("Description", {
             'fields': ('description',)
         }),
-
         ("Timeline", {
             'fields': ('start_date', 'end_date')
         }),
     )
-    
 
-    from .models import TeamDependency
-
-    @admin.register(TeamDependency)
-    class TeamDependencyAdmin(admin.ModelAdmin):
-        list_display = ("source_team", "target_team", "dependency_type")
-        search_fields = ("source_team__team_name", "target_team__team_name")
+# --- 4. Dependency Mapping ---
+@admin.register(TeamDependency)
+class TeamDependencyAdmin(admin.ModelAdmin):
+    """
+    Visualizes the connections and blockers between different squads.
+    """
+    list_display = ("source_team", "target_team", "dependency_type")
+    search_fields = ("source_team__team_name", "target_team__team_name")
