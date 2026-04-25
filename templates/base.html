@@ -49,6 +49,10 @@
                     class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">schedule</span> Scheduler
                 </a>
+                <a href="{% url 'summary' %}" 
+                    class="smart-button {% if 'reports' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">description</span> Reports
+                </a>
                 <a href="/settings/" 
                     class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
                     <span class="material-symbols-outlined">settings</span> Settings
@@ -60,7 +64,10 @@
                     <div class="user-info">
                     <span class="user-name">{{ user.username }}</span> 
                     <div class="log-off-group">
-                        <a href="{% url 'accounts:logout' %}" class="log-off-text">Log off</a> 
+                        <form method="post" action="{% url 'accounts:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="log-off-text log-off-button">Log off</button>
+                        </form>
                         <div class="logout-icon"></div>
                     </div>
                 </div>

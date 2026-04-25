@@ -258,6 +258,13 @@ a {
     color: rgba(255, 255, 255, 0.85);
 }
 
+.log-off-button {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
 .logout-icon {
     width: 14px;
     height: 14px;
