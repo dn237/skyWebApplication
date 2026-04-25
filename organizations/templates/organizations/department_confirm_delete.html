@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card border-0 shadow-lg rounded-5 p-5 border-top border-danger border-5">
+                <div class="bg-soft-danger text-danger rounded-circle p-4 d-inline-block mx-auto mb-4">
+                    <span class="material-symbols-outlined" style="font-size: 48px;">warning</span>
+                </div>
+                
+                <h2 class="fw-bold mb-3">Delete Department?</h2>
+                <p class="lead text-muted mb-4">
+                    Are you sure you want to permanently remove <strong>{{ department.dept_name }}</strong> from the organization registry? This action cannot be undone.
+                </p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                        <button type="submit" class="btn btn-danger rounded-pill px-5 py-2 fw-bold shadow-sm">
+                            Yes, Delete It
+                        </button>
+                        <a href="{% url 'organizations:detail' department.pk %}" class="btn btn-light rounded-pill px-5 py-2 fw-bold border">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

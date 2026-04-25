@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4 p-4">
+                <div class="card-body">
+                    <h3 class="fw-bold mb-4 text-center">Add New Department</h3>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Department Name</label>
+                            {{ form.dept_name }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Head of Department</label>
+                            {{ form.head_user }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2">Save Department</button>
+                            <a href="{% url 'organizations:dept' %}" class="btn btn-light rounded-pill py-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

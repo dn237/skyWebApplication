@@ -12,4 +12,7 @@ urlpatterns = [
     # Detail page: /organizations/1/ or /organizations/2/
     # <int:pk> is a path converter that captures the ID from the URL
     path('<int:pk>/', views.department_detail, name='detail'),
+    path('add/', views.create_department, name='add_department'),
+    path('<int:pk>/edit/', views.edit_department, name='edit_department'),
+    path('<int:pk>/delete/', views.delete_department, name='delete_department'),
 ]
