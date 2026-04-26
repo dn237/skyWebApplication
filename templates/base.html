@@ -53,10 +53,10 @@
                     class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">schedule</span> Scheduler
                 </a>
-                {% if is_admin %}
                 <a href="{% url 'summary' %}" class="smart-button {% if 'reports' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">description</span> Reports
                 </a>
+                {% if is_admin %}
                 <a href="{% url 'accounts:user_access' %}" class="smart-button">
                     <span class="material-symbols-outlined">group</span> User Access
                 </a>
@@ -70,15 +70,15 @@
             <div class="user-footer">
                 {% if user.is_authenticated %}
                     <div class="user-info">
-                    <span class="user-name">{{ user.username }}</span> 
-                    <div class="log-off-group">
-                        <form method="post" action="{% url 'accounts:logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="log-off-button">
-                                <span>Log off</span>
-                                <span class="material-symbols-outlined">logout</span>
-                            </button>
-                        </form>
+                        <a href="{% url 'accounts:profile' %}" class="user-name">{{ user.username }}</a>
+                        <div class="log-off-group">
+                            <form method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="log-off-button">
+                                    <span>Log off</span>
+                                    <span class="material-symbols-outlined">logout</span>
+                                </button>
+                            </form>
                     </div>
                 </div>
                 {% else %}

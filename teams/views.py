@@ -134,6 +134,12 @@ def teamRepositories(request, team_id):
         'repositories': repositories
     })
 
+def projectDetail(request, pk):
+    project = get_object_or_404(Team.projects.related.model, pk=pk)
+    return render(request, 'teams/project_detail.html', {
+        'project': project
+    })
+
 
 @login_required
 def editTeam(request, team_id):

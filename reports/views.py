@@ -10,32 +10,23 @@ import pandas as pd
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
+
 # role based user filter
 def get_visible_users(user):
-    """
-    Returns users visible based on role:
-    - Admin (is_staff): All users
-    - Department Head: All users in their department
-    - Team Leader: All users in their team
-    - Engineer: Only themselves
-    """
-    
-    # Admin: can see all users
-    if user.is_staff or user.is_superuser:
-        return User.objects.all().order_by('username')
-    
-    # Department head
+
+    # department head
     if Department.objects.filter(head_user=user.username).exists():
         dept = Department.objects.get(head_user=user.username)
-        return User.objects.filter(userprofile__department=dept).order_by('username')
+        return User.objects.filter(userprofile__department=dept)
 
-    # Team leader
-    if Team.objects.filter(lead_user=user).exists():
+    # team leader
+    elif Team.objects.filter(lead_user=user).exists():
         team = Team.objects.get(lead_user=user)
-        return User.objects.filter(userprofile__team=team).order_by('username')
+        return User.objects.filter(userprofile__team=team)
 
-    # Normal engineer: only see themselves
-    return User.objects.filter(id=user.id)
+   # normal user
+    else:
+        return User.objects.filter(id=user.id)
 
 
 # main report page

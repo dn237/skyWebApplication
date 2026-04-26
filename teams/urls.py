@@ -22,5 +22,7 @@ urlpatterns = [
     path('teamID-<int:team_id>/repositories/', views.teamRepositories, name='repositories'),
     # Edit team page
     path('teamID-<int:team_id>/edit/', views.editTeam, name='edit'),
+    
+    path('projects/<int:pk>/', views.projectDetail, name='project_detail'),
 
 ]

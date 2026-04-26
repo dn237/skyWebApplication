@@ -16,6 +16,7 @@ class EngineerAdmin(admin.ModelAdmin):
     list_filter = ('team',)
     search_fields = ('first_name', 'last_name')
 
+
 # --- 2. Team Administration ---
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
