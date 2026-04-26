@@ -1,3 +1,8 @@
+# ================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# Co-author: COPILOT
+# ----->
+
 import os
 import django
 import pandas as pd
@@ -133,3 +138,5 @@ for _, row in df.iterrows():
         )
 
 print("IMPORT COMPLETE")
+
+# =================================================

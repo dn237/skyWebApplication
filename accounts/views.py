@@ -5,6 +5,10 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail 
 
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
+
 def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -55,3 +59,21 @@ def logout_view(request):
     auth_logout(request)
     messages.info(request, 'You have been logged out successfully.')
     return redirect('accounts:login')
+
+
+def user_access(request):
+    """Admin page for managing user access and permissions"""
+    from django.contrib.auth import get_user_model
+    from django.contrib.auth.decorators import user_passes_test
+    
+    # This view requires admin privileges
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'You do not have permission to access this page.')
+        return redirect('dashboard')
+    
+    User = get_user_model()
+    users = User.objects.all().order_by('username')
+    
+    return render(request, 'accounts/user_access.html', {
+        'users': users,
+    })

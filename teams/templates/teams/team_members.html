@@ -1,6 +1,46 @@
+{#-------------------------------------------------------------------#}
+{#-------- AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 --------#}
+{#-------------------------------------------------------------------#}
+
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="team-edit-wrapper">
+	<div class="profile-top-bar">
+		<a href="{% url 'teams:detail' team.team_id %}" class="back-arrow">
+			<span class="material-symbols-outlined">arrow_back</span>
+		</a>
+		<h1 class="page-main-title">Team Members: {{ team.team_name }}</h1>
+	</div>
 
+	<div class="card">
+		<div class="card-header">
+			<h3>{{ members|length }} Member{{ members|length|pluralize }}</h3>
+		</div>
+		<div class="card-body">
+			{% if members %}
+				<div class="row g-3">
+					{% for member in members %}
+						<div class="col-md-6 col-lg-4">
+							<div class="d-flex align-items-center gap-2 border rounded p-2 h-100">
+								{% if member.avatar %}
+									<img src="{{ member.avatar.url }}" alt="{{ member.user.username }}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;">
+								{% else %}
+									<span class="material-symbols-outlined" style="font-size:40px;">account_circle</span>
+								{% endif %}
+								<div>
+									<div class="fw-semibold">{{ member.user.get_full_name|default:member.user.username }}</div>
+									<small class="text-muted">{{ member.user.email|default:"No email" }}</small>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<p class="text-muted mb-0">No members are assigned to this team yet.</p>
+			{% endif %}
+		</div>
+	</div>
+</div>
 
 {% endblock %}
