@@ -1,3 +1,7 @@
+{#-------------------------------------------------------------------#}
+{#-------- AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 --------#}
+{#-------------------------------------------------------------------#}
+
 {% extends 'base.html' %}
 
 {% block content %}
@@ -27,6 +31,11 @@
             <a href="{% url 'scheduler:create_schedule' %}" class="btn-action-primary">
                 <span class="material-symbols-outlined">calendar_today</span> Schedule Meeting
             </a>
+            {% if can_edit %}
+                <a href="{% url 'teams:edit' team.team_id %}" class="btn-action-primary secondary">
+                    <span class="material-symbols-outlined">edit</span> Edit Team
+                </a>
+            {% endif %}
         </div>
     </div>
 

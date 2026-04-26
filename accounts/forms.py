@@ -2,6 +2,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User

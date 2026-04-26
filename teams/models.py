@@ -1,3 +1,7 @@
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
+
 from django.conf import settings
 from django.db import models
 
@@ -14,9 +18,9 @@ class Team(models.Model):
     standup_details = models.TextField(blank=True, default="")
     agile_practices = models.TextField(blank=True, default="")
 
-    team_wiki = models.URLField(blank=True, default="")
-    github_url = models.URLField(blank=True, default="")
-    jira_board_link = models.URLField(blank=True, default="")
+    team_wiki = models.TextField(blank=True, default="")
+    github_url = models.TextField(blank=True, default="")
+    jira_board_link = models.TextField(blank=True, default="")
 
     status = models.CharField(max_length=50, blank=True, default="")
 

@@ -8,10 +8,13 @@ Role: Project Management & Global Settings.
 Responsibility: Centralized configuration (settings.py) and main URL routing.
 Note: Only edit this file when adding new apps or global middleware.
 ==========================================================================
+Author: Diana Nichvolodova | Student ID: 20165015
 """
 
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from .views import dashboard
 
@@ -27,3 +30,6 @@ urlpatterns = [
     path("reports/", include("reports.urls")),  # STUDENT 5
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
