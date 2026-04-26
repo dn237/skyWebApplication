@@ -32,7 +32,15 @@
     <div class="create-form-card" style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
         <div style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
             
-            <h2 style="margin-bottom:20px;">Create New Meeting</h2>
+            <h2 style="margin-bottom:20px;">
+                {% if edit_mode %}
+                    Edit Meeting
+                {% elif schedule_type == 'reminder' %}
+                    Add Reminder
+                {% else %}
+                    Create New Meeting
+                {% endif %}
+            </h2>
 
             <form method="POST">
                 {% csrf_token %}
@@ -62,13 +70,21 @@
                     {{ form.platform }}
                 </div>
 
+                {% if schedule_type != 'reminder' %}
                 <div style="margin-bottom:20px;">
                     <label>Type</label>
                     {{ form.schedule_type }}
                 </div>
+                {% endif %}
 
                 <button type="submit" class="contact-button">
-                    Save Meeting
+                    {% if edit_mode %}
+                        Save Changes
+                    {% elif schedule_type == 'reminder' %}
+                        Save Reminder
+                    {% else %}
+                        Save Meeting
+                    {% endif %}
                 </button>
             </form>
 

@@ -5,6 +5,7 @@ class Schedule(models.Model):
         ('weekly', 'Weekly'),
         ('monthly', 'Monthly'),
         ('upcoming', 'Upcoming'),
+        ('reminder', 'Reminder'),
     ]
 
     title = models.CharField(max_length=200)
