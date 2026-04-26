@@ -1,3 +1,12 @@
+/* ==========================================
+AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+-------------------------------------------------
+Direction: All styles for the app go here. This includes the header, footer,
+ sidebar, and all reusable components like cards, buttons, and forms. 
+ The goal is to keep this file organized and modular, 
+ so we can easily find and update styles as needed.
+ ==============================================*/
+ 
 /* All Figma Menu styles go here --->*/
 
 /* GLOBAL SETTINGS */
@@ -48,9 +57,11 @@ a {
 .smart-button, 
 .card, 
 .contact-button, 
+.team-card-figma,
+.profile-button,
 .bottom-bar .footer-links,
-.contact-support,
-.language-picker,.dropdown-button, .dropdown {
+.contact-support, 
+.language-picker,.dropdown-button, .dropdown, .card-item, .view-toggle-button, .btn-action-primary, .view-details-link, .stat-item , .sidebar-card-figma {
     transition: all 0.3s ease;
 }
 
@@ -65,8 +76,26 @@ a {
     box-shadow: 0 10px 15px rgba(0,0,0,0.1);
 }
 
-.contact-button:hover {
+
+.team-card-figma:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(59, 77, 148, 0.12);
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(59, 77, 148, 0.12);
+}
+
+.btn-action-primary:hover {
     background: var(--accent-primary-hover);
+    box-shadow: 0 10px 18px rgba(104, 106, 222, 0.24);
+
+}
+
+.profile-button:hover {
+    background: var(--accent-primary-hover);
+    box-shadow: 0 10px 18px rgba(104, 106, 222, 0.24);
 }
 
 .bottom-bar .footer-links:hover {
@@ -77,6 +106,7 @@ a {
 .dropdown-button:hover {
     background-color: var(--accent-primary-hover);
 }
+
 
 /* 4. ACTIVE STATES */
 /* Helps users know which page they are currently visiting */
@@ -211,6 +241,7 @@ a {
     min-height: calc(100vh - var(--top-height) - var(--bottom-height));
 }
 
+
 /* ADAPTIVE CONTAINER: Keeps content from stretching too wide on 4K monitors */
 .content-container {
     width: 100%;
@@ -247,22 +278,42 @@ a {
     color: #FFFFFF;
 }
 
+/* Container for the whole logout section */
 .log-off-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    margin-top: 4px;
 }
 
-.log-off-text {
+/* The Button - Reset and Styled */
+.log-off-button {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Precise gap between text and icon */
+    
+    /* Typography & Color */
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Inter', sans-serif;
+    color: rgba(255, 255, 255, 0.85); /* Your specific Figma opacity */
+    transition: color 0.2s ease;
 }
 
-.logout-icon {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.65);
+/* Hover state for the whole group */
+.log-off-button:hover {
+    color: #FFFFFF;
+}
+
+/* The Icon - Using Google Material Symbols */
+.log-off-button .material-symbols-outlined {
+    font-size: 16px !important; /* Slightly larger than text for visual balance */
+    display: flex;
+    align-items: center;
 }
 
 .card { 
@@ -273,13 +324,98 @@ a {
     border: 1px solid rgba(0,0,0,0.02);
 }
 
-.contact-button {
+.card-header-figma {
+    text-align: left;
+    margin-bottom: 14px;
+    width: 250px;
+}
+
+.team-title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #050C72;
+}
+
+.team-subtitle {
+    margin: 10px 0 0;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 400;
+    color: #050C72;
+}
+
+.card-body-figma {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 2px;
+    flex: 1;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #2B3674;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.info-row p {
+    margin: 0;
+}
+
+.info-row .material-symbols-outlined {
+    font-size: 24px;
+    line-height: 1;
+    color: #2B3674;
+    flex: 0 0 auto;
+}
+
+.status-row {
+    color: #1A602C;
+    font-weight: 600;
+}
+
+.status-row .material-symbols-outlined {
+    color: #1A602C;
+}
+
+.card-footer-figma {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.hero-team-info{
+    color: #5A60C4;
+    font-size: 30px;
+    margin-bottom: 10px;
+    position: center;
+}
+
+.profile-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: 170px;
+    height: 32px;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 20px;
     background: var(--accent-primary);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 400;
+    box-shadow: 0 8px 24px rgba(104, 106, 222, 0.22);
+}
+
+
+.profile-button .material-symbols-outlined {
+    font-size: 20px;
+    line-height: 1;
 }
 
 .page-stack {
@@ -296,10 +432,457 @@ a {
     color: #6B7280;
 }
 
+.team-profile-wrapper {
+    background-color: #F6F6F6;
+    padding: 20px 60px;
+    min-height: 100vh;
+}
+
+.profile-top-bar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.page-main-title {
+    color: #2B3674;
+    font-weight: 700;
+    font-size: 33px;
+}
+
+.profile-hero-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+}
+
+.hero-team-name {
+    color: #5A60C4;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.hero-contact-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-action-primary {
+    background: #686ADE;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.btn-action-primary:focus-visible {
+    outline: 2px solid rgba(104, 106, 222, 0.45);
+    outline-offset: 2px;
+}
+
+.btn-action-primary.secondary {
+    background: #FFFFFF;
+    color: #686ADE;
+    border: 1px solid #686ADE;
+    margin-left: 10px;
+}
+
+.profile-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    background: #FFFFFF;
+    padding: 24px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.profile-content-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.overview-card, .sidebar-card-figma {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+/* TEAM EDIT PAGE */
+.team-edit-wrapper {
+    background-color: #F6F6F6;
+    padding: 20px 60px 32px;
+    min-height: 100vh;
+}
+
+.team-edit-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding: 20px 24px;
+    background: #FFFFFF;
+}
+
+.team-edit-hero-main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.team-edit-hero-kicker {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(104, 106, 222, 0.12);
+    color: #686ADE;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.team-edit-hero-title {
+    margin: 0;
+    color: #2B3674;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.team-edit-hero-copy {
+    margin: 0;
+    color: #6B7280;
+    max-width: 680px;
+}
+
+.team-edit-hero-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.meta-chip {
+    min-width: 0;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #FFFFFF;
+    border: 1px solid #E7EAF3;
+    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
+}
+
+.meta-chip span {
+    display: block;
+    margin-bottom: 4px;
+    color: #6B7280;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.meta-chip strong {
+    display: block;
+    color: #1F2A57;
+    font-size: 14px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.team-edit-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.team-edit-panel {
+    padding: 22px;
+    border-radius: 20px;
+}
+
+.team-edit-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.team-edit-panel-header.compact {
+    margin-bottom: 18px;
+}
+
+.team-edit-panel-title {
+    margin: 0;
+    color: #2B3674;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.team-edit-panel-subtitle {
+    margin: 6px 0 0;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.team-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+}
+
+.team-edit-span-2 {
+    grid-column: span 2;
+}
+
+.team-edit-grid .form-group,
+.team-edit-sidebar .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.team-edit-grid label,
+.team-edit-sidebar label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2B3674;
+}
+
+.team-edit-grid .form-control,
+.team-edit-grid select,
+.team-edit-grid textarea,
+.team-edit-sidebar .form-control,
+.team-edit-sidebar select,
+.team-edit-sidebar textarea {
+    border-radius: 12px;
+    border: 1px solid #D6DAE6;
+    background: #FBFBFD;
+    padding: 11px 14px;
+    box-shadow: none;
+}
+
+.team-edit-grid .form-control:focus,
+.team-edit-grid select:focus,
+.team-edit-grid textarea:focus {
+    border-color: #686ADE;
+    box-shadow: 0 0 0 3px rgba(104, 106, 222, 0.12);
+    background: #FFFFFF;
+}
+
+.team-edit-grid textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.team-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 6px;
+}
+
+.team-edit-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.team-member-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.team-member-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 11px 12px;
+    border: 1px solid #E7EAF3;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFF 100%);
+}
+
+.team-member-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #EEF1FF;
+    color: #686ADE;
+    flex: 0 0 auto;
+}
+
+.team-member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-member-avatar .material-symbols-outlined {
+    font-size: 30px;
+}
+
+.team-member-avatar.placeholder {
+    background: #F1F3F9;
+    color: #98A2B3;
+}
+
+.team-member-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.team-member-copy strong {
+    color: #1F2A57;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.team-member-copy span {
+    color: #6B7280;
+    font-size: 12px;
+}
+
+.team-edit-sidebar .card {
+    padding: 20px;
+}
+
+@media (max-width: 1100px) {
+    .team-edit-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .team-edit-wrapper {
+        padding: 20px 24px;
+    }
+
+    .team-edit-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .team-edit-hero-meta {
+        width: 100%;
+    }
+}
+
+@media (max-width: 720px) {
+    .team-edit-grid,
+    .team-member-row {
+        grid-template-columns: 1fr;
+    }
+
+    .team-edit-span-2 {
+        grid-column: auto;
+    }
+
+    .team-edit-hero-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .team-edit-actions {
+        flex-direction: column-reverse;
+    }
+
+    .team-member-row button {
+        width: 100%;
+    }
+}
+
 .responsive-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* --- GRID MODE (Teams1) --- */
+.teams-container.grid-mode {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(350px, 435px));
     gap: 25px;
+    justify-content: center;
+}
+
+/* --- LIST MODE (Teams2) --- */
+.teams-container.list-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.teams-container.list-mode .card-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 60px;
+}
+
+.teams-container.list-mode .card-main-content {
+    display: flex;
+    flex: 0;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 30px;
+    position: relative;
+
+}
+
+.teams-container.list-mode .card-body-figma {
+    flex: 0 2 auto;
+    display: flex;
+    gap: 36px;
+    margin: 0;
+    position: relative;
+}
+
+/* Hide stat labels in list mode to keep it slim */
+.teams-container.list-mode .stat-text { font-size: 14px; }
+
+/* Toggle Active State */
+.view-toggle-button.active {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute; /* Keeps the active button from blocking clicks on the other button */
+}
+
+.view-toggle-button:hover {
+    background-color: #E0E5F2;
+    transform: scale(1.05);
 }
 
 .responsive-grid-two-one {
@@ -325,6 +908,8 @@ a {
     gap: 10px;
     flex-wrap: wrap;
 }
+
+
 
 /* Container that aligns the links to the right side of the footer */
 .footer-group {
@@ -505,11 +1090,6 @@ a {
     margin-left: auto;
 }
 
-.teams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-}
 
 .card-header {
     display: flex;
@@ -527,6 +1107,134 @@ a {
     color: var(--accent-primary);
     font-weight: 600;
     white-space: nowrap;
+}
+
+
+.overview-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 32px; /* More breathing room */
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.card-title-figma {
+    color: #2B3674;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.about-text {
+    font-size: 16px;
+    line-height: 1.6; /* Better readability */
+    color: #050C72;
+    margin-bottom: 24px;
+}
+
+/* Focus Box Styling */
+.focus-box {
+    margin-bottom: 24px;
+    font-size: 15px;
+}
+
+.focus-label {
+    font-weight: 700;
+    color: #2B3674;
+    margin-right: 4px;
+}
+
+.focus-content {
+    color: #4A5568;
+}
+
+/* Footer (Location + Status) */
+.location-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid #EDF2F7; /* Subtle divider */
+    padding-top: 20px;
+    color: #A3AED0; /* Muted color for secondary info */
+}
+
+.location-icon {
+    font-size: 20px !important;
+    color: #2B3674;
+}
+
+.location-text {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.status-divider {
+    color: #CBD5E0;
+}
+
+.status-tag.active {
+    color: #05CD99; /* Professional green */
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.contact-link:hover .name-bold {
+    text-decoration: underline;
+    color: #5A60C4; /* Sky blue/purple from your Figma */
+}
+
+/*  Make the link wrap around the content properly */
+.contact-link {
+    display: block;      /* Or inline-block */
+    color: inherit;       /* Keeps your 'name-bold' and 'role-muted' colors */
+    transition: background-color 0.2s ease;
+    border-radius: 8px;
+    padding: 4px; 
+}
+
+/* Visual feedback so you KNOW it's a link */
+.contact-link:hover {
+    background-color: rgba(90, 96, 196, 0.05); /* Very light purple tint */
+    cursor: pointer;
+}
+
+/* Ensure the child text doesn't 'block' the click */
+.contact-link p {
+    pointer-events: none; /* Passes the click through to the <a> tag */
+}
+
+.sidebar-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; 
+    width: 100%;
+}
+
+.sidebar-card-figma {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Spacing between the title and the content inside the card */
+}
+.sidebar-contact {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.name-bold {
+    font-weight: 600;
+    font-size: 16px;
+    color: #050C72;
+    margin: 0;
+}
+
+.role-muted {
+    font-size: 14px;
+    color: rgba(5, 12, 114, 0.5);
+    margin: 4px 0 0 0;
 }
 
 @media (min-width: 1440px) {
@@ -1480,5 +2188,42 @@ a {
 
     .signup-button-figma {
         font-size: 18px;
+    }
+}
+/* The Mesh Grid Logic */
+.dashboard-mesh {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr; /* Desktop Proportions */
+    gap: 20px;
+    width: 100%;
+    margin: 0; /* Ensures it sits left against the sidebar margin */
+}
+
+.grid-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+
+/* Tablet: Collapse to 2 columns */
+@media (max-width: 1200px) {
+    .dashboard-mesh {
+        grid-template-columns: 1fr 1fr;
+    }
+    /* Make the table span both columns for better legibility on tablet */
+    .grid-stack:first-child {
+        grid-column: span 2;
+    }
+}
+
+/* Mobile: Collapse to 1 column */
+@media (max-width: 768px) {
+    .dashboard-mesh {
+        grid-template-columns: 1fr;
+    }
+    .grid-stack:first-child {
+        grid-column: span 1;
     }
 }

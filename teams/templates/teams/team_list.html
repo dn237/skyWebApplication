@@ -1,77 +1,169 @@
+{#-------------------------------------------------------------------#}
+{#-------- AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 --------#}
+{#-------------------------------------------------------------------#}
+
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="page-header section-header">
-        <form class="section-search">
-            <div class = "search-bar">
-                <span class="search-icon-style material-symbols-outlined">search</span>
-                <input class="search-input" type="search" placeholder="Search teams...">
+    <form class="teams-filters-form" method="get">
+        <div class="page-header section-header">
+            <div class="section-search">
+                <div class = "search-bar">
+                    <span class="search-icon-style material-symbols-outlined">search</span>
+                    <input class="search-input" type="search" name="q" value="{{ search_query }}" placeholder="Search teams...">
+                </div>
             </div>
-        </form>
-        <div class="section-actions">
-            <div class="dropdown">
-                <button class="dropdown-button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
-                <div class="dropdown-content">
-                    {% for department in departments %}
-                        <label class="dropdown-option" for="department-{{ forloop.counter }}">
-                            <input type="checkbox" id="department-{{ forloop.counter }}" name="departments" value="{{ department }}">
-                            <span>{{ department }}</span>
+            <div class="section-actions">
+                <div class="dropdown">
+                    <button class="dropdown-button" type="button">All Departments<i class="material-symbols-outlined">expand_more</i></button>
+                    <div class="dropdown-content">
+                        {% for department in departments %}
+                            <label class="dropdown-option" for="department-{{ forloop.counter }}">
+                                <input type="checkbox" id="department-{{ forloop.counter }}" name="departments" value="{{ department }}" {% if department in selected_departments %}checked{% endif %}>
+                                <span>{{ department }}</span>
+                            </label>
+                        {% empty %}
+                            <div class="dropdown-empty">No departments available</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-button" type="button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
+                    <div class="dropdown-content">
+                        <label class="dropdown-option" for="sort-name-asc">
+                            <input type="radio" id="sort-name-asc" name="sort" value="name_asc" {% if selected_sort == 'name_asc' %}checked{% endif %}>
+                            <span>Name (A-Z)</span>
                         </label>
-                    {% empty %}
-                        <div class="dropdown-empty">No departments available</div>
-                    {% endfor %}
+                        <label class="dropdown-option" for="sort-name-desc">
+                            <input type="radio" id="sort-name-desc" name="sort" value="name_desc" {% if selected_sort == 'name_desc' %}checked{% endif %}>
+                            <span>Name (Z-A)</span>
+                        </label>
+                        <label class="dropdown-option" for="sort-date-newest">
+                            <input type="radio" id="sort-date-newest" name="sort" value="date_newest" {% if selected_sort == 'date_newest' %}checked{% endif %}>
+                            <span>Date Created (Newest)</span>
+                        </label>
+                        <label class="dropdown-option" for="sort-date-oldest">
+                            <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest" {% if selected_sort == 'date_oldest' %}checked{% endif %}>
+                            <span>Date Created (Oldest)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="page-view-toggle">
+                    <button type="button" class="view-toggle-button active" id="grid-btn" onclick="toggleView('grid')" aria-label="Grid view" data-tooltip="Grid view" >
+                        <i class="material-symbols-outlined">grid_view</i>
+                    </button>
+                    <button type="button" class="view-toggle-button" id="list-btn" onclick="toggleView('list')" aria-label="Grid view" data-tooltip="Grid view">
+                        <i class="material-symbols-outlined">list</i>
+                    </button>
                 </div>
             </div>
-            <div class="dropdown">
-                <button class="dropdown-button">Sort by...<i class="material-symbols-outlined">expand_more</i></button>
-                <div class="dropdown-content">
-                    <label class="dropdown-option" for="sort-name-asc">
-                        <input type="radio" id="sort-name-asc" name="sort" value="name_asc">
-                        <span>Name (A-Z)</span>
-                    </label>
-                    <label class="dropdown-option" for="sort-name-desc">
-                        <input type="radio" id="sort-name-desc" name="sort" value="name_desc">
-                        <span>Name (Z-A)</span>
-                    </label>
-                    <label class="dropdown-option" for="sort-date-newest">
-                        <input type="radio" id="sort-date-newest" name="sort" value="date_newest">
-                        <span>Date Created (Newest)</span>
-                    </label>
-                    <label class="dropdown-option" for="sort-date-oldest">
-                        <input type="radio" id="sort-date-oldest" name="sort" value="date_oldest">
-                        <span>Date Created (Oldest)</span>
-                    </label>
+    </div>
+</form>
+    
+    
+<div class="teams-container grid-mode" id="teams-container">
+    {% for team in teams %}
+        <div class="card card-item">
+            <div class="card-header-figma"> 
+                <h3 style="color:#5A60C4; font-weight: 600;">{{ team.team_name }}</h3>
+                <p class="team-subtitle">
+                    {% if team.dept.head_user %}
+                        Deparment Head: 
+                        <strong>{{team.dept.head_user}} </strong>
+                    {% else %}
+                        Assigning...
+                    {% endif %} 
+                </p>
+            </div>
+            
+            <div class="card-body-figma">
+                <div class="info-row">
+                    <span class="material-symbols-outlined">person</span>
+                    <p>Team Leader:
+                        <strong>
+                            {% if team.lead_user %}
+                                {{ team.lead_user.first_name|default:team.lead_user.username }}
+                            {% else %}
+                                Assigning...
+                            {% endif %}
+                        </strong>
+                    </p>
+                </div>
+
+                <div class="info-row">
+                    <span class="material-symbols-outlined">groups</span>
+                    <p>{{ team.computed_count }} Members</p>
+                </div>
+
+                <div class="info-row">
+                    <span class="material-symbols-outlined">account_tree</span>
+                    <p>{{ team.repo_count }} Repositories</p>
+                </div>
+
+                <div class="info-row status-row {% if team.status|lower == 'active' %}active-status{% endif %}">
+                    <span class="material-symbols-outlined">radio_button_checked</span>
+                    <p>{% if team.status %}{{ team.status|capfirst }}{% else %}Inactive{% endif %}</p>
                 </div>
             </div>
-            <div class = "page-view-toggle">
-                <button class="view-toggle-button" aria-label="Grid view" data-tooltip="Grid view">
-                    <i class="material-symbols-outlined">grid_view</i>
-                </button>
-                <button class="view-toggle-button" aria-label="List view" data-tooltip="List view">
-                    <i class="material-symbols-outlined">list</i>
-                </button>
+
+            <div class="card-footer-figma">
+                <a href="{% url 'teams:detail' team.team_id %}" class="profile-button">
+                    View Profile<span class="material-symbols-outlined">expand_content</span>
+                </a>
             </div>
         </div>
-    </div>
-    
-
-    <div class="responsive-grid teams-grid">
-        {% for team in teams %}
-            <div class="card card-item">
-                <div class="card-header">
-                    <h3>{{ team.team_name }}</h3>
-                    <a href="{% url 'teams:detail' team.team_id %}" class="view-details-link">View Details</a>
-                </div>
-                <div class="card-body">
-                    <p>{{ team.mission_statement }}</p>
-                    <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
-                </div>
-            </div>
-        {% empty %}
+    {% empty %}
+        <div class="no-data-alert">
             <p>No teams found.</p>
-        {% endfor %}
-    </div>
-
-    
-
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    // --- SCRIPT 1: AUTO-SUBMIT FILTERS ---
+    (function () {
+        const form = document.querySelector('.teams-filters-form');
+        if (!form) return;
+
+        form.querySelectorAll('input[name="departments"], input[name="sort"]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                form.submit();
+            });
+        });
+    })();
+
+    // --- SCRIPT 2: GRID/LIST VIEW TOGGLE ---
+    function toggleView(mode) {
+        const container = document.getElementById('teams-container');
+        const gridBtn = document.getElementById('grid-btn');
+        const listBtn = document.getElementById('list-btn');
+        
+        if (!container) return;
+
+        if (mode === 'grid') {
+            container.classList.remove('list-mode');
+            container.classList.add('grid-mode');
+            if(gridBtn) gridBtn.classList.add('active');
+            if(listBtn) listBtn.classList.remove('active');
+        } else {
+            container.classList.remove('grid-mode');
+            container.classList.add('list-mode');
+            if(listBtn) listBtn.classList.add('active');
+            if(gridBtn) gridBtn.classList.remove('active');
+        }
+        
+        // Save choice so it doesn't reset when Script 1 submits the form
+        localStorage.setItem('teamViewPreference', mode);
+    }
+
+    // Initialize View on Page Load
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedMode = localStorage.getItem('teamViewPreference') || 'grid';
+        toggleView(savedMode);
+    });
+</script>
+{% endblock %}
+
+

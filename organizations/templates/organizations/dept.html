@@ -1,10 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="page-stack">
-        <h1 class="page-title">Departments</h1>
-        <div class="card">
-            <p class="muted-text">Department page content will appear here.</p>
+<div class="container py-5 text-center">
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill px-4 shadow-sm mb-4 mx-auto" style="max-width: 800px;" role="alert">
+                <strong>{% if message.tags == 'success' %}✓ Success:{% else %}! Info:{% endif %}</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="bg-white p-5 rounded-5 shadow-lg mx-auto position-relative" style="max-width: 800px;">
+        
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <a href="{% url 'organizations:dept' %}" class="btn btn-link text-decoration-none text-muted p-0">
+                <span class="material-symbols-outlined align-middle">arrow_back</span> Back to Registry
+            </a>
+            
+            <div class="btn-group shadow-sm rounded-pill">
+                <a href="{% url 'organizations:edit_department' department.pk %}" class="btn btn-outline-primary px-4 rounded-start-pill">
+                    <span class="material-symbols-outlined align-middle" style="font-size: 18px;">edit</span> Edit
+                </a>
+                <a href="{% url 'organizations:delete_department' department.pk %}" class="btn btn-outline-danger px-4 rounded-end-pill">
+                    <span class="material-symbols-outlined align-middle" style="font-size: 18px;">delete</span> Delete
+                </a>
+            </div>
+        </div>
+
+        <h6 class="text-primary fw-bold text-uppercase mb-2">Detailed Specifications</h6>
+        <h1 class="display-4 fw-bold text-dark mb-4">{{ department.dept_name }}</h1>
+        
+        <div class="p-4 bg-light rounded-4 border-start border-primary border-5 d-inline-block px-5 mt-3">
+            <p class="text-muted mb-1 small fw-bold">HEAD OF DEPARTMENT</p>
+            <h3 class="fw-bold mb-0">{{ department.head_user }}</h3>
+        </div>
+        
+        <div class="mt-5 text-muted border-top pt-4">
+            <p class="mb-0">System Registry ID: <span class="fw-bold">#{{ department.id }}</span> | Status: <span class="badge bg-success">Active</span></p>
         </div>
     </div>
+</div>
 {% endblock %}

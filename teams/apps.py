@@ -1,3 +1,7 @@
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
+
 from django.apps import AppConfig
 
 

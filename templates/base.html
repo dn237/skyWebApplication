@@ -1,3 +1,7 @@
+{# ================================================= #}
+{# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 #}
+{# ================================================= #}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,6 +53,14 @@
                     class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">schedule</span> Scheduler
                 </a>
+                <a href="{% url 'summary' %}" class="smart-button {% if 'reports' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">description</span> Reports
+                </a>
+                {% if is_admin %}
+                <a href="{% url 'accounts:user_access' %}" class="smart-button">
+                    <span class="material-symbols-outlined">group</span> User Access
+                </a>
+                {% endif %}
                 <a href="/settings/" 
                     class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
                     <span class="material-symbols-outlined">settings</span> Settings
@@ -58,10 +70,15 @@
             <div class="user-footer">
                 {% if user.is_authenticated %}
                     <div class="user-info">
-                    <span class="user-name">{{ user.username }}</span> 
-                    <div class="log-off-group">
-                        <a href="{% url 'accounts:logout' %}" class="log-off-text">Log off</a> 
-                        <div class="logout-icon"></div>
+                        <a href="{% url 'accounts:profile' %}" class="user-name">{{ user.username }}</a>
+                        <div class="log-off-group">
+                            <form method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="log-off-button">
+                                    <span>Log off</span>
+                                    <span class="material-symbols-outlined">logout</span>
+                                </button>
+                            </form>
                     </div>
                 </div>
                 {% else %}
@@ -127,6 +144,10 @@
             applyTopBarBehavior();
         })();
     </script>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
 
 </body>
 </html>

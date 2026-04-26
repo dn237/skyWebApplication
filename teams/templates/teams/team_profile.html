@@ -1,26 +1,112 @@
+{#-------------------------------------------------------------------#}
+{#-------- AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 --------#}
+{#-------------------------------------------------------------------#}
+
 {% extends 'base.html' %}
 
-
 {% block content %}
-    <div class="page-stack">
-        <h1 class="page-title">Team Profile</h1>
-        <p class="muted-text">Details about the team.</p>
+<div class="team-profile-wrapper">
+    <div class="profile-top-bar">
+        <a href="{% url 'teams:index' %}" class="back-arrow">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="page-main-title">Team Profile</h1>
+    </div>
 
-        <div class="card">
-            <p><strong>Team ID:</strong> {{ team.team_id }}</p>
-            <p><strong>Team Name:</strong> {{ team.team_name }}</p>
-            <p><strong>Mission Statement:</strong> {{ team.mission_statement }}</p>
-            <p><strong>Workstream MF:</strong> {{ team.workstream_mf }}</p>
-            <p><strong>Focus Areas:</strong> {{ team.focus_areas }}</p>
-            <p><strong>Skills/Technologies:</strong> {{ team.skills_technologies }}</p>
-            <p><strong>Slack Channels:</strong> {{ team.slack_channels }}</p>
-            <p><strong>Standup Details:</strong> {{ team.standup_details }}</p>
-            <p><strong>Agile Practices:</strong> {{ team.agile_practices }}</p>
-            <p><strong>Team Wiki:</strong> {{ team.team_wiki }}</p>
-            <p><strong>Status:</strong> {{ team.status }}</p>
-            <p><strong>Department:</strong> {{ team.dept.dept_name }}</p>
-            <p><strong>Lead User:</strong> {{ team.lead_user }}</p>
+    <div class="profile-hero-card">
+        <div class="hero-left">
+            <h2 class="hero-team-name">{{ team.team_name }}</h2>
+            <div class="hero-contact-row">
+                <span class="material-symbols-outlined person-icon">person</span>
+                <div class="contact-text">
+                    <span class="contact-name">{{ team.dept.head_user|default:"N/A" }}</span>
+                    <span class="contact-sub">Department Head</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-right">
+            <a href="mailto:{{ team.lead_user.email }}" class="btn-action-primary">
+                <span class="material-symbols-outlined">mail</span> Email Team
+            </a>
+            <a href="{% url 'scheduler:create_schedule' %}" class="btn-action-primary">
+                <span class="material-symbols-outlined">calendar_today</span> Schedule Meeting
+            </a>
+            {% if can_edit %}
+                <a href="{% url 'teams:edit' team.team_id %}" class="btn-action-primary secondary">
+                    <span class="material-symbols-outlined">edit</span> Edit Team
+                </a>
+            {% endif %}
         </div>
     </div>
 
+    <div class="profile-stats-grid">
+        <a href="{% url 'teams:projects' team.team_id %}" class="stat-link">
+            <div class="stat-item">
+                <span class="material-symbols-outlined icon-green">radio_button_checked</span>
+                <p><strong>{{ team.computed_repo_count }}</strong> Active Projects</p>
+            </div>
+        </a>
+        <a href="{% url 'teams:members' team.team_id %}" class="stat-link">
+            <div class="stat-item">
+                <span class="material-symbols-outlined icon-blue">groups</span>
+                <p><strong>{{ team.computed_member_count }}</strong> Members</p>
+            </div>
+        </a>
+        <a href="{% url 'teams:repositories' team.team_id %}" class="stat-link">
+            <div class="stat-item">
+                <span class="material-symbols-outlined icon-orange">account_tree</span>
+                <p><strong>{{ team.computed_repo_count }}</strong> Repositories</p>
+            </div>
+        </a>
+    </div>
+
+    <div class="profile-content-layout">
+        <div class="main-info-column">
+            <div class="overview-card">
+                <h3 class="card-title-figma">About the Team</h3>
+                <p class="about-text">
+                    {{ team.mission_statement|default:"Building and maintaining robust monitoring and observability solutions across the organization." }}
+                </p>
+                <div class="focus-box">
+                    <span class="focus-label">Focus:</span>
+                    <span class="focus-content">{{ team.focus_areas }}</span>
+                </div>
+                <div class="location-footer">
+                    <span class="material-symbols-outlined location-icon">location_on</span>
+                    <span class="location-text">London, UK</span>
+                    <span class="status-divider">|</span>
+                    <span class="status-tag active">{{ team.status|default:"Active" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-column">
+            <div class="sidebar-card-figma">
+                <h3 class="card-title-figma">Key Contacts</h3>
+                <div class="sidebar-contact">
+                    <span class="material-symbols-outlined">person</span>
+                    <div>
+                        <a href="mailto:{{ team.lead_user.email }}" class="contact-link" aria-label="Click to send me an email" data-tooltip="Click to send me an email" >
+                            <p class="name-bold">{{ team.lead_user.get_full_name }}</p>
+                            <p class="role-muted">Team Leader</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{% url 'teams:dependencies' team.team_id %}" class="card-link-wrapper">
+                <div class="sidebar-card-figma">
+                    <h3 class="card-title-figma">Key Dependencies</h3>
+                    <div class="dependency-text">
+                        {% for dep in dependencies %}
+                            <p>• {{ dep.target_team.team_name }}</p>
+                        {% empty %}
+                            <p class="role-muted">No dependencies listed.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
