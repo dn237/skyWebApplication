@@ -1,3 +1,7 @@
+{# ================================================= #}
+{# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 #}
+{# ================================================= #}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,10 +53,14 @@
                     class="smart-button {% if 'schedules' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">schedule</span> Scheduler
                 </a>
-                <a href="{% url 'summary' %}" 
-                    class="smart-button {% if 'reports' in request.path %}active{% endif %}">
+                {% if is_admin %}
+                <a href="{% url 'summary' %}" class="smart-button {% if 'reports' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">description</span> Reports
                 </a>
+                <a href="{% url 'accounts:user_access' %}" class="smart-button">
+                    <span class="material-symbols-outlined">group</span> User Access
+                </a>
+                {% endif %}
                 <a href="/settings/" 
                     class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
                     <span class="material-symbols-outlined">settings</span> Settings
@@ -66,9 +74,11 @@
                     <div class="log-off-group">
                         <form method="post" action="{% url 'accounts:logout' %}">
                             {% csrf_token %}
-                            <button type="submit" class="log-off-text log-off-button">Log off</button>
+                            <button type="submit" class="log-off-button">
+                                <span>Log off</span>
+                                <span class="material-symbols-outlined">logout</span>
+                            </button>
                         </form>
-                        <div class="logout-icon"></div>
                     </div>
                 </div>
                 {% else %}

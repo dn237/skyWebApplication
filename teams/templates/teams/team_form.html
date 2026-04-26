@@ -1,0 +1,205 @@
+{#-------------------------------------------------------------------#}
+{#-------- AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 --------#}
+{#-------------------------------------------------------------------#}
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="team-edit-wrapper">
+    <div class="profile-top-bar">
+        <a href="{% url 'teams:detail' team.team_id %}" class="back-arrow" aria-label="Back to team profile">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <div>
+            <h1 class="page-main-title">Edit Team</h1>
+            <p class="muted-text mb-0">Update team details, leader assignment, and membership</p>
+        </div>
+    </div>
+
+    <div class="team-edit-hero card">
+        <div class="team-edit-hero-main">
+            <span class="team-edit-hero-kicker">Editing</span>
+            <h2 class="team-edit-hero-title">{{ team.team_name }}</h2>
+        </div>
+
+        <div class="team-edit-hero-meta">
+            <div class="meta-chip">
+                <span>Members</span>
+                <strong>{{ current_members|length }}</strong>
+            </div>
+            <div class="meta-chip">
+                <span>Status</span>
+                <strong>{{ team.status|default:"Not set" }}</strong>
+            </div>
+            <div class="meta-chip">
+                <span>Department</span>
+                <strong>{{ team.dept.dept_name|default:"Unassigned" }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" class="team-edit-layout">
+        {% csrf_token %}
+
+        <section class="team-edit-panel card">
+            <div class="team-edit-panel-header">
+                <div>
+                    <h3 class="team-edit-panel-title">Team Details</h3>
+                    <p class="team-edit-panel-subtitle">Required fields are marked with *</p>
+                </div>
+            </div>
+
+            <div class="team-edit-grid">
+                <div class="form-group">
+                    <label for="{{ form.team_name.id_for_label }}">{{ form.team_name.label }} *</label>
+                    {{ form.team_name }}
+                    {% if form.team_name.errors %}<div class="text-danger">{{ form.team_name.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}<div class="text-danger">{{ form.status.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.mission_statement.id_for_label }}">{{ form.mission_statement.label }}</label>
+                    {{ form.mission_statement }}
+                    {% if form.mission_statement.errors %}<div class="text-danger">{{ form.mission_statement.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.focus_areas.id_for_label }}">{{ form.focus_areas.label }} *</label>
+                    {{ form.focus_areas }}
+                    {% if form.focus_areas.errors %}<div class="text-danger">{{ form.focus_areas.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.skills_technologies.id_for_label }}">{{ form.skills_technologies.label }} *</label>
+                    {{ form.skills_technologies }}
+                    {% if form.skills_technologies.errors %}<div class="text-danger">{{ form.skills_technologies.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.dept.id_for_label }}">Department *</label>
+                    {{ form.dept }}
+                    {% if form.dept.errors %}<div class="text-danger">{{ form.dept.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.lead_user.id_for_label }}">{{ form.lead_user.label }} *</label>
+                    {{ form.lead_user }}
+                    {% if form.lead_user.errors %}<div class="text-danger">{{ form.lead_user.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.slack_channels.id_for_label }}">{{ form.slack_channels.label }}</label>
+                    {{ form.slack_channels }}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.team_wiki.id_for_label }}">{{ form.team_wiki.label }}</label>
+                    {{ form.team_wiki }}
+                    {% if form.team_wiki.errors %}<div class="text-danger">{{ form.team_wiki.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.github_url.id_for_label }}">{{ form.github_url.label }}</label>
+                    {{ form.github_url }}
+                    {% if form.github_url.errors %}<div class="text-danger">{{ form.github_url.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group team-edit-span-2">
+                    <label for="{{ form.jira_board_link.id_for_label }}">{{ form.jira_board_link.label }}</label>
+                    {{ form.jira_board_link }}
+                    {% if form.jira_board_link.errors %}<div class="text-danger">{{ form.jira_board_link.errors }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="team-edit-actions">
+                <button type="submit" class="btn-action-primary">Save Changes</button>
+                <a href="{% url 'teams:detail' team.team_id %}" class="btn-action-primary secondary">Cancel</a>
+            </div>
+        </section>
+
+        <aside class="team-edit-sidebar">
+            <section class="team-edit-panel card">
+                <div class="team-edit-panel-header compact">
+                    <div>
+                        <h3 class="team-edit-panel-title">Current Members</h3>
+                        <p class="team-edit-panel-subtitle">{{ current_members|length }} member{{ current_members|length|pluralize }}</p>
+                    </div>
+                </div>
+
+                <div class="team-member-stack">
+                    {% if current_members %}
+                        {% for member in current_members %}
+                            <div class="team-member-row">
+                                <div class="team-member-avatar">
+                                    {% if member.avatar %}
+                                        <img src="{{ member.avatar.url }}" alt="{{ member.user.username }}">
+                                    {% else %}
+                                        <span class="material-symbols-outlined">account_circle</span>
+                                    {% endif %}
+                                </div>
+                                <div class="team-member-copy">
+                                    <strong>{{ member.user.get_full_name|default:member.user.username }}</strong>
+                                    <span>{{ member.user.email|default:"No email" }}</span>
+                                </div>
+                                <button type="submit" name="remove_user_id" value="{{ member.user.id }}" class="btn btn-sm btn-outline-danger" formnovalidate>Remove</button>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="muted-text mb-0">No members are assigned to this team yet.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="team-edit-panel card">
+                <div class="team-edit-panel-header compact">
+                    <div>
+                        <h3 class="team-edit-panel-title">Add Members</h3>
+                        <p class="team-edit-panel-subtitle">Choose a user to add to this team</p>
+                    </div>
+                </div>
+
+                <div class="team-member-stack">
+                    {% for candidate in available_profiles %}
+                        <div class="team-member-row">
+                            <div class="team-member-avatar">
+                                {% if candidate.avatar %}
+                                    <img src="{{ candidate.avatar.url }}" alt="{{ candidate.user.username }}">
+                                {% else %}
+                                    <span class="material-symbols-outlined">account_circle</span>
+                                {% endif %}
+                            </div>
+                            <div class="team-member-copy">
+                                <strong>{{ candidate.user.get_full_name|default:candidate.user.username }}</strong>
+                                <span>{{ candidate.user.email|default:"No email" }}</span>
+                            </div>
+                            <button type="submit" name="add_user_id" value="{{ candidate.user.id }}" class="btn btn-sm btn-outline-primary" formnovalidate>Add</button>
+                        </div>
+                    {% endfor %}
+
+                    {% for user in users_without_profile %}
+                        <div class="team-member-row">
+                            <div class="team-member-avatar placeholder">
+                                <span class="material-symbols-outlined">account_circle</span>
+                            </div>
+                            <div class="team-member-copy">
+                                <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                <span>{{ user.email|default:"No email" }}</span>
+                            </div>
+                            <button type="submit" name="add_user_id" value="{{ user.id }}" class="btn btn-sm btn-outline-primary" formnovalidate>Add</button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if not available_profiles and not users_without_profile %}
+                    <p class="muted-text mb-0">All users are already members of this team.</p>
+                {% endif %}
+            </section>
+        </aside>
+    </form>
+</div>
+{% endblock %}

@@ -1,15 +1,79 @@
+{# ================================================= #}
+{# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 #}
+{# ================================================= #}
+
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2 class="page-title">Dashboard</h2>
-    <div class="responsive-grid responsive-grid-two-one">
-        <div class="card">
-            <h3>Announcements</h3>
-            <p>Welcome, Team! The Project Architecture is officially live.</p>
+<div class="app-body">
+    <div class="section-header" style="margin-bottom: 25px;">
+            <div class="search-bar" style="width: 100%; max-width: 600px;">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" class="search-input" placeholder="Search teams, departments, or managers">
+            </div>
         </div>
-        <div class="card">
-            <h3>Messages Widget</h3>
-            <p class="muted-text">(Student 3: Your logic will go here)</p>
+
+        <div class="dashboard-mesh">
+            
+            <div class="grid-stack">
+                <div class="card">
+                    <h3 class="card-title-figma" style="text-align: center;">Announcements</h3>
+                    <div style="background: #F4F7FE; padding: 20px; border-radius: 15px;">
+                        <p class="muted-text">• Manager updated for Cloud Services</p>
+                        <a href="#" class="view-details-link" style="display: block; text-align: right;">Views All ></a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title-figma">Complex Table</h3>
+                        <span class="material-symbols-outlined">more_horiz</span>
+                    </div>
+                    <div class="page-stack">
+                        {% for team in recent_teams|slice:":4" %}
+                        <div class="team-member-row" style="border: none; border-bottom: 1px solid #F4F7FE; border-radius: 0;">
+                            <strong style="flex: 1;">{{ team.team_name }}</strong>
+                            <span class="status-tag active" style="flex: 1;">Approved</span>
+                            <div style="flex: 1; background: #EEE; height: 8px; border-radius: 4px;">
+                                <div style="width: 70%; background: var(--accent-primary); height: 100%; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-stack">
+                <div class="card" style="min-height: 250px;">
+                    <h3 class="card-title-figma" style="text-align: center;">Calendar</h3>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title-figma">Team members</h3>
+                    <div class="page-stack">
+                        {% for member in team_members %}
+                        <div class="sidebar-contact">
+                            <div class="avatar" style="width: 32px; height: 32px;"></div>
+                            <p class="name-bold">{{ member.first_name }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-stack">
+                <div class="card" style="flex-grow: 1; min-height: 200px;">
+                    <h3 class="card-title-figma" style="text-align: center;">Messages</h3>
+                </div>
+                <div class="card">
+                    <h3 class="card-title-figma" style="text-align: center;">Tasks</h3>
+                </div>
+            </div>
+
+        </div> <div style="display: flex; gap: 20px; margin-top: 30px; padding-bottom: 40px;">
+            <button class="btn-action-primary" style="width: 180px;">Explore Team</button>
+            <button class="btn-action-primary secondary" style="width: 180px;">Contact Team</button>
         </div>
-    </div>
+    </main>
+</div>
 {% endblock %}

@@ -1,3 +1,7 @@
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
+
 from django.urls import path
 from . import views
 
@@ -16,4 +20,7 @@ urlpatterns = [
     path('teamID-<int:team_id>/dependencies/', views.teamDependencies, name='dependencies'),
     # Repositories page
     path('teamID-<int:team_id>/repositories/', views.teamRepositories, name='repositories'),
+    # Edit team page
+    path('teamID-<int:team_id>/edit/', views.editTeam, name='edit'),
+
 ]
