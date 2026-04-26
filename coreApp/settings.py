@@ -26,8 +26,10 @@ SECRET_KEY = "django-insecure-%tul)q$e#7hg)scyq2**ums^-#4zb5pplrx3pv2(@kky%ff1k1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+# Force Django to print emails to the VS Code terminal
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Application definition
 
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     "organizations",  # STUDENT 2
     "messaging",  # STUDENT 3
     "scheduler",  # STUDENT 4
-    "reports",  # STUDENT 5
+    "reports",  # STUDENT 5 
+    "accounts",  # STUDENT 1 (for authentication)   
 ]
 
 MIDDLEWARE = [
@@ -120,7 +123,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+LOGIN_REDIRECT_URL = 'dashboard'
+
+
+

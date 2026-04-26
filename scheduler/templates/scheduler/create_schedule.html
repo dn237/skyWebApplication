@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .create-form-card input,
+    .create-form-card textarea,
+    .create-form-card select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #D9E1F2;
+        border-radius: 12px;
+        font-size: 14px;
+        margin-top: 6px;
+        background: #F8FAFF;
+        outline: none;
+    }
+
+    .create-form-card label {
+        font-weight: 600;
+        color: #333333;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .create-form-card h2 {
+        margin-bottom: 24px;
+    }
+</style>
+
+<div class="page-content">
+    <div class="create-form-card" style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
+        <div style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
+            
+            <h2 style="margin-bottom:20px;">Create New Meeting</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div style="margin-bottom:15px;">
+                    <label>Title</label>
+                    {{ form.title }}
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <label>Description</label>
+                    {{ form.message }}
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <label>Date</label>
+                    {{ form.date }}
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <label>Time</label>
+                    {{ form.time }}
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <label>Platform</label>
+                    {{ form.platform }}
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <label>Type</label>
+                    {{ form.schedule_type }}
+                </div>
+
+                <button type="submit" class="contact-button">
+                    Save Meeting
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
