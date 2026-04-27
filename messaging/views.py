@@ -69,12 +69,50 @@ def conversation(request, user_id):
         read_at__isnull=True
     ).update(read_at=timezone.now())
 
+    sent_messages = Message.objects.filter(status='sent').filter(
+        Q(sender=request.user) | Q(recipient=request.user)
+    )
+    partner_ids = set()
+    for msg in sent_messages:
+        if msg.sender == request.user:
+            if msg.recipient_id:
+                partner_ids.add(msg.recipient_id)
+        else:
+            partner_ids.add(msg.sender_id)
+    conversations = []
+    for pid in partner_ids:
+        p = User.objects.get(id=pid)
+        latest = sent_messages.filter(
+            Q(sender=request.user, recipient_id=pid) |
+            Q(sender_id=pid, recipient=request.user)
+        ).order_by('-created_at').first()
+        conversations.append({'partner': p, 'latest': latest})
+    conversations.sort(key=lambda c: c['latest'].created_at, reverse=True)
+
     form = MessageForm(user=request.user)
     return render(request, 'messaging/conversation.html', {
         'partner': partner,
         'messages': messages,
         'form': form,
+        'conversations': conversations,
     })
+
+
+@login_required
+def send_in_thread(request, user_id):
+    if request.method == 'POST':
+        partner = get_object_or_404(User, id=user_id)
+        body = request.POST.get('body', '').strip()
+        if body:
+            Message.objects.create(
+                sender=request.user,
+                recipient=partner,
+                subject='',
+                body=body,
+                status='sent',
+                sent_at=timezone.now(),
+            )
+    return redirect('messages:conversation', user_id=user_id)
 
 
 @login_required

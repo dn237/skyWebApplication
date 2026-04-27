@@ -1,9 +1,110 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-4">
-    <h2>Sent</h2>
-    <p class="text-muted">{{ sent_messages|length }} sent message(s)</p>
-    <p><em>UI in commit 3.</em></p>
+<style>
+.msg-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.msg-list-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2B3674;
+    margin: 0;
+}
+.msg-row {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+.msg-row:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.08); color: inherit; text-decoration: none; }
+.msg-row-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e3e1ff;
+    color: #686ADE;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.msg-row-body { flex: 1; min-width: 0; }
+.msg-row-subject {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2B3674;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.msg-row-meta {
+    font-size: 12px;
+    color: #A3AED0;
+    margin-top: 3px;
+}
+.read-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+.read-badge.read { background: #e6fdf4; color: #05CD99; }
+.read-badge.unread { background: #f0f0f0; color: #A3AED0; }
+.empty-notice {
+    text-align: center;
+    padding: 60px 20px;
+    color: #A3AED0;
+}
+.empty-notice .material-symbols-outlined { font-size: 48px; display: block; margin-bottom: 10px; }
+</style>
+
+<div class="msg-list-header">
+    <h2>
+        <span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px; color:#686ADE;">send</span>
+        Sent
+        <span style="font-size:14px; font-weight:400; color:#A3AED0; margin-left:8px;">{{ sent_messages|length }}</span>
+    </h2>
+    <a href="{% url 'messages:compose' %}" class="btn-action-primary">
+        <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+        New Message
+    </a>
 </div>
+
+{% if sent_messages %}
+    {% for msg in sent_messages %}
+    <a class="msg-row" href="{% url 'messages:conversation' msg.recipient.id %}">
+        <div class="msg-row-icon">
+            <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+        </div>
+        <div class="msg-row-body">
+            <div class="msg-row-subject">{{ msg.subject|default:"(no subject)" }}</div>
+            <div class="msg-row-meta">
+                To: {{ msg.recipient.get_full_name|default:msg.recipient.username }}
+                &middot; {{ msg.sent_at|date:"d M Y, H:i" }}
+            </div>
+        </div>
+        {% if msg.read_at %}
+        <span class="read-badge read">Read</span>
+        {% else %}
+        <span class="read-badge unread">Delivered</span>
+        {% endif %}
+    </a>
+    {% endfor %}
+{% else %}
+<div class="empty-notice">
+    <span class="material-symbols-outlined">send</span>
+    <p>No sent messages yet.</p>
+</div>
+{% endif %}
 {% endblock %}

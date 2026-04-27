@@ -1,9 +1,174 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-4">
-    <h2>Inbox</h2>
-    <p class="text-muted">{{ conversations|length }} conversation(s) &mdash; {{ unread_count }} unread</p>
-    <p><em>UI in commit 3.</em></p>
+<style>
+.msg-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: calc(100vh - 130px);
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+.msg-sidebar {
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.msg-sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+.msg-sidebar-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #2B3674;
+}
+.msg-search {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+}
+.msg-search input {
+    width: 100%;
+    padding: 8px 14px;
+    border: 1px solid #D6DAE6;
+    border-radius: 20px;
+    background: #FBFBFD;
+    font-size: 14px;
+    outline: none;
+    color: #2B3674;
+}
+.msg-search input:focus {
+    border-color: #686ADE;
+    box-shadow: 0 0 0 3px rgba(104,106,222,0.1);
+}
+.conv-list {
+    overflow-y: auto;
+    flex: 1;
+}
+.conv-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid #f9f9f9;
+    transition: background 0.2s;
+}
+.conv-item:hover {
+    background: #f6f4ff;
+    color: inherit;
+    text-decoration: none;
+}
+.conv-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent-primary, #686ADE);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.conv-meta { flex: 1; min-width: 0; }
+.conv-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2B3674;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.conv-preview {
+    font-size: 12px;
+    color: #6B7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+.conv-time {
+    font-size: 11px;
+    color: #A3AED0;
+    flex-shrink: 0;
+}
+.msg-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F6F6F6;
+}
+.empty-state {
+    text-align: center;
+    color: #A3AED0;
+}
+.empty-state .material-symbols-outlined {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 12px;
+    color: #D6DAE6;
+}
+.empty-state p {
+    font-size: 15px;
+    margin: 0;
+}
+</style>
+
+<div class="msg-layout">
+    <div class="msg-sidebar">
+        <div class="msg-sidebar-header">
+            <h2>Messages</h2>
+            <a href="{% url 'messages:compose' %}" class="btn-action-primary" style="padding: 8px 14px; font-size: 13px;">
+                <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                New
+            </a>
+        </div>
+        <div class="msg-search">
+            <input type="text" placeholder="Search conversations…" id="conv-search">
+        </div>
+        <div class="conv-list" id="conv-list">
+            {% for c in conversations %}
+            <a class="conv-item" href="{% url 'messages:conversation' c.partner.id %}">
+                <div class="conv-avatar">{{ c.partner.first_name|default:c.partner.username|slice:":1"|upper }}</div>
+                <div class="conv-meta">
+                    <div class="conv-name">{{ c.partner.get_full_name|default:c.partner.username }}</div>
+                    <div class="conv-preview">{{ c.latest.body|truncatechars:45 }}</div>
+                </div>
+                <div class="conv-time">{{ c.latest.created_at|date:"d M" }}</div>
+            </a>
+            {% empty %}
+            <div style="padding: 24px 16px; color: #A3AED0; font-size: 13px; text-align: center;">No conversations yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="msg-main">
+        <div class="empty-state">
+            <span class="material-symbols-outlined">forum</span>
+            <p>Select a conversation to start messaging</p>
+        </div>
+    </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.getElementById('conv-search').addEventListener('input', function () {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.conv-item').forEach(function (el) {
+        el.style.display = el.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}
 {% endblock %}
