@@ -77,3 +77,13 @@ def user_access(request):
     return render(request, 'accounts/user_access.html', {
         'users': users,
     })
+
+def profile(request):
+    """User profile page showing basic information"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'You need to be logged in to view your profile.')
+        return redirect('accounts:login')
+    
+    return render(request, 'accounts/profile.html', {
+        'user': request.user,
+    })

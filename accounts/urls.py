@@ -17,6 +17,7 @@ urlpatterns = [
     # The crucial naming to match base.html sidebar links
     path('logout/', views.logout_view, name='logout'),
     path('user-access/', views.user_access, name='user_access'),
+    path('profile/', views.profile, name='profile'),
     
     # Password Reset URLs (Integrated from main branch)
     path('password-reset/', login_not_required(auth_views.PasswordResetView.as_view(
@@ -36,4 +37,5 @@ urlpatterns = [
     path('reset/done/', login_not_required(auth_views.PasswordResetCompleteView.as_view(
         template_name='accounts/password_reset_complete.html'
     )), name='password_reset_complete'),
+
 ]
