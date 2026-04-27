@@ -1748,6 +1748,7 @@ a {
     margin-top: 12px;
 }
 
+
 @media (max-width: 1100px) {
     .scheduler-layout {
         grid-template-columns: 1fr;
@@ -2226,4 +2227,115 @@ a {
     .grid-stack:first-child {
         grid-column: span 1;
     }
+}
+
+/* Dashboard Mini Calendar SAMIA-STUDENT4*/
+.mini-calendar-date {
+    background: #F4F7FE;
+    border-radius: 18px;
+    padding: 18px;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.mini-calendar-date p {
+    margin: 0;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.mini-calendar-date h2 {
+    margin: 5px 0;
+    font-size: 42px;
+    color: #2B3674;
+}
+
+.mini-calendar-date span {
+    font-size: 13px;
+    color: #A3AED0;
+}
+
+.mini-calendar-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mini-calendar-btn {
+    flex: 1;
+    text-align: center;
+    background: var(--accent-primary);
+    color: white;
+    padding: 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.mini-calendar-btn.secondary {
+    background: #EEF2FF;
+    color: #2B3674;
+}
+
+.mini-calendar-list h4 {
+    margin: 10px 0;
+    color: #2B3674;
+}
+
+.mini-calendar-item {
+    background: #FFFFFF;
+    border-left: 4px solid var(--accent-primary);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.mini-calendar-item strong {
+    display: block;
+    color: #2B3674;
+    font-size: 14px;
+}
+
+.mini-calendar-item span {
+    font-size: 12px;
+    color: #A3AED0;
+}
+.calendar-link-wrapper {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.calendar-link-wrapper:hover .card {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    cursor: pointer;
+}
+/* Fix Scheduler Form Styles */
+.scheduler-form input,
+.scheduler-form textarea,
+.scheduler-form select {
+    width: 100%;
+    border: 1px solid #D6DAE6;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: #FBFBFD;
+}
+
+.scheduler-form button {
+    background: var(--accent-primary);
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.scheduler-form button:hover {
+    background: var(--accent-primary-hover);
 }
