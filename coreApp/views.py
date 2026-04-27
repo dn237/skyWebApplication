@@ -3,6 +3,10 @@ from django.shortcuts import render
 from accounts.models import UserProfile
 from teams.models import Engineer, Team
 from django.contrib.auth.models import User
+# ================================================
+# Samia
+from datetime import date
+from scheduler.models import Schedule
 
 
 # ================================================
@@ -27,10 +31,19 @@ def dashboard(request):
 
     recent_teams = Team.objects.all().order_by('-team_id')
 
+    # Samia  - Dashboard mini calendar
+    today = date.today()
+    upcoming_schedules = Schedule.objects.filter(date__gte=today).order_by('date', 'time')[:4]
+
     return render(request, 'dashboard.html', {
         'my_team': user_team,
         'team_members': team_members, # These are now UserProfile objects
         'recent_teams': recent_teams,
+    
+    # Samia - Dashboard mini calendar
+        'today': today,
+        'upcoming_schedules': upcoming_schedules,
     })
 
-## ========END OF AUTHOR'S WORK========
+
+# ========END OF AUTHOR'S WORK========
