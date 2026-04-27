@@ -1,3 +1,6 @@
+# AUTHOR: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864
+# View logic for scheduler features (meetings, reminders, calendar display)
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Schedule
 from datetime import date, timedelta

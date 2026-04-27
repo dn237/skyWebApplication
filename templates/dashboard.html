@@ -1,5 +1,7 @@
 {# ================================================= #}
 {# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 #}
+{# CONTRIBUTION: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864 #}
+{# FEATURE: Dashboard Mini Calendar Integration #}
 {# ================================================= #}
 
 {% extends 'base.html' %}
@@ -44,9 +46,40 @@
             </div>
 
             <div class="grid-stack">
-                <div class="card" style="min-height: 250px;">
-                    <h3 class="card-title-figma" style="text-align: center;">Calendar</h3>
+                <a href="{% url 'scheduler:schedule_list' %}" class="calendar-link-wrapper">
+                    <div class="card" style="min-height: 250px;">
+                    <div class="card-header">
+                        <h3 class="card-title-figma">Calendar</h3>
+                        <span class="material-symbols-outlined">calendar_month</span>
+                    </div>
+
+                    <div class="mini-calendar-date">
+                        <p>Today</p>
+                        <h2>{{ today|date:"d" }}</h2>
+                        <span>{{ today|date:"l, F Y" }}</span>
+                    </div>
+
+                    <div class="mini-calendar-actions">
+                        <a href="{% url 'scheduler:create_schedule' %}" class="mini-calendar-btn">New Meeting</a>
+                        <a href="{% url 'scheduler:schedule_list' %}" class="mini-calendar-btn secondary">View All</a>
+                    </div>
+
+                    <div class="mini-calendar-list">
+                        <h4>Upcoming</h4>
+
+                        {% if upcoming_schedules %}
+                            {% for schedule in upcoming_schedules %}
+                                <div class="mini-calendar-item">
+                                    <strong>{{ schedule.title }}</strong>
+                                    <span>{{ schedule.date|date:"d M" }} • {{ schedule.time|time:"H:i" }} • {{ schedule.platform }}</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="muted-text" style="font-size: 13px;">No upcoming meetings.</p>
+                        {% endif %}
+                    </div>
                 </div>
+                </a>
 
                 <div class="card" style="min-height: 250px; display: flex; flex-direction: column;">
                     <h3 class="card-title-figma"> {{my_team}} members</h3>

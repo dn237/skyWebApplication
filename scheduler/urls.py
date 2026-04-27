@@ -1,3 +1,6 @@
+# AUTHOR: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864
+# Scheduler views (create, list, edit, delete)
+
 from django.urls import path
 from . import views
 

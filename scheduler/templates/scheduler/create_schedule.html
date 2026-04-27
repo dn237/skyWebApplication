@@ -1,3 +1,9 @@
+{# ================================================= #}
+{# AUTHOR: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864 #}
+{# FEATURE: Create/Edit Schedule Form + Reminder + Back Navigation #}
+{# DESCRIPTION: Custom UI form for creating, editing, and managing schedules with improved UX and styling #}
+{# ================================================= #}
+
 {% extends 'base.html' %}
 
 {% block content %}
@@ -26,12 +32,52 @@
     .create-form-card h2 {
         margin-bottom: 24px;
     }
+    .create-form-card .contact-button {
+        background: var(--accent-primary);
+        color: #FFFFFF;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 999px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(104, 106, 222, 0.22);
+    }
+
+    .create-form-card .contact-button:hover {
+        background: var(--accent-primary-hover);
+    }
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 20px;
+        color: #6B7280;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .back-btn:hover {
+        color: var(--accent-primary);
+        transform: translateX(-3px);
+    }
+
+    .back-btn .material-symbols-outlined {
+        font-size: 18px;
+    }
 </style>
 
 <div class="page-content">
     <div class="create-form-card" style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
         <div style="max-width:600px; margin:auto; background:white; padding:30px; border-radius:20px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
             
+            <!-- BACK BUTTON FIRST -->
+            <a href="{% url 'scheduler:schedule_list' %}" class="back-btn">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Back
+            </a>
+
             <h2 style="margin-bottom:20px;">
                 {% if edit_mode %}
                     Edit Meeting
@@ -41,8 +87,8 @@
                     Create New Meeting
                 {% endif %}
             </h2>
-
-            <form method="POST">
+            
+            <form method="POST" class="scheduler-form">
                 {% csrf_token %}
 
                 <div style="margin-bottom:15px;">
