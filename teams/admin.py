@@ -3,21 +3,10 @@
 # =================================================
 
 from django.contrib import admin
-from .models import Team, Engineer, Project, TeamDependency
-
-# --- 1. Engineer Administration ---
-@admin.register(Engineer)
-class EngineerAdmin(admin.ModelAdmin):
-    """
-    Configuration for the Engineer admin interface.
-    Allows managing staff members independently of User accounts.
-    """
-    list_display = ('first_name', 'last_name', 'team')
-    list_filter = ('team',)
-    search_fields = ('first_name', 'last_name')
+from .models import Team, Project, TeamDependency
 
 
-# --- 2. Team Administration ---
+# --- 1. Team Administration ---
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     """
@@ -43,7 +32,7 @@ class TeamAdmin(admin.ModelAdmin):
         }),
     )
 
-# --- 3. Project Administration ---
+# --- 2. Project Administration ---
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     """
@@ -65,7 +54,7 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
     )
 
-# --- 4. Dependency Mapping ---
+# --- 3. Dependency Mapping ---
 @admin.register(TeamDependency)
 class TeamDependencyAdmin(admin.ModelAdmin):
     """
