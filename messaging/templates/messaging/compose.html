@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Compose</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="save_draft" class="btn btn-secondary">Save Draft</button>
+        <button type="submit" name="send" class="btn btn-primary">Send</button>
+    </form>
+    <p><em>UI in commit 3.</em></p>
+</div>
+{% endblock %}

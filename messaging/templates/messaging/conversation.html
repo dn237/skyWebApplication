@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Conversation with {{ partner.get_full_name|default:partner.username }}</h2>
+    <p class="text-muted">{{ messages|length }} message(s)</p>
+    <p><em>UI in commit 3.</em></p>
+</div>
+{% endblock %}
