@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h3>Create Team Update for {{ team.team_name }}</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-action-primary">Post Update</button>
+        <a href="{% url 'dashboard' %}" class="btn-action-primary secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

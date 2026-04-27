@@ -625,11 +625,37 @@ a {
 /* 5. Footer Action Buttons Alignment */
 .dashboard-footer-actions {
     display: flex;
-    gap: 30px;
-    margin-top: 10px;
-    padding: 20px 0;
-    width: 450px;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 8px 0 2px;
+    width: fit-content;
     position: relative;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateX(32px);
+}
+
+.dashboard-footer-actions .btn-action-primary {
+    flex: 0 0 auto;
+    text-align: center;
+    justify-content: center;
+    min-width: 170px;
+}
+
+@media (max-width: 680px) {
+    .dashboard-footer-actions {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+        width: 100%;
+        transform: none;
+    }
+
+    .dashboard-footer-actions .btn-action-primary {
+        width: 100%;
+    }
 }
 
 .profile-stats-grid {

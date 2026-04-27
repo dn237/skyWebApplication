@@ -24,5 +24,10 @@ urlpatterns = [
     path('teamID-<int:team_id>/edit/', views.editTeam, name='edit'),
     
     path('projects/<int:pk>/', views.projectDetail, name='project_detail'),
+    # Team update management (lead users only)
+    path('teamID-<int:team_id>/updates/add/', views.add_team_update, name='add_update'),
+    path('teamID-<int:team_id>/updates/<int:update_id>/delete/', views.delete_team_update, name='delete_update'),
+    path('teamID-<int:team_id>/updates/manage/', views.manage_team_updates, name='manage_updates'),
+    path('teamID-<int:team_id>/updates/older/', views.older_team_updates, name='older_updates'),
 
 ]

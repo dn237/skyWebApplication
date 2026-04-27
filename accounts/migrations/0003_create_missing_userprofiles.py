@@ -1,3 +1,15 @@
+"""
+Data migration: create missing UserProfile rows
+
+This migration iterates all existing `User` records and ensures a
+corresponding `accounts.UserProfile` exists. It is intended to make the
+transition from legacy person records to a single profile table safe by
+provisioning profiles for users that don't yet have them.
+
+The reverse operation is intentionally a no-op to avoid accidental data
+removal on rollback.
+"""
+
 from django.conf import settings
 from django.db import migrations
 
@@ -7,12 +19,12 @@ def forwards_create_profiles(apps, schema_editor):
     UserProfile = apps.get_model('accounts', 'UserProfile')
 
     for user in User.objects.all():
-        # create if missing
+        # create if missing; keep defaults for job_title/avatar
         UserProfile.objects.get_or_create(user=user)
 
 
 def backwards_noop(apps, schema_editor):
-    # Do not delete profiles on rollback
+    # Do not delete profiles on rollback to avoid losing data.
     pass
 
 

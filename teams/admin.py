@@ -4,6 +4,12 @@
 
 from django.contrib import admin
 from .models import Team, Project, TeamDependency
+from .models import TeamUpdate
+
+# Admin configuration for `Team`, `Project` and `TeamDependency`.
+# Note: The separate `Engineer` admin was intentionally removed because
+# engineer/person data now lives on `accounts.UserProfile`. Use the
+# `Users` / `UserProfile` admin to manage people.
 
 
 # --- 1. Team Administration ---
@@ -62,3 +68,10 @@ class TeamDependencyAdmin(admin.ModelAdmin):
     """
     list_display = ("source_team", "target_team", "dependency_type")
     search_fields = ("source_team__team_name", "target_team__team_name")
+
+
+@admin.register(TeamUpdate)
+class TeamUpdateAdmin(admin.ModelAdmin):
+    list_display = ('team', 'title', 'author', 'created_at')
+    list_filter = ('team', 'created_at')
+    search_fields = ('title', 'body')

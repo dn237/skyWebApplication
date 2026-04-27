@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h3>Delete Update</h3>
+    <p>Are you sure you want to delete "{{ update.title }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-action-primary">Delete</button>
+        <a href="{% url 'dashboard' %}" class="btn-action-primary secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

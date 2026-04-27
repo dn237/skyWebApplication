@@ -6,6 +6,15 @@ from django.contrib.auth.hashers import make_password
 
 
 def forwards_transfer_engineers(apps, schema_editor):
+    """
+    Transfer legacy Engineer rows into accounts.UserProfile.
+
+    For each legacy Engineer we either link to an existing User (if the
+    engineer had a user) or create a stub User and set an unusable
+    password. We then ensure a `UserProfile` exists with the team and a
+    default job_title so the rest of the application can rely on
+    profiles as the single source of truth.
+    """
     Engineer = apps.get_model("teams", "Engineer")
     UserProfile = apps.get_model("accounts", "UserProfile")
     user_app_label, user_model_name = settings.AUTH_USER_MODEL.split(".")
@@ -20,10 +29,14 @@ def forwards_transfer_engineers(apps, schema_editor):
             username = base_username
             suffix = 1
 
+            # Avoid username collisions by appending a numeric suffix.
             while User.objects.filter(username=username).exists():
                 username = f"{base_username}{suffix}"
                 suffix += 1
 
+            # Create a minimal User record for the engineer so we can
+            # attach a profile. The password is set to an unusable hash
+            # to prevent immediate login for these generated accounts.
             user = User.objects.create(
                 username=username,
                 first_name=engineer.first_name,

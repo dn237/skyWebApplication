@@ -59,16 +59,29 @@
             </div>
             {% else %}
             <div class="card dashboard-card">
-                <h3 class="card-title-figma">Team Updates</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 class="card-title-figma">Team Updates</h3>
+                </div>
+
                 <div class="activity-feed" style="padding: 10px;">
-                    <div class="activity-item" style="border-left: 2px solid #4318FF; padding-left: 15px; margin-bottom: 20px;">
-                        <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">Department Update</p>
-                        <p style="font-size: 12px; color: #A3AED0; margin: 0;">Cloud migration scheduled for Friday.</p>
-                    </div>
-                    <div class="activity-item" style="border-left: 2px solid #05CD99; padding-left: 15px;">
-                        <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">New Project Member</p>
-                        <p style="font-size: 12px; color: #A3AED0; margin: 0;">A new engineer joined {{ my_team.team_name|default:"your team" }}.</p>
-                    </div>
+                    {% if team_updates %}
+                        {# Render the visible updates (max 2) #}
+                        {% for update in team_updates %}
+                        <div class="activity-item" style="padding-left: 6px; margin-bottom: 12px; {% if forloop.first %}border-left:3px solid #4318FF; background:#F7FAFF;{% endif %}">
+                            <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">{{ update.title }}</p>
+                            <p style="font-size: 12px; color: #A3AED0; margin: 0;">{{ update.body|truncatechars:140 }}</p>
+                            <p style="font-size: 11px; color: #A3AED0; margin: 4px 0 0;">By {{ update.author.get_full_name|default:update.author.username }} • {{ update.created_at|date:"M d" }}</p>
+                        </div>
+                        {% endfor %}
+
+                        {% if has_hidden_updates and my_team %}
+                        <div id="hidden-updates" style="display:none; margin-top:8px;"></div>
+                        <button id="toggle-updates" class="btn-sm" data-url="{% url 'teams:older_updates' team_id=my_team.pk %}" data-loaded="false" style="margin-top:6px; background:transparent; color:#2B3674; border:1px solid #D6DEEF; border-radius:8px; padding:2px 9px; font-size:10px; font-weight:600; line-height:1.25;">Show more</button>
+                        {% endif %}
+
+                    {% else %}
+                        <p class="muted-text" style="font-size: 12px;">No updates for your team yet.</p>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
@@ -103,9 +116,13 @@
                     </table>
                 </div>
             </div>
-                        <div class="dashboard-footer-actions">
+                        <div class="dashboard-footer-actions" style="transform: translateX(111px);">
                 <a href="{% url 'teams:index' %}" class="btn-action-primary">Explore Teams</a>
-                <a href="{% url 'messages:inbox' %}" class="btn-action-primary secondary">Contact Support</a>
+                {% if my_team and my_team.lead_user and my_team.lead_user.id == request.user.id %}
+                <a href="{% url 'teams:manage_updates' team_id=my_team.pk %}" class="btn-action-primary secondary">Manage Updates</a>
+                {% else %}
+                <a href="{% url 'messages:inbox' %}" class="btn-action-primary secondary">Open Inbox</a>
+                {% endif %}
             </div>
             
         </div>
@@ -144,11 +161,12 @@
             </a>
 
             <div class="card dashboard-card">
+                
                 <h3 class="card-title-figma">{{ my_team.team_name|default:"My Team" }} Members</h3>
                 <div class="members-scroll-area" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
                     <div class="page-stack" style="gap: 8px;">
                         {% for member in team_members %}
-                        <div class="member-row-figma pro-row" style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+                        <div class="member-row-figma pro-row" data-roster-name="{{ member.user.username }}" {% if member.user_id == current_user_id %}data-current-user="true"{% endif %} style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
                             <div class="avatar-circle" style="width: 32px; height: 32px; flex-shrink: 0; background: #E0E5F2; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                                 {% if member.avatar %}
                                 <img src="{{ member.avatar.url }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -159,6 +177,9 @@
                             <div class="member-meta" style="overflow: hidden;">
                                 <p class="name-bold" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ member.user.get_full_name|default:member.user.username }}
+                                    {% if member.user_id == current_user_id %}
+                                    <span style="font-size: 11px; color: #4318FF; font-weight: 700; margin-left: 6px;">(You)</span>
+                                    {% endif %}
                                 </p>
                                 <p class="role-muted" style="font-size: 11px; margin: 0; color: #A3AED0;">
                                     {{ member.job_title|default:"Engineer" }}
@@ -192,4 +213,79 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('toggle-updates');
+    if(!btn) return;
+    var hidden = document.getElementById('hidden-updates');
+    var expandedFromY = null;
+
+    function renderUpdateItem(update){
+        var wrapper = document.createElement('div');
+        wrapper.className = 'activity-item';
+        wrapper.style.cssText = 'padding-left: 6px; margin-bottom: 8px;';
+
+        var title = document.createElement('p');
+        title.style.cssText = 'font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;';
+        title.textContent = update.title;
+
+        var body = document.createElement('p');
+        body.style.cssText = 'font-size: 12px; color: #A3AED0; margin: 0;';
+        body.textContent = update.body;
+
+        var meta = document.createElement('p');
+        meta.style.cssText = 'font-size: 11px; color: #A3AED0; margin: 4px 0 0;';
+        meta.textContent = 'By ' + update.author + ' • ' + update.created_at;
+
+        wrapper.appendChild(title);
+        wrapper.appendChild(body);
+        wrapper.appendChild(meta);
+        hidden.appendChild(wrapper);
+    }
+
+    async function loadOlderUpdatesOnce(){
+        if(btn.dataset.loaded === 'true') return;
+        var url = btn.dataset.url;
+        if(!url) return;
+        hidden.innerHTML = '<p class="muted-text" style="font-size: 12px;">Loading...</p>';
+        try {
+            var response = await fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
+            if(!response.ok){
+                throw new Error('Failed to load updates');
+            }
+            var data = await response.json();
+            hidden.innerHTML = '';
+            if(!data.updates || data.updates.length === 0){
+                hidden.innerHTML = '<p class="muted-text" style="font-size: 12px;">No older updates.</p>';
+            } else {
+                data.updates.forEach(renderUpdateItem);
+            }
+            btn.dataset.loaded = 'true';
+        } catch (e) {
+            hidden.innerHTML = '<p class="muted-text" style="font-size: 12px;">Could not load older updates.</p>';
+        }
+    }
+
+    btn.addEventListener('click', function(e){
+        e.preventDefault();
+        if(hidden.style.display === 'none'){
+            // Remember where the user was right before expanding.
+            expandedFromY = window.scrollY;
+            loadOlderUpdatesOnce().then(function(){
+                hidden.style.display = 'block';
+                btn.textContent = 'Show less';
+            });
+            return;
+        }
+        hidden.style.display = 'none';
+        btn.textContent = 'Show more';
+        // Restore prior position so collapse feels stable.
+        if(expandedFromY !== null){
+            window.scrollTo({ top: expandedFromY, behavior: 'smooth' });
+        }
+    });
+});
+</script>
 {% endblock %}
