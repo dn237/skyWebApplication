@@ -5,17 +5,144 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="profile-v2-shell">
+    <section class="profile-v2-hero card card-item">
+        <div class="profile-v2-cover"></div>
 
-<div class="container">
-    <h1 class="page-main-title">Profile - PAGE IS UNDER CONSTRUCTION</h1>
-    <div class="card card-item">
-        <div class="card-body">
-            <p><strong>Username:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>First Name:</strong> {{ user.first_name }}</p>
-            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+        <div class="profile-v2-identity">
+            <div class="profile-v2-avatar-wrap">
+                {% if profile_obj.avatar %}
+                <img src="{{ profile_obj.avatar.url }}" alt="{{ user.username }}" class="profile-v2-avatar">
+                {% else %}
+                <span class="material-symbols-outlined profile-v2-avatar-icon">person</span>
+                {% endif %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="profile-v2-photo-form">
+                {% csrf_token %}
+                <label for="{{ avatar_form.avatar.id_for_label }}" class="profile-v2-photo-label">Update photo</label>
+                {{ avatar_form.avatar }}
+                <button type="submit" class="btn-action-primary profile-v2-photo-btn">Save Photo</button>
+                {% if avatar_form.avatar.errors %}
+                    <p class="text-danger mb-0">{{ avatar_form.avatar.errors|striptags }}</p>
+                {% endif %}
+            </form>
+
+            <h1 class="profile-v2-name">{{ user.get_full_name|default:user.username }}</h1>
+            <p class="profile-v2-title">{{ profile_obj.job_title|default:"Team Member" }}</p>
+
+            <div class="profile-v2-stat-row">
+                <div class="profile-v2-stat">
+                    <strong>#{{ user.id }}</strong>
+                    <span>Employee no.</span>
+                </div>
+                <div class="profile-v2-stat">
+                    <strong>{{ user.date_joined|date:"d/m/Y" }}</strong>
+                    <span>Date Joined</span>
+                </div>
+                <div class="profile-v2-stat">
+                    <strong>
+                        {% if led_teams %}
+                            Leader
+                        {% elif member_team %}
+                            Member
+                        {% else %}
+                            Unassigned
+                        {% endif %}
+                    </strong>
+                    <span>Team Role</span>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
+    <section class="profile-v2-layout">
+        <div class="profile-v2-info card card-item">
+            <h2 class="profile-v2-section-title">General Information</h2>
+            <div class="profile-v2-info-grid">
+                <article class="profile-v2-cell">
+                    <span>Username</span>
+                    <strong>{{ user.username }}</strong>
+                </article>
+                <article class="profile-v2-cell">
+                    <span>Contact details</span>
+                    <strong>{{ user.email|default:"Not set" }}</strong>
+                </article>
+                <article class="profile-v2-cell">
+                    <span>Department</span>
+                    <strong>{{ profile_obj.department.dept_name|default:"Not assigned" }}</strong>
+                </article>
+                <article class="profile-v2-cell">
+                    <span>Work History</span>
+                    <strong>{{ profile_obj.job_title|default:"No role set" }}</strong>
+                </article>
+                <article class="profile-v2-cell">
+                    <span>Organization</span>
+                    <strong>Sky Web Application</strong>
+                </article>
+                <article class="profile-v2-cell">
+                    <span>Date joined</span>
+                    <strong>{{ user.date_joined|date:"d F Y" }}</strong>
+                </article>
+            </div>
+        </div>
+
+        <aside class="profile-v2-team-rail">
+            {% if led_teams %}
+                {% for team in led_teams %}
+                <section class="profile-team-card card card-item">
+                    <div class="profile-team-card-head">
+                        <div>
+                            <h3>{{ team.team_name }}</h3>
+                            <p>You are leading this team</p>
+                        </div>
+                        <span class="profile-role-chip profile-role-chip-leader">Team Role: Leader</span>
+                    </div>
+                    <div class="profile-team-card-body">
+                        <p><strong>Department:</strong> {{ team.dept.dept_name|default:"Unassigned" }}</p>
+                        <p><strong>Status:</strong> {{ team.status|default:"Not set" }}</p>
+                        <p><strong>Members:</strong> {{ team.members.count }}</p>
+                        <p><strong>Projects:</strong> {{ team.projects.count }}</p>
+                    </div>
+                    <div class="profile-team-card-actions">
+                        <a href="{% url 'teams:detail' team.team_id %}" class="btn-action-primary secondary">View Team</a>
+                        <a href="{% url 'teams:edit' team.team_id %}" class="btn-action-primary">Edit Team</a>
+                    </div>
+                </section>
+                {% endfor %}
+            {% endif %}
+
+            {% if show_member_team_card and member_team %}
+            <section class="profile-team-card card card-item">
+                <div class="profile-team-card-head">
+                    <div>
+                        <h3>{{ member_team.team_name }}</h3>
+                        <p>You are a member of this team</p>
+                    </div>
+                    <span class="profile-role-chip profile-role-chip-member">Team Role: Member</span>
+                </div>
+                <div class="profile-team-card-body">
+                    <p><strong>Department:</strong> {{ member_team.dept.dept_name|default:"Unassigned" }}</p>
+                    <p><strong>Leader:</strong> {{ member_team.lead_user.get_full_name|default:member_team.lead_user.username|default:"Not assigned" }}</p>
+                    <p><strong>Status:</strong> {{ member_team.status|default:"Not set" }}</p>
+                    <p><strong>Members:</strong> {{ member_team.members.count }}</p>
+                </div>
+                <div class="profile-team-card-actions">
+                    <a href="{% url 'teams:detail' member_team.team_id %}" class="btn-action-primary secondary">View Team</a>
+                </div>
+            </section>
+            {% elif not led_teams %}
+            <section class="profile-team-card card card-item">
+                <div class="profile-team-card-head">
+                    <div>
+                        <h3>No Team Assigned</h3>
+                        <p>You are not assigned as a leader or member to any team yet.</p>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        </aside>
+    </section>
+</div>
 
 {% endblock %}

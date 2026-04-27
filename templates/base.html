@@ -69,6 +69,15 @@
 
             <div class="user-footer">
                 {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}" class="sidebar-avatar-link" aria-label="Open profile">
+                        {% if sidebar_profile and sidebar_profile.avatar %}
+                            <img src="{{ sidebar_profile.avatar.url }}" alt="{{ user.username }}" class="avatar sidebar-avatar-image">
+                        {% else %}
+                            <span class="avatar sidebar-avatar-placeholder">
+                                <span class="material-symbols-outlined">person</span>
+                            </span>
+                        {% endif %}
+                    </a>
                     <div class="user-info">
                         <a href="{% url 'accounts:profile' %}" class="user-name">{{ user.username }}</a>
                         <div class="log-off-group">

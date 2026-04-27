@@ -1,125 +1,195 @@
 {# ================================================= #}
 {# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015 #}
-{# CONTRIBUTION: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864 #}
-{# FEATURE: Dashboard Mini Calendar Integration #}
+{# FEATURE: Integrated Dynamic Dashboard (Hero Style) #}
 {# ================================================= #}
 
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="app-body">
-    <div class="section-header" style="margin-bottom: 25px;">
-            <div class="search-bar" style="width: 100%; max-width: 600px;">
-                <span class="material-symbols-outlined">search</span>
-                <input type="text" class="search-input" placeholder="Search teams, departments, or managers">
-            </div>
+<div class="dashboard-shell">
+    <div class="section-header dashboard-head">
+        <div class="header-titles">
+            <p class="muted-text" style="font-size: 12px; margin-bottom: 4px;">Pages / Dashboard</p>
+            <h2 style="color: #2B3674; font-weight: 800;">Main Dashboard</h2>
         </div>
+        <form method="GET" action="{% url 'dashboard' %}" class="search-bar dashboard-search">
+        <span class="material-symbols-outlined">search</span>
+        <input class="search-input" 
+               type="search" 
+               name="q" 
+               value="{{ search_query }}" 
+               placeholder="Search teams or projects...">
 
-        <div class="dashboard-mesh">
+               <button type="submit" style="display: none;"></button>
+    </form>
+</div>
+
+    <div class="dashboard-mesh {% if is_admin %}dashboard-mesh-admin{% else %}dashboard-mesh-user{% endif %}">
+        
+        <div class="grid-stack">
             
-            <div class="grid-stack">
-                <div class="card">
-                    <h3 class="card-title-figma" style="text-align: center;">Announcements</h3>
-                    <div style="background: #F4F7FE; padding: 20px; border-radius: 15px;">
-                        <p class="muted-text">• Manager updated for Cloud Services</p>
-                        <a href="#" class="view-details-link" style="display: block; text-align: right;">Views All ></a>
+            {% if is_admin %}
+            <div class="card dashboard-card">
+                <div class="card-header dashboard-card-header">
+                    <h3 class="card-title-figma">Team Oversight</h3>
+                    <a href="{% url 'teams:index' %}" class="btn-action-primary btn-sm">Manage All</a>
+                </div>
+                <div class="dashboard-table-shell">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Lead</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for team in admin_teams|slice:":3" %}
+                            <tr>
+                                <td><strong>{{ team.team_name }}</strong></td>
+                                <td>{{ team.lead_user.first_name|default:"TBD" }}</td>
+                                <td><span class="status-pill">{{ team.status|default:"Active" }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="muted-text">No data found.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="card dashboard-card">
+                <h3 class="card-title-figma">Team Updates</h3>
+                <div class="activity-feed" style="padding: 10px;">
+                    <div class="activity-item" style="border-left: 2px solid #4318FF; padding-left: 15px; margin-bottom: 20px;">
+                        <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">Department Update</p>
+                        <p style="font-size: 12px; color: #A3AED0; margin: 0;">Cloud migration scheduled for Friday.</p>
+                    </div>
+                    <div class="activity-item" style="border-left: 2px solid #05CD99; padding-left: 15px;">
+                        <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">New Project Member</p>
+                        <p style="font-size: 12px; color: #A3AED0; margin: 0;">A new engineer joined {{ my_team.team_name|default:"your team" }}.</p>
                     </div>
                 </div>
+            </div>
+            {% endif %}
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title-figma">Complex Table</h3>
-                        <span class="material-symbols-outlined">more_horiz</span>
+            <div class="card dashboard-card">
+                <div class="card-header dashboard-card-header">
+                    <h3 class="card-title-figma">Complex Table</h3>
+                    <span class="material-symbols-outlined" style="color: #A3AED0;">bar_chart</span>
+                </div>
+                <div class="dashboard-table-shell">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Health</th>
+                                <th>Completion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for team in recent_teams|slice:":4" %}
+                            <tr>
+                                <td><strong>{{ team.team_name }}</strong></td>
+                                <td><span class="status-tag active">On Track</span></td>
+                                <td>
+                                    <div class="dashboard-progress">
+                                        <div class="dashboard-progress-bar" style="width: {% cycle '70%' '45%' '90%' '30%' %};"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                        <div class="dashboard-footer-actions">
+                <a href="{% url 'teams:index' %}" class="btn-action-primary">Explore Teams</a>
+                <a href="{% url 'messages:inbox' %}" class="btn-action-primary secondary">Contact Support</a>
+            </div>
+            
+        </div>
+
+        <div class="grid-stack">
+            <a href="{% url 'scheduler:schedule_list' %}" class="calendar-link-wrapper" style="text-decoration: none; display: block;">
+                <div class="card dashboard-card dashboard-calendar-card">
+                    <div class="card-header dashboard-card-header">
+                        <h3 class="card-title-figma">Calendar</h3>
+                        <span class="material-symbols-outlined" style="color: #4318FF;">calendar_month</span>
                     </div>
-                    <div class="page-stack">
-                        {% for team in recent_teams|slice:":4" %}
-                        <div class="team-member-row" style="border: none; border-bottom: 1px solid #F4F7FE; border-radius: 0;">
-                            <strong style="flex: 1;">{{ team.team_name }}</strong>
-                            <span class="status-tag active" style="flex: 1;">Approved</span>
-                            <div style="flex: 1; background: #EEE; height: 8px; border-radius: 4px;">
-                                <div style="width: 70%; background: var(--accent-primary); height: 100%; border-radius: 4px;"></div>
+
+                    <div class="mini-calendar-date" style="text-align: center; padding: 15px 0;">
+                        <p style="color: #A3AED0; text-transform: uppercase; font-size: 11px; margin: 0;">Today</p>
+                        <h2 style="font-size: 42px; color: #2B3674; margin: 0; font-weight: 800;">{{ today|date:"d" }}</h2>
+                        <span style="color: #707EAE; font-size: 14px;">{{ today|date:"l, F Y" }}</span>
+                    </div>
+
+                    <div class="mini-calendar-actions" style="display: flex; gap: 8px; padding: 0 10px 15px;">
+                        <span class="mini-calendar-btn" style="flex: 1; text-align: center; background: #4318FF; color: white; border-radius: 10px; padding: 5px; font-size: 11px;">New</span>
+                        <span class="mini-calendar-btn secondary" style="flex: 1; text-align: center; background: #F4F7FE; color: #4318FF; border-radius: 10px; padding: 5px; font-size: 11px;">View All</span>
+                    </div>
+
+                    <div class="mini-calendar-list" style="padding: 0 10px 10px; border-top: 1px solid #F4F7FE;">
+                        <h4 style="font-size: 11px; color: #A3AED0; text-transform: uppercase; margin: 10px 0 5px;">Upcoming</h4>
+                        {% for schedule in upcoming_schedules|slice:":2" %}
+                        <div class="mini-calendar-item" style="margin-bottom: 8px;">
+                            <strong style="display: block; font-size: 13px; color: #2B3674;">{{ schedule.title }}</strong>
+                            <span style="font-size: 11px; color: #A3AED0;">{{ schedule.time|time:"H:i" }} • {{ schedule.platform }}</span>
+                        </div>
+                        {% empty %}
+                        <p class="muted-text" style="font-size: 11px; text-align: center;">No meetings scheduled.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </a>
+
+            <div class="card dashboard-card">
+                <h3 class="card-title-figma">{{ my_team.team_name|default:"My Team" }} Members</h3>
+                <div class="members-scroll-area" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                    <div class="page-stack" style="gap: 8px;">
+                        {% for member in team_members %}
+                        <div class="member-row-figma pro-row" style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+                            <div class="avatar-circle" style="width: 32px; height: 32px; flex-shrink: 0; background: #E0E5F2; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                {% if member.avatar %}
+                                <img src="{{ member.avatar.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <span class="material-symbols-outlined" style="font-size: 18px; color: #A3AED0;">person</span>
+                                {% endif %}
+                            </div>
+                            <div class="member-meta" style="overflow: hidden;">
+                                <p class="name-bold" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    {{ member.user.get_full_name|default:member.user.username }}
+                                </p>
+                                <p class="role-muted" style="font-size: 11px; margin: 0; color: #A3AED0;">
+                                    {{ member.job_title|default:"Engineer" }}
+                                </p>
                             </div>
                         </div>
+                        {% empty %}
+                        <p class="muted-text" style="text-align: center; font-size: 12px; padding: 20px;">No teammates found.</p>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-
-            <div class="grid-stack">
-                <a href="{% url 'scheduler:schedule_list' %}" class="calendar-link-wrapper">
-                    <div class="card" style="min-height: 250px;">
-                    <div class="card-header">
-                        <h3 class="card-title-figma">Calendar</h3>
-                        <span class="material-symbols-outlined">calendar_month</span>
-                    </div>
-
-                    <div class="mini-calendar-date">
-                        <p>Today</p>
-                        <h2>{{ today|date:"d" }}</h2>
-                        <span>{{ today|date:"l, F Y" }}</span>
-                    </div>
-
-                    <div class="mini-calendar-actions">
-                        <a href="{% url 'scheduler:create_schedule' %}" class="mini-calendar-btn">New Meeting</a>
-                        <a href="{% url 'scheduler:schedule_list' %}" class="mini-calendar-btn secondary">View All</a>
-                    </div>
-
-                    <div class="mini-calendar-list">
-                        <h4>Upcoming</h4>
-
-                        {% if upcoming_schedules %}
-                            {% for schedule in upcoming_schedules %}
-                                <div class="mini-calendar-item">
-                                    <strong>{{ schedule.title }}</strong>
-                                    <span>{{ schedule.date|date:"d M" }} • {{ schedule.time|time:"H:i" }} • {{ schedule.platform }}</span>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <p class="muted-text" style="font-size: 13px;">No upcoming meetings.</p>
-                        {% endif %}
-                    </div>
-                </div>
-                </a>
-
-                <div class="card" style="min-height: 250px; display: flex; flex-direction: column;">
-                    <h3 class="card-title-figma"> {{my_team}} members</h3>
-                    <div class="members-scroll-area" style="flex: 1; overflow-y: auto; padding-right: 5px; margin-top: 10px;">
-                        <div class="page-stack" style="gap: 12px;">
-                            {% for member in team_members %}
-                            <div class="member-row-figma" style="display: flex; align-items: center; gap: 15px; padding: 8px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                <div class="avatar-circle" style="width: 40px; height: 40px; border-radius: 50%; background: #E0E5F2; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                                    {% if member.userprofile.avatar %}
-                                    <img src="{{ member.userprofile.avatar.url }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                    {% else %}
-                                    <span class="material-symbols-outlined" style="color: #A3AED0;">person</span>
-                                    {% endif %}
-                                </div>
-                                <div class="member-meta">
-                                    <p style="margin: 0; font-weight: 700; color: #2B3674; font-size: 14px;">{{ member.user.first_name }} {{ member.user.last_name }}</p>
-                                    <p style="margin: 0; font-size: 12px; color: #A3AED0;">{{ member.job_title|default:"Engineer" }}</p>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p class="muted-text" style="font-size: 13px; text-align: center;">No team members found.</p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-stack">
-                <div class="card" style="flex-grow: 1; min-height: 200px;">
-                    <h3 class="card-title-figma" style="text-align: center;">Messages</h3>
-                </div>
-                <div class="card">
-                    <h3 class="card-title-figma" style="text-align: center;">Tasks</h3>
-                </div>
-            </div>
-
-        </div> <div style="display: flex; gap: 20px; margin-top: 30px; padding-bottom: 40px;">
-            <button class="btn-action-primary" style="width: 180px;">Explore Team</button>
-            <button class="btn-action-primary secondary" style="width: 180px;">Contact Team</button>
         </div>
-    </main>
+        
+
+        <div class="grid-stack">
+            <div class="card dashboard-card">
+                <h3 class="card-title-figma">Messages</h3>
+                <div style="text-align: center; padding: 30px 0;">
+                    <span class="material-symbols-outlined" style="font-size: 40px; color: #E0E5F2;">mail</span>
+                    <p class="muted-text" style="font-size: 12px;">Inbox is clear</p>
+                </div>
+            </div>
+            <div class="card dashboard-card">
+                <h3 class="card-title-figma">Sprint Tasks</h3>
+                <div style="text-align: center; padding: 30px 0;">
+                    <span class="material-symbols-outlined" style="font-size: 40px; color: #E0E5F2;">checklist</span>
+                    <p class="muted-text" style="font-size: 12px;">All tasks completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

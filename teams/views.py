@@ -13,7 +13,6 @@ from accounts.models import UserProfile
 
 def teamsHome(request):
     # 1. Capture View Preference (Grid vs List)
-    # Default to 'grid' to match Teams1 Figma
     view_type = request.GET.get("view", "grid") 
 
     # 2. Existing Search/Filter/Sort Logic
