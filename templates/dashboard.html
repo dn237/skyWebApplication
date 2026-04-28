@@ -31,7 +31,7 @@
             {% if is_admin %}
             <div class="card dashboard-card">
                 <div class="card-header dashboard-card-header">
-                    <h3 class="card-title-figma">Team Oversight</h3>
+                    <h3 class="dashboard-card-header">Team Oversight</h3>
                     <a href="{% url 'teams:index' %}" class="btn-action-primary btn-sm">Manage All</a>
                 </div>
                 <div class="dashboard-table-shell">
@@ -59,15 +59,13 @@
             </div>
             {% else %}
             <div class="card dashboard-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 class="card-title-figma">Team Updates</h3>
-                </div>
+                <h3 class="dashboard-card-header">Team Updates</h3>
 
                 <div class="activity-feed" style="padding: 10px;">
                     {% if team_updates %}
                         {# Render the visible updates (max 2) #}
                         {% for update in team_updates %}
-                        <div class="activity-item" style="padding-left: 6px; margin-bottom: 12px; {% if forloop.first %}border-left:3px solid #4318FF; background:#F7FAFF;{% endif %}">
+                        <div class="activity-item" style="padding-left: 6px; margin-bottom: 12px; {% if forloop.first %}border-left:3px solid #4318FF; background:#F7FAFF; border-radius: 3px{% endif %}">
                             <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">{{ update.title }}</p>
                             <p style="font-size: 12px; color: #A3AED0; margin: 0;">{{ update.body|truncatechars:140 }}</p>
                             <p style="font-size: 11px; color: #A3AED0; margin: 4px 0 0;">By {{ update.author.get_full_name|default:update.author.username }} • {{ update.created_at|date:"M d" }}</p>
@@ -131,7 +129,7 @@
             <a href="{% url 'scheduler:schedule_list' %}" class="calendar-link-wrapper" style="text-decoration: none; display: block;">
                 <div class="card dashboard-card dashboard-calendar-card">
                     <div class="card-header dashboard-card-header">
-                        <h3 class="card-title-figma">Calendar</h3>
+                        <h3 class="dashboard-card-header">Calendar</h3>
                         <span class="material-symbols-outlined" style="color: #4318FF;">calendar_month</span>
                     </div>
 
@@ -142,8 +140,8 @@
                     </div>
 
                     <div class="mini-calendar-actions" style="display: flex; gap: 8px; padding: 0 10px 15px;">
-                        <span class="mini-calendar-btn" style="flex: 1; text-align: center; background: #4318FF; color: white; border-radius: 10px; padding: 5px; font-size: 11px;">New</span>
-                        <span class="mini-calendar-btn secondary" style="flex: 1; text-align: center; background: #F4F7FE; color: #4318FF; border-radius: 10px; padding: 5px; font-size: 11px;">View All</span>
+                        <span class="mini-calendar-btn" style="flex: 1; text-align: center; background: #686ADE; color: white; border-radius: 10px; padding: 5px; font-size: 11px;">New</span>
+                        <span class="mini-calendar-btn secondary" style="flex: 1; text-align: center; background: #F4F7FE; color: #686ADE; border-radius: 10px; padding: 5px; font-size: 11px;">View All</span>
                     </div>
 
                     <div class="mini-calendar-list" style="padding: 0 10px 10px; border-top: 1px solid #F4F7FE;">
@@ -162,7 +160,7 @@
 
             <div class="card dashboard-card">
                 
-                <h3 class="card-title-figma">{{ my_team.team_name|default:"My Team" }} Members</h3>
+                <h3 class="dashboard-card-header">{{ my_team.team_name|default:"My Team" }} Members</h3>
                 <div class="members-scroll-area dashboard-members-scroll" style="padding-right: 5px;">
                     <div class="page-stack" style="gap: 8px;">
                         {% for member in team_members %}
@@ -199,7 +197,7 @@
                 {% include 'messaging/_dashboard_widget.html' %}
             </div>
             <div class="card dashboard-card">
-                <h3 class="card-title-figma">Sprint Tasks</h3>
+                <h3 class="dashboard-card-header">Sprint Tasks</h3>
                 <div style="text-align: center; padding: 30px 0;">
                     <span class="material-symbols-outlined" style="font-size: 40px; color: #E0E5F2;">checklist</span>
                     <p class="muted-text" style="font-size: 12px;">All tasks completed</p>
