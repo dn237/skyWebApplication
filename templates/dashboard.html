@@ -199,10 +199,30 @@
                 {% include 'messaging/_dashboard_widget.html' %}
             </div>
             <div class="card dashboard-card">
-                <h3 class="card-title-figma">Sprint Tasks</h3>
-                <div style="text-align: center; padding: 30px 0;">
-                    <span class="material-symbols-outlined" style="font-size: 40px; color: #E0E5F2;">checklist</span>
-                    <p class="muted-text" style="font-size: 12px;">All tasks completed</p>
+                <div class="card-header dashboard-card-header">
+                    <h3 class="card-title-figma">Sprint Tasks</h3>
+                    <a href="{% url 'scheduler:create_schedule' %}?type=task" class="btn-sm"
+                    style="background:#4318FF; color:white; border-radius:8px; padding:4px 10px; font-size:11px; text-decoration:none;">
+                        + Add
+                    </a>
+                </div>
+
+                <div style="padding: 10px;">
+                    {% for task in dashboard_tasks %}
+                        <div style="padding: 10px; margin-bottom: 8px; background:#F7FAFF; border-left:3px solid #4318FF; border-radius:10px;">
+                            <p style="font-size: 13px; font-weight: 700; color:#2B3674; margin:0;">
+                                {{ task.title }}
+                            </p>
+                            <p style="font-size: 11px; color:#A3AED0; margin:4px 0 0;">
+                                {{ task.date }} • {{ task.time|time:"H:i" }}
+                            </p>
+                        </div>
+                    {% empty %}
+                        <div style="text-align: center; padding: 30px 0;">
+                            <span class="material-symbols-outlined" style="font-size: 40px; color: #E0E5F2;">checklist</span>
+                            <p class="muted-text" style="font-size: 12px;">No tasks added yet.</p>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
