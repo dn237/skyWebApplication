@@ -608,7 +608,6 @@ a {
     box-shadow: none !important;
 }
 
-
 .pro-row:last-child {
     border-bottom: none;
 }
@@ -635,6 +634,7 @@ a {
     position: relative;
     align-items: center;
     justify-content: center;
+    margin-left: auto;
     margin-right: auto;
     transform: translateX(32px);
 }
