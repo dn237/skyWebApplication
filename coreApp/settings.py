@@ -11,15 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import os 
-# Load the .env file
+import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
-from dotenv import load_dotenv
-
-# Load the .env file
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
