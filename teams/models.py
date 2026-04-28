@@ -12,6 +12,11 @@
 
 from django.conf import settings
 from django.db import models
+from typing import TYPE_CHECKING
+from django.db.models import QuerySet
+
+if TYPE_CHECKING:
+    from .models import TeamDependency, Project, TeamUpdate
 
 
 class Team(models.Model):
@@ -47,6 +52,12 @@ class Team(models.Model):
         null=True,
         blank=True,
     )
+
+    if TYPE_CHECKING:
+        downstream_dependencies: QuerySet["TeamDependency"]
+        upstream_dependencies: QuerySet["TeamDependency"]
+        projects: QuerySet["Project"]
+        updates: QuerySet["TeamUpdate"]
 
     def __str__(self):
         return self.team_name

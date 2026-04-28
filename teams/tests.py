@@ -23,8 +23,8 @@ class TeamsViewTests(TestCase):
 	def setUp(self):
 		User = get_user_model()
 		# create a lead user and a regular member
-		self.lead = User.objects.create_user(username='leaduser', password='pass')
-		self.member = User.objects.create_user(username='member', password='pass')
+		self.lead = User.objects.create_user(username='leaduser', password='pass') # type: ignore
+		self.member = User.objects.create_user(username='member', password='pass') # type: ignore
 
 		# create a team and assign a lead
 		self.team = Team.objects.create(team_name='API Team')
@@ -94,11 +94,11 @@ class TeamsViewTests(TestCase):
 		self.assertIsNotNone(update)
 
 		# Delete it
-		url_del = reverse('teams:delete_update', kwargs={'team_id': self.team.pk, 'update_id': update.pk})
+		url_del = reverse('teams:delete_update', kwargs={'team_id': self.team.pk, 'update_id': update.pk}) # type: ignore
 		resp3 = self.client.post(url_del, follow=True)
 		self.assertEqual(resp3.status_code, 200)
 		# Ensure it's gone
-		self.assertFalse(TeamUpdate.objects.filter(pk=update.pk).exists())
+		self.assertFalse(TeamUpdate.objects.filter(pk=update.pk).exists()) # type: ignore
 
 	def test_older_updates_endpoint_returns_updates_after_first_two(self):
 		"""AJAX endpoint should return only updates older than the first two."""

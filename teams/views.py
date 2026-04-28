@@ -8,11 +8,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
-from .models import Team
+from .models import Project, Team
 from .forms import TeamForm
 from accounts.models import UserProfile
 from .models import TeamUpdate
 from .forms import TeamUpdateForm
+
+
+
 
 def teamsHome(request):
     # 1. Capture View Preference (Grid vs List)
@@ -136,12 +139,11 @@ def teamRepositories(request, team_id):
         'repositories': repositories
     })
 
-def projectDetail(request, pk):
-    project = get_object_or_404(Team.projects.related.model, pk=pk)
+def projectDetail(request, team_pk, pk):
+    project = get_object_or_404(Project, pk=pk, team_id=team_pk)
     return render(request, 'teams/project_detail.html', {
         'project': project
     })
-
 
 @login_required
 def editTeam(request, team_id):
@@ -165,12 +167,12 @@ def editTeam(request, team_id):
             user = get_object_or_404(User, pk=add_user_id)
             profile, _ = UserProfile.objects.get_or_create(user=user)
 
-            if profile.team_id == team.team_id:
-                messages.info(request, f'{user.username} is already in this team.')
+            if profile.team == team:
+                messages.info(request, f'{user.username} is already in this team.') # type: ignore
             else:
                 profile.team = team
                 profile.save(update_fields=['team'])
-                messages.success(request, f'{user.username} was added to {team.team_name}.')
+                messages.success(request, f'{user.username} was added to {team.team_name}.') # type: ignore
 
             return redirect('teams:edit', team_id=team_id)
 
@@ -208,7 +210,7 @@ def editTeam(request, team_id):
 def add_team_update(request, team_id):
     team = get_object_or_404(Team, pk=team_id)
     # only the lead can create updates
-    if team.lead_user_id != request.user.id:
+    if team.lead_user != request.user:
         messages.error(request, 'Only the team lead can post updates.')
         return redirect('teams:detail', team_id=team_id)
 
@@ -231,7 +233,8 @@ def add_team_update(request, team_id):
 def delete_team_update(request, team_id, update_id):
     team = get_object_or_404(Team, pk=team_id)
     update = get_object_or_404(TeamUpdate, pk=update_id, team=team)
-    if team.lead_user_id != request.user.id:
+
+    if team.lead_user != request.user:
         messages.error(request, 'Only the team lead can delete updates.')
         return redirect('teams:detail', team_id=team_id)
 
@@ -242,16 +245,11 @@ def delete_team_update(request, team_id, update_id):
 
     return render(request, 'teams/delete_update.html', {'update': update, 'team': team})
 
-
 @login_required
 def manage_team_updates(request, team_id):
-    """Manage updates page: add new updates and remove existing ones.
-
-    Only the team's lead may access this page. It combines the add-update
-    form and a compact list of updates with small delete controls.
-    """
     team = get_object_or_404(Team, pk=team_id)
-    if team.lead_user_id != request.user.id:
+
+    if team.lead_user != request.user:
         messages.error(request, 'Only the team lead may manage updates.')
         return redirect('dashboard')
 
@@ -268,8 +266,12 @@ def manage_team_updates(request, team_id):
         form = TeamUpdateForm()
 
     updates = team.updates.all()
-    return render(request, 'teams/manage_updates.html', {'team': team, 'form': form, 'updates': updates})
 
+    return render(request, 'teams/manage_updates.html', {
+        'team': team,
+        'form': form,
+        'updates': updates
+    })
 
 @login_required
 def older_team_updates(request, team_id):
@@ -281,8 +283,8 @@ def older_team_updates(request, team_id):
     team = get_object_or_404(Team, pk=team_id)
     profile = UserProfile.objects.filter(user=request.user).first()
 
-    is_member = bool(profile and profile.team_id == team.pk)
-    is_lead = team.lead_user_id == request.user.id
+    is_member = bool(profile and profile.team == team)
+    is_lead = team.lead_user == request.user
     is_admin = request.user.is_staff or request.user.is_superuser
 
     if not (is_member or is_lead or is_admin):
