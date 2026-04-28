@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileAvatarForm
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail 
@@ -83,7 +83,45 @@ def profile(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You need to be logged in to view your profile.')
         return redirect('accounts:login')
+
+    from .models import UserProfile
+    from teams.models import Team
+
+    profile_obj, _ = UserProfile.objects.select_related('team', 'department').get_or_create(
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        avatar_form = ProfileAvatarForm(request.POST, request.FILES, instance=profile_obj)
+        if avatar_form.is_valid():
+            avatar_form.save()
+            messages.success(request, 'Profile picture updated successfully.')
+            return redirect('accounts:profile')
+        messages.error(request, 'Could not update profile picture. Please use a valid image file.')
+    else:
+        avatar_form = ProfileAvatarForm(instance=profile_obj)
+
+    led_teams = (
+        request.user.led_teams.select_related('dept')
+        .prefetch_related('members', 'projects')
+        .order_by('team_name')
+    )
+
+    member_team = profile_obj.team
+    show_member_team_card = bool(member_team and member_team.lead_user_id != request.user.id)
+
+    if show_member_team_card:
+        member_team = (
+            Team.objects.select_related('dept', 'lead_user')
+            .prefetch_related('members', 'projects')
+            .get(pk=profile_obj.team.pk)
+        )
     
     return render(request, 'accounts/profile.html', {
         'user': request.user,
+        'profile_obj': profile_obj,
+        'avatar_form': avatar_form,
+        'led_teams': led_teams,
+        'member_team': member_team,
+        'show_member_team_card': show_member_team_card,
     })

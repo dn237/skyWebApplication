@@ -11,12 +11,19 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'coreApp.settings')
 django.setup()
 
 from django.contrib.auth.models import User
-from teams.models import Engineer, Team, TeamDependency, Project
+from accounts.models import UserProfile
+from teams.models import Team, TeamDependency, Project
 from organizations.models import Department
 
 df = pd.read_excel("Agile Project Module UofW - Team Registry.xlsx")
 
-# 1. Departments + Teams + Engineers
+# 1. Departments + Teams + Team Leads
+#
+# This import script seeds Departments, Teams and Projects from a spreadsheet.
+# Historically it created `Engineer` rows for team leads. The code now
+# writes lead membership into `accounts.UserProfile` (the single source of
+# truth for user-facing profile data) to avoid duplication between models.
+#
 for _, row in df.iterrows():
     dept_name = str(row.get("Department", "")).strip()
     team_name = str(row.get("Team Name", "")).strip()
@@ -67,15 +74,19 @@ for _, row in df.iterrows():
         }
     )
     if lead_name and lead_name != "nan":
-        parts = lead_name.split()
-        f_name = parts[0]
-        l_name = " ".join(parts[1:]) if len(parts) > 1 else "Leader"
-        
-        Engineer.objects.get_or_create(
-            first_name=f_name,
-            last_name=l_name,
-            team=team
-        )
+        # If the spreadsheet provides a team lead, assign them to the team
+        # by creating/updating their UserProfile. This keeps membership
+        # authoritative on the profile side instead of maintaining a
+        # separate Engineer table.
+        profile_user = lead_user
+        if profile_user is not None:
+            UserProfile.objects.update_or_create(
+                user=profile_user,
+                defaults={
+                    "team": team,
+                    "job_title": "Team Lead",
+                },
+            )
 
 
 # 2. Projects

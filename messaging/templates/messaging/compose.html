@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.compose-card {
+    max-width: 620px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding: 32px;
+}
+.compose-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2B3674;
+    margin: 0 0 24px;
+}
+.form-group { margin-bottom: 18px; }
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2B3674;
+    margin-bottom: 6px;
+}
+.form-group select,
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #D6DAE6;
+    border-radius: 12px;
+    background: #FBFBFD;
+    font-size: 14px;
+    color: #2B3674;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+}
+.form-group select:focus,
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    border-color: #686ADE;
+    box-shadow: 0 0 0 3px rgba(104,106,222,0.1);
+}
+.compose-actions { display: flex; gap: 10px; margin-top: 24px; }
+</style>
+
+<div class="compose-card">
+    <h2>
+        <span class="material-symbols-outlined" style="vertical-align:middle; font-size:22px; margin-right:6px; color:#686ADE;">edit</span>
+        New Message
+    </h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.recipient.id_for_label }}">To</label>
+            {{ form.recipient }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.subject.id_for_label }}">Subject</label>
+            {{ form.subject }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.body.id_for_label }}">Message</label>
+            {{ form.body }}
+        </div>
+        <div class="compose-actions">
+            <button type="submit" name="send" class="btn-action-primary">
+                <span class="material-symbols-outlined" style="font-size:16px;">send</span>
+                Send
+            </button>
+            <button type="submit" name="save_draft" class="btn-action-primary secondary">
+                <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                Save Draft
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

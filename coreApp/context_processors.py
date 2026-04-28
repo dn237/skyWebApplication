@@ -10,3 +10,14 @@ def admin_context(request):
         'is_admin': request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
     }
 # =================================================
+
+
+def user_profile_context(request):
+    """Provide user profile data to global templates like the sidebar."""
+    if not request.user.is_authenticated:
+        return {'sidebar_profile': None}
+
+    from accounts.models import UserProfile
+
+    profile = UserProfile.objects.filter(user=request.user).first()
+    return {'sidebar_profile': profile}

@@ -7,13 +7,15 @@ from django.db.models import Count, Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from .models import Team
 from .forms import TeamForm
 from accounts.models import UserProfile
+from .models import TeamUpdate
+from .forms import TeamUpdateForm
 
 def teamsHome(request):
     # 1. Capture View Preference (Grid vs List)
-    # Default to 'grid' to match Teams1 Figma
     view_type = request.GET.get("view", "grid") 
 
     # 2. Existing Search/Filter/Sort Logic
@@ -200,3 +202,103 @@ def editTeam(request, team_id):
         'available_profiles': available_profiles,
         'users_without_profile': users_without_profile,
     })
+
+
+@login_required
+def add_team_update(request, team_id):
+    team = get_object_or_404(Team, pk=team_id)
+    # only the lead can create updates
+    if team.lead_user_id != request.user.id:
+        messages.error(request, 'Only the team lead can post updates.')
+        return redirect('teams:detail', team_id=team_id)
+
+    if request.method == 'POST':
+        form = TeamUpdateForm(request.POST)
+        if form.is_valid():
+            upd = form.save(commit=False)
+            upd.team = team
+            upd.author = request.user
+            upd.save()
+            messages.success(request, 'Update posted.')
+            return redirect('dashboard')
+    else:
+        form = TeamUpdateForm()
+
+    return render(request, 'teams/add_update.html', {'form': form, 'team': team})
+
+
+@login_required
+def delete_team_update(request, team_id, update_id):
+    team = get_object_or_404(Team, pk=team_id)
+    update = get_object_or_404(TeamUpdate, pk=update_id, team=team)
+    if team.lead_user_id != request.user.id:
+        messages.error(request, 'Only the team lead can delete updates.')
+        return redirect('teams:detail', team_id=team_id)
+
+    if request.method == 'POST':
+        update.delete()
+        messages.success(request, 'Update deleted.')
+        return redirect('dashboard')
+
+    return render(request, 'teams/delete_update.html', {'update': update, 'team': team})
+
+
+@login_required
+def manage_team_updates(request, team_id):
+    """Manage updates page: add new updates and remove existing ones.
+
+    Only the team's lead may access this page. It combines the add-update
+    form and a compact list of updates with small delete controls.
+    """
+    team = get_object_or_404(Team, pk=team_id)
+    if team.lead_user_id != request.user.id:
+        messages.error(request, 'Only the team lead may manage updates.')
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = TeamUpdateForm(request.POST)
+        if form.is_valid():
+            upd = form.save(commit=False)
+            upd.team = team
+            upd.author = request.user
+            upd.save()
+            messages.success(request, 'Update posted.')
+            return redirect('teams:manage_updates', team_id=team.pk)
+    else:
+        form = TeamUpdateForm()
+
+    updates = team.updates.all()
+    return render(request, 'teams/manage_updates.html', {'team': team, 'form': form, 'updates': updates})
+
+
+@login_required
+def older_team_updates(request, team_id):
+    """Return older team updates (everything after the first 2) as JSON.
+
+    Used by the dashboard "Show more" control to lazy-load older items.
+    Access is limited to team members, team lead, or admins.
+    """
+    team = get_object_or_404(Team, pk=team_id)
+    profile = UserProfile.objects.filter(user=request.user).first()
+
+    is_member = bool(profile and profile.team_id == team.pk)
+    is_lead = team.lead_user_id == request.user.id
+    is_admin = request.user.is_staff or request.user.is_superuser
+
+    if not (is_member or is_lead or is_admin):
+        return JsonResponse({'detail': 'Forbidden'}, status=403)
+
+    updates = TeamUpdate.objects.filter(team=team)[2:]
+    payload = {
+        'updates': [
+            {
+                'id': upd.pk,
+                'title': upd.title,
+                'body': upd.body,
+                'author': upd.author.get_full_name() if upd.author and upd.author.get_full_name() else (upd.author.username if upd.author else 'Unknown'),
+                'created_at': upd.created_at.strftime('%b %d'),
+            }
+            for upd in updates
+        ]
+    }
+    return JsonResponse(payload)

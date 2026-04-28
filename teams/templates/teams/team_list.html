@@ -5,14 +5,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
     <form class="teams-filters-form" method="get">
         <div class="page-header section-header">
+            <p class="muted-text" style="font-size: 12px; margin-bottom: 4px;">Pages / Teams</p>
+
             <div class="section-search">
                 <div class = "search-bar">
                     <span class="search-icon-style material-symbols-outlined">search</span>
                     <input class="search-input" type="search" name="q" value="{{ search_query }}" placeholder="Search teams...">
                 </div>
             </div>
+            <p class="muted-text" style="font-size: 12px; margin-bottom: 4px;">Filter options:</p>
+
             <div class="section-actions">
                 <div class="dropdown">
                     <button class="dropdown-button" type="button">All Departments<i class="material-symbols-outlined">expand_more</i></button>

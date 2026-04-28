@@ -17,12 +17,12 @@ def get_visible_users(user):
     # department head
     if Department.objects.filter(head_user=user.username).exists():
         dept = Department.objects.get(head_user=user.username)
-        return User.objects.filter(userprofile__department=dept)
+        return User.objects.filter(profile__department=dept)
 
     # team leader
     elif Team.objects.filter(lead_user=user).exists():
         team = Team.objects.get(lead_user=user)
-        return User.objects.filter(userprofile__team=team)
+        return User.objects.filter(profile__team=team)
 
    # normal user
     else:

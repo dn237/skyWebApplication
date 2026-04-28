@@ -1,6 +1,14 @@
 # =================================================
 # AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
 # =================================================
+# Contributor: Anita B. - Added Project and TeamDependency models
+# =================================================
+# NOTE: This module contains the main Team/Project/Dependency models used
+# across the app. Historically there was an `Engineer` model here that
+# duplicated user/profile information. That model has been removed and
+# its data migrated into `accounts.UserProfile`. Use `UserProfile` for
+# person-level fields (team membership, avatar, job_title) and keep
+# `Team`/`Project` here for team-scoped data.
 
 from django.conf import settings
 from django.db import models
@@ -88,28 +96,21 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-class Engineer(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True, blank=True, null=True)
-    
-    # Link to Team
-    team = models.ForeignKey(
-        'teams.Team', 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        related_name='engineers'
-    )
-    
-    #Link to a User if they ever create an account
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='engineer_profile'
-    )
+
+class TeamUpdate(models.Model):
+    """A short update posted by a team's lead or members for the team's
+    dashboard. Team leads are permitted to add and delete updates for their
+    team via simple views and templates.
+    """
+    team = models.ForeignKey('teams.Team', on_delete=models.CASCADE, related_name='updates')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    title = models.CharField(max_length=200)
+    body = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.team}: {self.title[:40]}"
 

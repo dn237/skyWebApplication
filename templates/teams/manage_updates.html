@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card" style="border-radius: 18px; padding: 22px; background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 100%); box-shadow: 0 16px 36px rgba(43, 54, 116, 0.08);">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+        <div>
+            <p style="margin:0; color:#A3AED0; font-size:12px;">Team Workspace</p>
+            <h3 style="margin:2px 0 0; color:#2B3674; font-weight:800;">Manage Updates — {{ team.team_name }}</h3>
+        </div>
+        <a href="{% url 'dashboard' %}" class="btn-action-primary secondary btn-sm">Back to Dashboard</a>
+    </div>
+
+    <div style="padding:14px; border:1px solid #E6ECFA; border-radius:14px; background:#FFFFFF;">
+        <p style="margin:0 0 10px; color:#707EAE; font-size:12px;">Post a new update for your team members.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div style="display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:start;">
+                <div style="display:flex; flex-direction:column; gap:8px; min-width:0;">
+                    {{ form.title }}
+                    {{ form.body }}
+                </div>
+                <button type="submit" class="btn-action-primary" style="height:38px; padding:0 16px; white-space:nowrap;">Post Update</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin:18px 0 10px;">
+        <h4 style="margin:0; color:#2B3674; font-weight:700;">Existing Updates</h4>
+        <span style="font-size:12px; color:#A3AED0;">{{ updates|length }} total</span>
+    </div>
+
+    {% for update in updates %}
+    <article style="padding:12px 12px 10px; margin-bottom:10px; border-left:4px solid #4318FF; border-radius:10px; background:linear-gradient(180deg, #F8FAFF 0%, #F3F7FF 100%);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+            <div style="min-width:0;">
+                <h5 style="margin:0; font-size:15px; color:#2B3674; font-weight:700;">{{ update.title }}</h5>
+                <p style="margin:6px 0 0; color:#637092; font-size:13px; line-height:1.45;">{{ update.body|linebreaksbr }}</p>
+            </div>
+            <form method="post" action="{% url 'teams:delete_update' team_id=team.pk update_id=update.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm" style="background:#FFFFFF; color:#D33F49; border:1px solid #F1B7BC; border-radius:8px; padding:3px 10px; font-size:11px; font-weight:600;">Delete</button>
+            </form>
+        </div>
+        <div style="font-size:11px; color:#9AA6C5; margin-top:8px;">By {{ update.author.get_full_name|default:update.author.username }} • {{ update.created_at|date:"M d, Y H:i" }}</div>
+    </article>
+    {% empty %}
+    <div style="padding:16px; border:1px dashed #DCE4F7; border-radius:12px; text-align:center; background:#FCFDFF;">
+        <p class="muted-text" style="margin:0;">No updates yet. Post your first update above.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

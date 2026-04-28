@@ -1,55 +1,48 @@
 """
 File: messaging/models.py
 Author: Yusuf (Student 3)
-Purpose: Message model for internal direct messaging system
+Purpose: Defines the Message model used by the internal messaging system.
+Co-authors: None
 """
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Message(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
         ('sent', 'Sent'),
-        ('delivered', 'Delivered'),
-        ('read', 'Read'),
     ]
 
     sender = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name='sent_messages'
     )
     recipient = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         null=True,
+        blank=True,
         related_name='received_messages'
     )
 
-    subject = models.CharField(max_length=200, default='')
-    body = models.TextField(default='')
+    subject = models.CharField(max_length=200, blank=True)
+    body = models.TextField()
 
     status = models.CharField(
-        max_length=20,
+        max_length=10,
         choices=STATUS_CHOICES,
         default='draft'
     )
 
-    # Keep old fields for backward compatibility with existing data
-    text = models.TextField(blank=True, default='')
-    time_sent = models.DateTimeField(auto_now_add=True)
-    time_received = models.DateTimeField(null=True, blank=True)
-
-    # New fields
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     sent_at = models.DateTimeField(null=True, blank=True)
     read_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-time_sent']
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.subject or '(no subject)'} - {self.sender}"
+        return f"{self.sender} → {self.recipient}: {self.subject[:30]}"
