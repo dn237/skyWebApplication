@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from .forms import MessageForm
 from .models import Message
@@ -17,31 +18,31 @@ from .models import Message
 User = get_user_model()
 
 
-@login_required
-def inbox(request):
+def _get_conversation_list(user):
     sent_messages = Message.objects.filter(status='sent').filter(
-        Q(sender=request.user) | Q(recipient=request.user)
+        Q(sender=user) | Q(recipient=user)
     )
-
     partner_ids = set()
     for msg in sent_messages:
-        if msg.sender == request.user:
+        if msg.sender == user:
             if msg.recipient_id:
                 partner_ids.add(msg.recipient_id)
         else:
             partner_ids.add(msg.sender_id)
-
     conversations = []
     for pid in partner_ids:
         partner = User.objects.get(id=pid)
         latest = sent_messages.filter(
-            Q(sender=request.user, recipient_id=pid) |
-            Q(sender_id=pid, recipient=request.user)
+            Q(sender=user, recipient_id=pid) |
+            Q(sender_id=pid, recipient=user)
         ).order_by('-created_at').first()
         conversations.append({'partner': partner, 'latest': latest})
-
     conversations.sort(key=lambda c: c['latest'].created_at, reverse=True)
+    return conversations
 
+
+@login_required
+def inbox(request):
     unread_count = Message.objects.filter(
         recipient=request.user,
         status='sent',
@@ -49,7 +50,7 @@ def inbox(request):
     ).count()
 
     return render(request, 'messaging/inbox.html', {
-        'conversations': conversations,
+        'conversations': _get_conversation_list(request.user),
         'unread_count': unread_count,
     })
 
@@ -69,49 +70,29 @@ def conversation(request, user_id):
         read_at__isnull=True
     ).update(read_at=timezone.now())
 
-    sent_messages = Message.objects.filter(status='sent').filter(
-        Q(sender=request.user) | Q(recipient=request.user)
-    )
-    partner_ids = set()
-    for msg in sent_messages:
-        if msg.sender == request.user:
-            if msg.recipient_id:
-                partner_ids.add(msg.recipient_id)
-        else:
-            partner_ids.add(msg.sender_id)
-    conversations = []
-    for pid in partner_ids:
-        p = User.objects.get(id=pid)
-        latest = sent_messages.filter(
-            Q(sender=request.user, recipient_id=pid) |
-            Q(sender_id=pid, recipient=request.user)
-        ).order_by('-created_at').first()
-        conversations.append({'partner': p, 'latest': latest})
-    conversations.sort(key=lambda c: c['latest'].created_at, reverse=True)
-
     form = MessageForm(user=request.user)
     return render(request, 'messaging/conversation.html', {
         'partner': partner,
         'messages': messages,
         'form': form,
-        'conversations': conversations,
+        'conversations': _get_conversation_list(request.user),
     })
 
 
+@require_POST
 @login_required
 def send_in_thread(request, user_id):
-    if request.method == 'POST':
-        partner = get_object_or_404(User, id=user_id)
-        body = request.POST.get('body', '').strip()
-        if body:
-            Message.objects.create(
-                sender=request.user,
-                recipient=partner,
-                subject='',
-                body=body,
-                status='sent',
-                sent_at=timezone.now(),
-            )
+    partner = get_object_or_404(User, id=user_id)
+    body = request.POST.get('body', '').strip()
+    if body:
+        Message.objects.create(
+            sender=request.user,
+            recipient=partner,
+            subject='',
+            body=body,
+            status='sent',
+            sent_at=timezone.now(),
+        )
     return redirect('messages:conversation', user_id=user_id)
 
 
@@ -160,19 +141,19 @@ def sent(request):
     return render(request, 'messaging/sent.html', {'sent_messages': sent_list})
 
 
+@require_POST
 @login_required
 def send_draft(request, message_id):
     msg = get_object_or_404(Message, id=message_id, sender=request.user)
-    if request.method == 'POST':
-        msg.status = 'sent'
-        msg.sent_at = timezone.now()
-        msg.save()
+    msg.status = 'sent'
+    msg.sent_at = timezone.now()
+    msg.save()
     return redirect('messages:inbox')
 
 
+@require_POST
 @login_required
 def delete_message(request, message_id):
     msg = get_object_or_404(Message, id=message_id, sender=request.user)
-    if request.method == 'POST':
-        msg.delete()
+    msg.delete()
     return redirect('messages:inbox')

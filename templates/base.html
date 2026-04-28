@@ -41,9 +41,10 @@
                     class="smart-button {% if 'teams' in request.path %}active{% endif %}">
                     <span class="material-symbols-outlined">groups</span> Teams
                 </a>
-                <a href="{% url 'messages:inbox' %}" 
+                <a href="{% url 'messages:inbox' %}"
                     class="smart-button {% if 'messages' in request.path %}active{% endif %}" >
                     <span class="material-symbols-outlined">mail</span> Messages
+                    {% if unread_count %}<span class="msg-badge" style="background:#E53E3E;color:white;border-radius:10px;font-size:10px;padding:1px 6px;margin-left:4px;font-weight:700;line-height:1.4;">{{ unread_count }}</span>{% endif %}
                 </a>
                 <a href="{% url 'organizations:dept' %}" 
                     class="smart-button{% if request.resolver_match.namespace == 'organizations' %} active{% endif %}">
