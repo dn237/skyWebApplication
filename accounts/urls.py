@@ -11,15 +11,15 @@ from . import views
 app_name = 'accounts'
 
 urlpatterns = [
-    path('signup/', login_not_required(views.signup), name='signup'),
-    path('login/', login_not_required(views.login), name='login'),
+    path('signup/', login_not_required(views.SignupView.as_view()), name='signup'),
+    path('login/', login_not_required(views.LoginView.as_view()), name='login'),
     
-    # The crucial naming to match base.html sidebar links
-    path('logout/', views.logout_view, name='logout'),
-    path('user-access/', views.user_access, name='user_access'),
-    path('profile/', views.profile, name='profile'),
+    # These names match the links in base.html
+    path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('user-access/', views.UserAccessView.as_view(), name='user_access'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
     
-    # Password Reset URLs (Integrated from main branch)
+    # Password reset pages
     path('password-reset/', login_not_required(auth_views.PasswordResetView.as_view(
         template_name='accounts/password_reset_form.html',
         success_url=reverse_lazy('accounts:password_reset_done'),

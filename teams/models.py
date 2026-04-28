@@ -3,12 +3,9 @@
 # =================================================
 # Contributor: Anita B. - Added Project and TeamDependency models
 # =================================================
-# NOTE: This module contains the main Team/Project/Dependency models used
-# across the app. Historically there was an `Engineer` model here that
-# duplicated user/profile information. That model has been removed and
-# its data migrated into `accounts.UserProfile`. Use `UserProfile` for
-# person-level fields (team membership, avatar, job_title) and keep
-# `Team`/`Project` here for team-scoped data.
+# NOTE: This file holds the core team, project, and dependency models.
+# Person details like team membership, avatar, and job title stay in
+# `accounts.UserProfile` so this app only stores team-level data.
 
 from django.conf import settings
 from django.db import models
@@ -20,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class Team(models.Model):
+    """A team in the app."""
+
     team_id = models.AutoField(primary_key=True, db_column="id")
     team_name = models.CharField(max_length=100, default="", db_column="name")
 
@@ -63,6 +62,8 @@ class Team(models.Model):
         return self.team_name
 
 class TeamDependency(models.Model):
+    """A link showing that one team depends on another."""
+
     source_team = models.ForeignKey(
         'teams.Team',
         on_delete=models.CASCADE,
@@ -85,6 +86,8 @@ class TeamDependency(models.Model):
 
 
 class Project(models.Model):
+    """A project owned by a team."""
+
     project_id = models.AutoField(primary_key=True)
 
     name = models.CharField(max_length=200)
@@ -109,10 +112,7 @@ class Project(models.Model):
 
 
 class TeamUpdate(models.Model):
-    """A short update posted by a team's lead or members for the team's
-    dashboard. Team leads are permitted to add and delete updates for their
-    team via simple views and templates.
-    """
+    """A short update that appears on the team's dashboard."""
     team = models.ForeignKey('teams.Team', on_delete=models.CASCADE, related_name='updates')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=200)

@@ -6,19 +6,14 @@ from django.contrib import admin
 from .models import Team, Project, TeamDependency
 from .models import TeamUpdate
 
-# Admin configuration for `Team`, `Project` and `TeamDependency`.
-# Note: The separate `Engineer` admin was intentionally removed because
-# engineer/person data now lives on `accounts.UserProfile`. Use the
-# `Users` / `UserProfile` admin to manage people.
+# Admin setup for Team, Project, and TeamDependency.
+# People data now lives in accounts.UserProfile, so there is no separate
+# Engineer admin anymore.
 
 
-# --- 1. Team Administration ---
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    """
-    Main Team configuration. 
-    Organizes team metadata, tools, and processes into logical fieldsets.
-    """
+    """Admin view for teams."""
     list_display = ('team_name', 'dept', 'lead_user', 'status')
     list_filter = ('dept', 'status')
     search_fields = ('team_name', 'mission_statement', 'focus_areas')
@@ -38,12 +33,9 @@ class TeamAdmin(admin.ModelAdmin):
         }),
     )
 
-# --- 2. Project Administration ---
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    """
-    Tracking for specific initiatives assigned to Teams.
-    """
+    """Admin view for projects."""
     list_display = ('name', 'status', 'team', 'start_date', 'end_date')
     list_filter = ('status', 'start_date', 'team')
     search_fields = ('name', 'description')
@@ -60,12 +52,9 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
     )
 
-# --- 3. Dependency Mapping ---
 @admin.register(TeamDependency)
 class TeamDependencyAdmin(admin.ModelAdmin):
-    """
-    Visualizes the connections and blockers between different squads.
-    """
+    """Admin view for team links."""
     list_display = ("source_team", "target_team", "dependency_type")
     search_fields = ("source_team__team_name", "target_team__team_name")
 

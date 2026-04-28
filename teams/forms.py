@@ -1,8 +1,16 @@
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
+
+"""Forms used by the teams app."""
+
 from django import forms
 from .models import TeamUpdate
+from .models import Team
 
 
 class TeamUpdateForm(forms.ModelForm):
+    """Form for a short team update."""
     class Meta:
         model = TeamUpdate
         fields = ('title', 'body')
@@ -10,15 +18,10 @@ class TeamUpdateForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Update title'}),
             'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Describe the update...'}),
         }
-# =================================================
-# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
-# =================================================
-
-from django import forms
-from .models import Team
 
 
 class TeamForm(forms.ModelForm):
+    """Form for creating and editing teams."""
     REQUIRED_FIELDS = {
         'team_name',
         'focus_areas',
@@ -73,6 +76,6 @@ class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Only selected fields should be mandatory in the edit form.
+        # Keep only the important fields required on the edit form.
         for name, field in self.fields.items():
             field.required = name in self.REQUIRED_FIELDS

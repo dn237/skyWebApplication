@@ -14,6 +14,13 @@ if TYPE_CHECKING:
 
 
 class UserProfile(models.Model):
+    """Per-user additional metadata.
+
+    Stores non-authentication attributes such as `team` membership,
+    `department`, `avatar` image and `job_title`. Keep profile-level data
+    here to avoid extending the primary User model directly.
+    """
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
 
     team = models.ForeignKey(

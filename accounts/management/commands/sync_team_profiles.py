@@ -1,17 +1,7 @@
-"""
-Management command: sync_team_profiles
+"""Sync team leads to profile rows.
 
-This command ensures that each Team.lead_user has a corresponding
-`accounts.UserProfile` with the `team` field set to the team they lead.
-
-Reason: we migrated away from the legacy `Engineer` model and now keep
-team membership on the UserProfile. Some legacy data imports or edge
-cases may have left lead users without a linked profile — this command
-fixes that in bulk.
-
-Run: `python manage.py sync_team_profiles`
-
-This command is idempotent and safe to re-run.
+This command makes sure every team lead has a matching UserProfile with
+the right team set. It is safe to run more than once.
 """
 
 from django.core.management.base import BaseCommand
@@ -21,7 +11,7 @@ from accounts.models import UserProfile
 
 
 class Command(BaseCommand):
-    help = 'Ensure Team.lead_user has a UserProfile.team set to the team they lead.'
+    help = 'Make sure each team lead has a matching UserProfile.'
 
     def handle(self, *args, **options):
         updated = 0
@@ -31,15 +21,12 @@ class Command(BaseCommand):
             if not lead:
                 continue
 
-            # get_or_create ensures the user has a profile; was_created
-            # tells us whether we made a new profile for a user that
-            # previously didn't have one.
+            # Create the profile if it is missing.
             profile, was_created = UserProfile.objects.get_or_create(user=lead)
             if was_created:
                 created += 1
 
-            # Use .pk for portability in case the Team model uses a
-            # non-standard primary key name.
+            # Keep the profile tied to the team the user leads.
             if profile.team_id != team.pk:
                 profile.team = team
                 profile.save(update_fields=['team'])

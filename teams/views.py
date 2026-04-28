@@ -2,284 +2,344 @@
 # AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
 # =================================================
 
+"""Views for the teams app.
+
+These pages handle the team list, team details, member rosters, project
+pages, dependency pages, and the update tools used by team leads.
+Where the same flow repeats, the code uses class-based views so the logic
+stays in one place and is easier to follow.
+"""
+
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
-from .models import Project, Team
-from .forms import TeamForm
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DetailView, ListView, UpdateView, FormView, DeleteView, TemplateView
+from django.views.generic.base import ContextMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Project, Team, TeamUpdate
+from .forms import TeamForm, TeamUpdateForm
 from accounts.models import UserProfile
-from .models import TeamUpdate
-from .forms import TeamUpdateForm
 
+class TeamListView(ListView):
+    """Show the teams list with search, filters, and sorting."""
 
+    model = Team
+    template_name = "teams/team_list.html"
+    context_object_name = "teams"
 
-
-def teamsHome(request):
-    # 1. Capture View Preference (Grid vs List)
-    view_type = request.GET.get("view", "grid") 
-
-    # 2. Existing Search/Filter/Sort Logic
-    search_query = request.GET.get("q", "").strip()
-    selected_departments = request.GET.getlist("departments")
-    selected_sort = request.GET.get("sort", "name_asc")
-
-    teams = Team.objects.select_related("dept", "lead_user").annotate(
-        # name must match what used in HTML
-        computed_count=Count("members", distinct=True), 
-        repo_count=Count("projects", distinct=True) 
-    )
-
-    if search_query:
-        teams = teams.filter(
-            Q(team_name__icontains=search_query)
-            | Q(mission_statement__icontains=search_query)
-            | Q(dept__dept_name__icontains=search_query)
+    def get_queryset(self):
+        queryset = Team.objects.select_related("dept", "lead_user").annotate(
+            computed_count=Count("members", distinct=True),
+            repo_count=Count("projects", distinct=True),
         )
 
-    if selected_departments:
-        teams = teams.filter(dept__dept_name__in=selected_departments)
+        self.search_query = self.request.GET.get("q", "").strip()
+        self.selected_departments = self.request.GET.getlist("departments")
+        self.selected_sort = self.request.GET.get("sort", "name_asc")
+        self.view_type = self.request.GET.get("view", "grid")
 
-    # Sorting logic
-    if selected_sort == "name_desc":
-        teams = teams.order_by("-team_name")
-    elif selected_sort == "date_newest":
-        teams = teams.order_by("-team_id")
-    elif selected_sort == "date_oldest":
-        teams = teams.order_by("team_id")
-    else:
-        teams = teams.order_by("team_name")
+        if self.search_query:
+            queryset = queryset.filter(
+                Q(team_name__icontains=self.search_query)
+                | Q(mission_statement__icontains=self.search_query)
+                | Q(dept__dept_name__icontains=self.search_query)
+            )
 
-    # Get unique departments for the filter dropdown
-    departments = (
-        Team.objects.select_related("dept")
-        .values_list("dept__dept_name", flat=True)
-        .order_by("dept__dept_name")
-        .distinct()
-    )
+        if self.selected_departments:
+            queryset = queryset.filter(dept__dept_name__in=self.selected_departments)
+
+        if self.selected_sort == "name_desc":
+            return queryset.order_by("-team_name")
+        if self.selected_sort == "date_newest":
+            return queryset.order_by("-team_id")
+        if self.selected_sort == "date_oldest":
+            return queryset.order_by("team_id")
+        return queryset.order_by("team_name")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["departments"] = (
+            Team.objects.select_related("dept")
+            .values_list("dept__dept_name", flat=True)
+            .order_by("dept__dept_name")
+            .distinct()
+        )
+        context["search_query"] = getattr(self, "search_query", "")
+        context["selected_departments"] = getattr(self, "selected_departments", [])
+        context["selected_sort"] = getattr(self, "selected_sort", "name_asc")
+        context["view_type"] = getattr(self, "view_type", "grid")
+        return context
 
 
-    # 3. Add 'view_type' to the Context
-    return render(request, "teams/team_list.html", {
-        "teams": teams,
-        "departments": departments,
-        "search_query": search_query,
-        "selected_departments": selected_departments,
-        "selected_sort": selected_sort,
-        "view_type": view_type, # <--- Tells HTML which layout to use
-    })
+class TeamDetailView(DetailView):
+    """Show one team's profile page."""
 
+    model = Team
+    template_name = "teams/team_profile.html"
+    pk_url_kwarg = "team_id"
+    context_object_name = "team"
 
-def teamsProfile(request, team_id):
-    # 1. Fetch team with optimized counts for the dashboard cards
-    team = get_object_or_404(
-        Team.objects.select_related("dept", "lead_user").annotate(
+    def get_queryset(self):
+        return Team.objects.select_related("dept", "lead_user").annotate(
             computed_member_count=Count("members", distinct=True),
-            computed_repo_count=Count("projects", distinct=True)
-        ), 
-        pk=team_id
-    )
+            computed_repo_count=Count("projects", distinct=True),
+        )
 
-    # 2. Get dependencies for the sidebar
-    dependencies = team.downstream_dependencies.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        is_admin = self.request.user.is_staff or self.request.user.is_superuser  # type: ignore[attr-defined]
+        is_leader = self.request.user == self.object.lead_user
+        context["dependencies"] = self.object.downstream_dependencies.all()
+        context["can_edit"] = is_admin or is_leader
+        context["is_admin"] = is_admin
+        return context
 
-    # --- ROLE-BASED ACCESS CONTROL ---
 
-    # 1. Admin: Has global rights (is_staff)
-    is_admin = request.user.is_staff or request.user.is_superuser
+teamsHome = TeamListView.as_view()
+teamsProfile = TeamDetailView.as_view()
 
-    # 2. Team Leader: Has rights for THIS team specifically
-    is_leader = (request.user == team.lead_user)
-    
-    # 3. Permission: Can they see the 'Edit' buttons?
-    can_edit = is_admin or is_leader
 
-    return render(request, 'teams/team_profile.html', {
-        'team': team,
-        'dependencies': team.downstream_dependencies.all(),
-        'can_edit': can_edit, 
-        'is_admin': is_admin,
-    })
+class TeamContextMixin(ContextMixin):
+    """Tiny helper for views that all start from the same team."""
 
-def teamMembers(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
-    members = UserProfile.objects.select_related('user').filter(team=team).order_by('user__username')
-    
-    return render(request, 'teams/team_members.html', {
-        'team': team,
-        'members': members
-    })
+    team_context_name = "team"
 
-def teamProjects(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
-    projects = team.projects.all()
-    
-    return render(request, 'teams/team_projects.html', {
-        'team': team,
-        'projects': projects
-    })
+    def get_team(self):
+        return get_object_or_404(
+            Team.objects.select_related("dept", "lead_user"),
+            pk=self.kwargs["team_id"],  # type: ignore[attr-defined]
+        )
 
-def teamDependencies(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
-    dependencies = team.downstream_dependencies.select_related('target_team').all()
-    
-    return render(request, 'teams/team_dependencies.html', {
-        'team': team,
-        'dependencies': dependencies
-    })
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[self.team_context_name] = self.get_team()
+        return context
 
-def teamRepositories(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
-    repositories = team.projects.filter(description__icontains="github.com").all()
 
-    return render(request, 'teams/team_repositories.html', {
-        'team': team,
-        'repositories': repositories
-    })
+class TeamMembersView(TeamContextMixin, TemplateView):
+    """Show the people on this team."""
 
-def projectDetail(request, team_pk, pk):
-    project = get_object_or_404(Project, pk=pk, team_id=team_pk)
-    return render(request, 'teams/project_detail.html', {
-        'project': project
-    })
+    template_name = "teams/team_members.html"
 
-@login_required
-def editTeam(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        team = context["team"]
+        context["members"] = UserProfile.objects.select_related("user").filter(team=team).order_by("user__username")
+        return context
 
-    # Role-based access control
-    is_admin = request.user.is_staff or request.user.is_superuser
-    is_leader = request.user == team.lead_user
 
-    if not (is_admin or is_leader):
-        messages.error(request, 'You do not have permission to edit this team.')
-        return redirect('teams:detail', team_id=team_id)
+class TeamProjectsView(TeamContextMixin, TemplateView):
+    """Show the projects linked to this team."""
 
-    User = get_user_model()
+    template_name = "teams/team_projects.html"
 
-    if request.method == 'POST':
-        add_user_id = request.POST.get('add_user_id')
-        remove_user_id = request.POST.get('remove_user_id')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["projects"] = context["team"].projects.all()
+        return context
+
+
+class TeamDependenciesView(TeamContextMixin, TemplateView):
+    """Show which teams this team depends on."""
+
+    template_name = "teams/team_dependencies.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["dependencies"] = context["team"].downstream_dependencies.select_related("target_team").all()
+        return context
+
+
+class TeamRepositoriesView(TeamContextMixin, TemplateView):
+    """Show the projects that look like code repositories."""
+
+    template_name = "teams/team_repositories.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["repositories"] = context["team"].projects.filter(description__icontains="github.com").all()
+        return context
+
+
+class ProjectDetailView(DetailView):
+    """Show one project and make sure it belongs to the right team."""
+
+    model = Project
+    template_name = "teams/project_detail.html"
+    pk_url_kwarg = "pk"
+    context_object_name = "project"
+
+    def get_queryset(self):
+        return Project.objects.select_related("team", "team__dept", "team__lead_user")
+
+    def get_object(self, queryset=None):
+        queryset = queryset or self.get_queryset()
+        return get_object_or_404(queryset, pk=self.kwargs["pk"], team_id=self.kwargs["team_id"])
+
+
+teamMembers = TeamMembersView.as_view()
+teamProjects = TeamProjectsView.as_view()
+teamDependencies = TeamDependenciesView.as_view()
+teamRepositories = TeamRepositoriesView.as_view()
+projectDetail = ProjectDetailView.as_view()
+
+class TeamPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Shared permission check for the views that let people edit teams."""
+
+    permission_mode = "lead_or_admin"
+
+    def get_team(self):
+        return get_object_or_404(
+            Team.objects.select_related("dept", "lead_user"),
+            pk=self.kwargs["team_id"],  # type: ignore[attr-defined]
+        )
+
+    def user_can_access(self, team):
+        if self.permission_mode == "lead_only":
+            return team.lead_user == self.request.user  # type: ignore[attr-defined]
+        return self.request.user.is_staff or self.request.user.is_superuser or self.request.user == team.lead_user  # type: ignore[attr-defined]
+
+    def test_func(self):
+        return self.user_can_access(self.get_team())
+
+
+class TeamUpdateView(TeamPermissionMixin, UpdateView):
+    """Edit a team and handle the quick add/remove member actions."""
+
+    model = Team
+    form_class = TeamForm
+    template_name = "teams/team_form.html"
+    pk_url_kwarg = "team_id"
+
+    def get_queryset(self):
+        return Team.objects.select_related("dept", "lead_user")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Team "{self.object.team_name}" has been updated successfully.')
+        return response
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        user_model = get_user_model()
+
+        add_user_id = request.POST.get("add_user_id")
+        remove_user_id = request.POST.get("remove_user_id")
 
         if add_user_id:
-            user = get_object_or_404(User, pk=add_user_id)
+            user = get_object_or_404(user_model, pk=add_user_id)
             profile, _ = UserProfile.objects.get_or_create(user=user)
 
-            if profile.team == team:
-                messages.info(request, f'{user.username} is already in this team.') # type: ignore
+            if profile.team == self.object:
+                messages.info(request, f"{user.username} is already in this team.")  # type: ignore[attr-defined]
             else:
-                profile.team = team
-                profile.save(update_fields=['team'])
-                messages.success(request, f'{user.username} was added to {team.team_name}.') # type: ignore
-
-            return redirect('teams:edit', team_id=team_id)
+                profile.team = self.object
+                profile.save(update_fields=["team"])
+                messages.success(request, f"{user.username} was added to {self.object.team_name}.")  # type: ignore[attr-defined]
+            return redirect("teams:edit", team_id=self.object.pk)
 
         if remove_user_id:
-            profile = get_object_or_404(UserProfile, user_id=remove_user_id, team=team)
+            profile = get_object_or_404(UserProfile, user_id=remove_user_id, team=self.object)
             username = profile.user.username
             profile.team = None
-            profile.save(update_fields=['team'])
-            messages.success(request, f'{username} was removed from {team.team_name}.')
-            return redirect('teams:edit', team_id=team_id)
+            profile.save(update_fields=["team"])
+            messages.success(request, f"{username} was removed from {self.object.team_name}.")
+            return redirect("teams:edit", team_id=self.object.pk)
 
-        form = TeamForm(request.POST, instance=team)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f'Team "{team.team_name}" has been updated successfully.')
-            return redirect('teams:detail', team_id=team_id)
-        messages.error(request, 'Please correct the errors below.')
-    else:
-        form = TeamForm(instance=team)
+        return super().post(request, *args, **kwargs)
 
-    current_members = UserProfile.objects.select_related('user').filter(team=team).order_by('user__username')
-    available_profiles = UserProfile.objects.select_related('user').exclude(team=team).order_by('user__username')
-    users_without_profile = User.objects.filter(profile__isnull=True).order_by('username')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["current_members"] = UserProfile.objects.select_related("user").filter(team=self.object).order_by("user__username")
+        context["available_profiles"] = UserProfile.objects.select_related("user").exclude(team=self.object).order_by("user__username")
+        context["users_without_profile"] = get_user_model().objects.filter(profile__isnull=True).order_by("username")
+        return context
 
-    return render(request, 'teams/team_form.html', {
-        'form': form,
-        'team': team,
-        'current_members': current_members,
-        'available_profiles': available_profiles,
-        'users_without_profile': users_without_profile,
-    })
+    def get_success_url(self):
+        return reverse("teams:detail", kwargs={"team_id": self.object.pk})
 
 
-@login_required
-def add_team_update(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
-    # only the lead can create updates
-    if team.lead_user != request.user:
-        messages.error(request, 'Only the team lead can post updates.')
-        return redirect('teams:detail', team_id=team_id)
+class TeamUpdateCreateView(TeamPermissionMixin, FormView):
+    """Let the team lead post a short update."""
 
-    if request.method == 'POST':
-        form = TeamUpdateForm(request.POST)
-        if form.is_valid():
-            upd = form.save(commit=False)
-            upd.team = team
-            upd.author = request.user
-            upd.save()
-            messages.success(request, 'Update posted.')
-            return redirect('dashboard')
-    else:
-        form = TeamUpdateForm()
+    form_class = TeamUpdateForm
+    template_name = "teams/add_update.html"
+    permission_mode = "lead_only"
 
-    return render(request, 'teams/add_update.html', {'form': form, 'team': team})
+    def form_valid(self, form):
+        team = self.get_team()
+        update = form.save(commit=False)
+        update.team = team
+        update.author = self.request.user
+        update.save()
+        messages.success(self.request, "Update posted.")
+        return redirect("dashboard")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["team"] = self.get_team()
+        return context
 
 
-@login_required
-def delete_team_update(request, team_id, update_id):
-    team = get_object_or_404(Team, pk=team_id)
-    update = get_object_or_404(TeamUpdate, pk=update_id, team=team)
+class TeamUpdateDeleteView(TeamPermissionMixin, DeleteView):
+    """Delete a team update after a quick confirmation."""
 
-    if team.lead_user != request.user:
-        messages.error(request, 'Only the team lead can delete updates.')
-        return redirect('teams:detail', team_id=team_id)
+    model = TeamUpdate
+    template_name = "teams/delete_update.html"
+    pk_url_kwarg = "update_id"
+    permission_mode = "lead_only"
+    success_url = reverse_lazy("dashboard")
 
-    if request.method == 'POST':
-        update.delete()
-        messages.success(request, 'Update deleted.')
-        return redirect('dashboard')
+    def get_queryset(self):
+        return TeamUpdate.objects.select_related("team", "author").filter(team_id=self.kwargs["team_id"])
 
-    return render(request, 'teams/delete_update.html', {'update': update, 'team': team})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["team"] = self.object.team
+        return context
 
-@login_required
-def manage_team_updates(request, team_id):
-    team = get_object_or_404(Team, pk=team_id)
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(request, "Update deleted.")
+        return response
 
-    if team.lead_user != request.user:
-        messages.error(request, 'Only the team lead may manage updates.')
-        return redirect('dashboard')
 
-    if request.method == 'POST':
-        form = TeamUpdateForm(request.POST)
-        if form.is_valid():
-            upd = form.save(commit=False)
-            upd.team = team
-            upd.author = request.user
-            upd.save()
-            messages.success(request, 'Update posted.')
-            return redirect('teams:manage_updates', team_id=team.pk)
-    else:
-        form = TeamUpdateForm()
+class TeamUpdateManageView(TeamUpdateCreateView):
+    """Show the update form and the team's recent updates on one page."""
 
-    updates = team.updates.all()
+    template_name = "teams/manage_updates.html"
 
-    return render(request, 'teams/manage_updates.html', {
-        'team': team,
-        'form': form,
-        'updates': updates
-    })
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        team = self.get_team()
+        context["team"] = team
+        context["updates"] = team.updates.all()
+        return context
 
-@login_required
+    def form_valid(self, form):
+        team = self.get_team()
+        update = form.save(commit=False)
+        update.team = team
+        update.author = self.request.user
+        update.save()
+        messages.success(self.request, "Update posted.")
+        return redirect("teams:manage_updates", team_id=team.pk)
+
+
+teamsHome = TeamListView.as_view()
+teamsProfile = TeamDetailView.as_view()
+editTeam = TeamUpdateView.as_view()
+add_team_update = TeamUpdateCreateView.as_view()
+delete_team_update = TeamUpdateDeleteView.as_view()
+manage_team_updates = TeamUpdateManageView.as_view()
+
+
 def older_team_updates(request, team_id):
-    """Return older team updates (everything after the first 2) as JSON.
-
-    Used by the dashboard "Show more" control to lazy-load older items.
-    Access is limited to team members, team lead, or admins.
-    """
+    """Return the older team updates as JSON for the dashboard's 'show more' button."""
     team = get_object_or_404(Team, pk=team_id)
     profile = UserProfile.objects.filter(user=request.user).first()
 

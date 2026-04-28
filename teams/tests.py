@@ -6,35 +6,31 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from organizations.models import Department
 from .models import Team
 from .models import TeamUpdate
 from accounts.models import UserProfile
 
 
 class TeamsViewTests(TestCase):
-	"""Functional tests for the teams views.
-
-	These tests exercise the public team list/search and the team
-	members page. They were added to replace an ad-hoc tmp script and
-	provide repeatable checks for the behaviors developers commonly use
-	while debugging teams-related UIs.
-	"""
+	"""Tests for the teams pages and update flows."""
 
 	def setUp(self):
 		User = get_user_model()
-		# create a lead user and a regular member
+		# Create the people we use across the tests.
 		self.lead = User.objects.create_user(username='leaduser', password='pass') # type: ignore
 		self.member = User.objects.create_user(username='member', password='pass') # type: ignore
+		self.outsider = User.objects.create_user(username='outsider', password='pass') # type: ignore
+		self.department = Department.objects.create(dept_name='Engineering', head_user='Director')
 
-		# create a team and assign a lead
-		self.team = Team.objects.create(team_name='API Team')
-		self.team.lead_user = self.lead
-		self.team.save()
+		# Build the main team and a second team for comparison.
+		self.team = Team.objects.create(team_name='API Team', dept=self.department, lead_user=self.lead, focus_areas='APIs', skills_technologies='Django')
+		self.other_team = Team.objects.create(team_name='Platform Team')
 
-		# create profiles and link member to team
-		# Profiles provide the canonical team membership used in the UI.
+		# Profiles are how the UI knows who belongs where.
 		UserProfile.objects.create(user=self.lead, team=self.team, job_title='Team Lead')
 		UserProfile.objects.create(user=self.member, team=self.team, job_title='Engineer')
+		UserProfile.objects.create(user=self.outsider, team=self.other_team, job_title='Analyst')
 
 	def test_team_list_shows_team(self):
 		"""The team index should render and include the created team."""
@@ -43,6 +39,55 @@ class TeamsViewTests(TestCase):
 		resp = self.client.get(url, follow=True)
 		self.assertEqual(resp.status_code, 200)
 		self.assertIn('API Team', resp.content.decode())
+
+	def test_team_detail_shows_edit_controls_for_lead(self):
+		"""The CBV detail page should expose edit actions to the team lead."""
+		url = reverse('teams:detail', kwargs={'team_id': self.team.pk})
+		self.client.login(username='leaduser', password='pass')
+		resp = self.client.get(url)
+		self.assertEqual(resp.status_code, 200)
+		body = resp.content.decode()
+		self.assertIn('API Team', body)
+		self.assertIn('can_edit', resp.context)
+
+	def test_non_lead_cannot_open_team_edit_page(self):
+		"""Only the lead or an admin should be allowed to open the edit page."""
+		url = reverse('teams:edit', kwargs={'team_id': self.team.pk})
+		self.client.login(username='outsider', password='pass')
+		resp = self.client.get(url)
+		self.assertEqual(resp.status_code, 403)
+		self.assertFalse(Team.objects.filter(pk=self.team.pk, team_name='Blocked Rename').exists())
+
+	def test_team_lead_can_update_team_name(self):
+		"""The update CBV should save team metadata changes."""
+		url = reverse('teams:edit', kwargs={'team_id': self.team.pk})
+		self.client.login(username='leaduser', password='pass')
+		resp = self.client.post(url, {
+			'team_name': 'API Team Updated',
+			'focus_areas': 'Platform APIs',
+			'skills_technologies': 'Django, PostgreSQL',
+			'status': 'Active',
+			'dept': self.department.pk,
+			'lead_user': self.lead.pk,
+		}, follow=True)
+		self.assertEqual(resp.status_code, 200)
+		self.team.refresh_from_db()
+		self.assertEqual(self.team.team_name, 'API Team Updated')
+
+	def test_team_lead_can_add_and_remove_member_through_edit_page(self):
+		"""The edit CBV should still support add/remove member quick actions."""
+		url = reverse('teams:edit', kwargs={'team_id': self.team.pk})
+		self.client.login(username='leaduser', password='pass')
+
+		resp_add = self.client.post(url, {'add_user_id': self.outsider.pk}, follow=True)
+		self.assertEqual(resp_add.status_code, 200)
+		self.outsider.profile.refresh_from_db()
+		self.assertEqual(self.outsider.profile.team, self.team)
+
+		resp_remove = self.client.post(url, {'remove_user_id': self.outsider.pk}, follow=True)
+		self.assertEqual(resp_remove.status_code, 200)
+		self.outsider.profile.refresh_from_db()
+		self.assertIsNone(self.outsider.profile.team)
 
 	def test_search_filters_results(self):
 		"""Search parameter should filter teams and return the matching team."""
@@ -55,12 +100,12 @@ class TeamsViewTests(TestCase):
 	def test_team_members_page_shows_members(self):
 		"""Team members page should list members for the given team."""
 		url = reverse('teams:members', kwargs={'team_id': self.team.pk})
-		# login as member
+		# Log in as the member so the page has a real user.
 		self.client.login(username='member', password='pass')
 		resp = self.client.get(url)
 		self.assertEqual(resp.status_code, 200)
 		body = resp.content.decode()
-		# member list should include member's username or job title
+		# The page should show either the username or the title.
 		self.assertTrue('member' in body or 'Engineer' in body)
 
 	def test_dashboard_team_section_includes_current_user(self):
@@ -84,21 +129,38 @@ class TeamsViewTests(TestCase):
 		self.client.login(username='leaduser', password='pass')
 		resp = self.client.post(url_add, {'title': 'Roadmap', 'body': 'We shipped v1'}, follow=True)
 		self.assertEqual(resp.status_code, 200)
-		# Ensure the update appears on dashboard
+		# Make sure the update shows up on the dashboard.
 		dash = reverse('dashboard')
 		resp2 = self.client.get(dash)
 		self.assertIn('Roadmap', resp2.content.decode())
 
-		# Find the created update id via the DB
+		# Pull the new update back out of the database.
 		update = TeamUpdate.objects.filter(team=self.team, title='Roadmap').first()
 		self.assertIsNotNone(update)
 
-		# Delete it
+		# Delete it through the same flow a user would use.
 		url_del = reverse('teams:delete_update', kwargs={'team_id': self.team.pk, 'update_id': update.pk}) # type: ignore
 		resp3 = self.client.post(url_del, follow=True)
 		self.assertEqual(resp3.status_code, 200)
-		# Ensure it's gone
+		# Confirm the row is gone.
 		self.assertFalse(TeamUpdate.objects.filter(pk=update.pk).exists()) # type: ignore
+
+	def test_manage_updates_page_posts_update(self):
+		"""The management CBV should create updates and list them on the same page."""
+		url = reverse('teams:manage_updates', kwargs={'team_id': self.team.pk})
+		self.client.login(username='leaduser', password='pass')
+		resp = self.client.post(url, {'title': 'Sprint', 'body': 'Planning complete'}, follow=True)
+		self.assertEqual(resp.status_code, 200)
+		self.assertTrue(TeamUpdate.objects.filter(team=self.team, title='Sprint').exists())
+		self.assertIn('Sprint', resp.content.decode())
+
+	def test_non_lead_cannot_manage_team_updates(self):
+		"""Only the team lead should be able to use the update management page."""
+		url = reverse('teams:manage_updates', kwargs={'team_id': self.team.pk})
+		self.client.login(username='member', password='pass')
+		resp = self.client.get(url)
+		self.assertEqual(resp.status_code, 403)
+		self.assertFalse(TeamUpdate.objects.filter(team=self.team, title='Blocked').exists())
 
 	def test_older_updates_endpoint_returns_updates_after_first_two(self):
 		"""AJAX endpoint should return only updates older than the first two."""
@@ -116,4 +178,3 @@ class TeamsViewTests(TestCase):
 		# The endpoint excludes the 2 most recent updates
 		self.assertEqual(len(data['updates']), 2)
 
-# Create your tests here.
