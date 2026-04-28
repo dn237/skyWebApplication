@@ -66,6 +66,31 @@
     .back-btn .material-symbols-outlined {
         font-size: 18px;
     }
+    .custom-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #D9E1F2;
+        border-radius: 12px;
+        font-size: 14px;
+        background: #F8FAFF;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .custom-input:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(104, 106, 222, 0.15);
+    }
+
+    /* Make calendar icon look cleaner */
+    .custom-input::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.7;
+    }
+
+    .custom-input::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
+    }
 </style>
 
 <div class="page-content">
