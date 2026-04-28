@@ -116,7 +116,7 @@
                     </table>
                 </div>
             </div>
-                        <div class="dashboard-footer-actions" style="transform: translateX(111px);">
+            <div class="dashboard-footer-actions dashboard-legacy-actions">
                 <a href="{% url 'teams:index' %}" class="btn-action-primary">Explore Teams</a>
                 {% if my_team and my_team.lead_user and my_team.lead_user.id == request.user.id %}
                 <a href="{% url 'teams:manage_updates' team_id=my_team.pk %}" class="btn-action-primary secondary">Manage Updates</a>
@@ -124,7 +124,7 @@
                 <a href="{% url 'messages:inbox' %}" class="btn-action-primary secondary">Open Inbox</a>
                 {% endif %}
             </div>
-            
+
         </div>
 
         <div class="grid-stack">
@@ -163,7 +163,7 @@
             <div class="card dashboard-card">
                 
                 <h3 class="card-title-figma">{{ my_team.team_name|default:"My Team" }} Members</h3>
-                <div class="members-scroll-area" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                <div class="members-scroll-area dashboard-members-scroll" style="padding-right: 5px;">
                     <div class="page-stack" style="gap: 8px;">
                         {% for member in team_members %}
                         <div class="member-row-figma pro-row" data-roster-name="{{ member.user.username }}" {% if member.user_id == current_user_id %}data-current-user="true"{% endif %} style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
@@ -193,7 +193,6 @@
                 </div>
             </div>
         </div>
-        
 
         <div class="grid-stack">
             <div class="card dashboard-card">
