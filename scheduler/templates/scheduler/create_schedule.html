@@ -83,6 +83,8 @@
                     Edit Meeting
                 {% elif schedule_type == 'reminder' %}
                     Add Reminder
+                {% elif schedule_type == 'task' %}
+                    Add Task
                 {% else %}
                     Create New Meeting
                 {% endif %}
@@ -116,7 +118,7 @@
                     {{ form.platform }}
                 </div>
 
-                {% if schedule_type != 'reminder' %}
+                {% if schedule_type != 'reminder' and schedule_type != 'task' %}
                 <div style="margin-bottom:20px;">
                     <label>Type</label>
                     {{ form.schedule_type }}
@@ -128,6 +130,8 @@
                         Save Changes
                     {% elif schedule_type == 'reminder' %}
                         Save Reminder
+                    {% elif schedule_type == 'task' %}
+                        Save Task
                     {% else %}
                         Save Meeting
                     {% endif %}

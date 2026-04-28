@@ -3,10 +3,9 @@ from django.contrib.auth.models import User
 
 class Schedule(models.Model):
     SCHEDULE_TYPES = [
-        ('weekly', 'Weekly'),
+         ('weekly', 'Weekly'),
         ('monthly', 'Monthly'),
         ('upcoming', 'Upcoming'),
-        ('reminder', 'Reminder'),
     ]
 
     title = models.CharField(max_length=200)
@@ -16,7 +15,11 @@ class Schedule(models.Model):
     time = models.TimeField()
     platform = models.CharField(max_length=100)
 
-    schedule_type = models.CharField(max_length=20, choices=SCHEDULE_TYPES)
+    schedule_type = models.CharField(
+    max_length=20,
+    choices=SCHEDULE_TYPES,
+    default='meeting'
+    )
 
     teams = models.ManyToManyField('teams.Team', blank=True)
     users = models.ManyToManyField(User, blank=True)

@@ -69,6 +69,7 @@ def dashboard(request):
     admin_teams = recent_teams[:5] if (request.user.is_staff or request.user.is_superuser) else []
     today = date.today()
     upcoming_schedules = Schedule.objects.filter(date__gte=today).order_by('date', 'time')[:4]
+    dashboard_tasks = Schedule.objects.filter(schedule_type='task').order_by('date', 'time')[:5]
     # Team updates for the small dashboard card — keep only the two most
     # recent visible items. Older items are lazy-loaded from a JSON endpoint.
     total_team_updates = TeamUpdate.objects.filter(team=user_team).count() if user_team else 0
@@ -89,4 +90,5 @@ def dashboard(request):
         'upcoming_schedules': upcoming_schedules,
         'team_updates': team_updates,
         'has_hidden_updates': has_hidden_updates,
+        'dashboard_tasks': dashboard_tasks,
     })
