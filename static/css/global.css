@@ -176,12 +176,15 @@ a {
 
 /* SIDEBAR STYLE (Menu Panel) */
 .sidebar {
-    border-radius: 0 30px 30px 0;
+    border-radius: 0 60px 60px 0; /* Rounded right side as per Figma */
     position: fixed;
     width: var(--sidebar-width);
     background: var(--sidebar-gradient);
-    top: var(--top-height);
-    height: calc(100vh - var(--top-height) - var(--bottom-height));
+    
+    /* Centering Sidebar vertically between Header and Footer */
+    top: 50%;
+    transform: translateY(-50%); 
+    height: 75%;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -190,19 +193,14 @@ a {
     z-index: 1000;
 }
 
-.sidebar-header {
-    display: none;
-}
-
 /* MENU BUTTONS */
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 15px; /* Spacing between buttons */
     flex-grow: 1;
-    margin-top: 40px;
-    overflow-y: auto;
+    margin-top: 120px;
     width: 100%;
     padding-left: var(--sidebar-active-cut);
     padding-right: 12px;
@@ -1697,7 +1695,7 @@ a {
     }
 
     .sidebar-nav {
-        margin-top: 44px;
+        margin-top: 110px;
         gap: 14px;
     }
 }
@@ -1708,7 +1706,7 @@ a {
     }
 
     .sidebar-nav {
-        margin-top: 28px;
+        margin-top: 104px;
         gap: 12px;
     }
 

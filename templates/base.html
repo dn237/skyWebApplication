@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/global.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
@@ -44,7 +44,7 @@
                 <a href="{% url 'messages:inbox' %}"
                     class="smart-button {% if 'messages' in request.path %}active{% endif %}" >
                     <span class="material-symbols-outlined">mail</span> Messages
-                    {% if unread_count %}<span class="msg-badge" style="background:#E53E3E;color:white;border-radius:10px;font-size:10px;padding:1px 6px;margin-left:auto;font-weight:700;line-height:1.4;">{{ unread_count }}</span>{% endif %}
+                    {% if unread_count %}<span class="msg-badge" style="background:#E53E3E;color:white;border-radius:10px;font-size:10px;padding:1px 6px;margin-left:4px;font-weight:700;line-height:1.4;">{{ unread_count }}</span>{% endif %}
                 </a>
                 <a href="{% url 'organizations:dept' %}" 
                     class="smart-button{% if request.resolver_match.namespace == 'organizations' %} active{% endif %}">
