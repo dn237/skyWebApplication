@@ -40,13 +40,21 @@ def create_schedule(request):
     if request.method == 'POST':
         post_data = request.POST.copy()
 
-        if schedule_type == 'reminder':
-            post_data['schedule_type'] = 'reminder'
+        if schedule_type in ['reminder', 'task']:
+            post_data['schedule_type'] = schedule_type
 
         form = ScheduleForm(post_data)
 
         if form.is_valid():
-            form.save()
+            schedule = form.save(commit=False)
+
+            if schedule_type in ['reminder', 'task']:
+                schedule.schedule_type = schedule_type
+
+            schedule.created_by = request.user
+            schedule.save()
+            form.save_m2m()
+
             return redirect('scheduler:schedule_list')
     else:
         form = ScheduleForm()

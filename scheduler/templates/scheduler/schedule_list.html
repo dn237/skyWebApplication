@@ -390,6 +390,10 @@
                 Add Reminder <span>+</span>
             </a>
 
+            <a href="{% url 'scheduler:create_schedule' %}?type=task" class="action-btn">
+                Add Task <span>+</span>
+            </a>
+
             <a href="{% url 'scheduler:schedule_list' %}?filter=today" class="action-btn {% if filter_type == 'today' %}active-filter{% endif %}">
                 Today <span>📅</span>
             </a>
