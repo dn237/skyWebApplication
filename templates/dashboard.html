@@ -31,7 +31,7 @@
             {% if is_admin %}
             <div class="card dashboard-card">
                 <div class="card-header dashboard-card-header">
-                    <h3 class="card-title-figma">Team Oversight</h3>
+                    <h3 class="dashboard-card-header">Team Oversight</h3>
                     <a href="{% url 'teams:index' %}" class="btn-action-primary btn-sm">Manage All</a>
                 </div>
                 <div class="dashboard-table-shell">
@@ -59,15 +59,13 @@
             </div>
             {% else %}
             <div class="card dashboard-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 class="card-title-figma">Team Updates</h3>
-                </div>
+                <h3 class="card-header dashboard-card-header">Team Updates</h3>
 
                 <div class="activity-feed" style="padding: 10px;">
                     {% if team_updates %}
                         {# Render the visible updates (max 2) #}
                         {% for update in team_updates %}
-                        <div class="activity-item" style="padding-left: 6px; margin-bottom: 12px; {% if forloop.first %}border-left:3px solid #4318FF; background:#F7FAFF;{% endif %}">
+                        <div class="activity-item" style="padding-left: 6px; margin-bottom: 12px; {% if forloop.first %}border-left:3px solid #4318FF; background:#F7FAFF; border-radius: 3px{% endif %}">
                             <p style="font-size: 13px; font-weight: 700; color: #2B3674; margin: 0;">{{ update.title }}</p>
                             <p style="font-size: 12px; color: #A3AED0; margin: 0;">{{ update.body|truncatechars:140 }}</p>
                             <p style="font-size: 11px; color: #A3AED0; margin: 4px 0 0;">By {{ update.author.get_full_name|default:update.author.username }} • {{ update.created_at|date:"M d" }}</p>
@@ -88,7 +86,7 @@
 
             <div class="card dashboard-card">
                 <div class="card-header dashboard-card-header">
-                    <h3 class="card-title-figma">Complex Table</h3>
+                    <h3 class="dashboard-card-header">Complex Table</h3>
                     <span class="material-symbols-outlined" style="color: #A3AED0;">bar_chart</span>
                 </div>
                 <div class="dashboard-table-shell">
@@ -131,8 +129,8 @@
             <a href="{% url 'scheduler:schedule_list' %}" class="calendar-link-wrapper" style="text-decoration: none; display: block;">
                 <div class="card dashboard-card dashboard-calendar-card">
                     <div class="card-header dashboard-card-header">
-                        <h3 class="card-title-figma">Calendar</h3>
-                        <span class="material-symbols-outlined" style="color: #4318FF;">calendar_month</span>
+                        <h3 class="dashboard-card-header">Calendar</h3>
+                        <span class="material-symbols-outlined" style="color: #686ADE;">calendar_month</span>
                     </div>
 
                     <div class="mini-calendar-date" style="text-align: center; padding: 15px 0;">
@@ -142,8 +140,8 @@
                     </div>
 
                     <div class="mini-calendar-actions" style="display: flex; gap: 8px; padding: 0 10px 15px;">
-                        <span class="mini-calendar-btn" style="flex: 1; text-align: center; background: #4318FF; color: white; border-radius: 10px; padding: 5px; font-size: 11px;">New</span>
-                        <span class="mini-calendar-btn secondary" style="flex: 1; text-align: center; background: #F4F7FE; color: #4318FF; border-radius: 10px; padding: 5px; font-size: 11px;">View All</span>
+                        <span class="mini-calendar-btn" style="flex: 1; text-align: center; background: #686ADE; color: white; border-radius: 10px; padding: 5px; font-size: 11px;">New</span>
+                        <span class="mini-calendar-btn secondary" style="flex: 1; text-align: center; background: #F4F7FE; color: #686ADE; border-radius: 10px; padding: 5px; font-size: 11px;">View All</span>
                     </div>
 
                     <div class="mini-calendar-list" style="padding: 0 10px 10px; border-top: 1px solid #F4F7FE;">
@@ -161,9 +159,8 @@
             </a>
 
             <div class="card dashboard-card">
-                
-                <h3 class="card-title-figma">{{ my_team.team_name|default:"My Team" }} Members</h3>
-                <div class="members-scroll-area dashboard-members-scroll" style="padding-right: 5px;">
+                <h3 class="card-header dashboard-card-header">{{ my_team.team_name|default:"My Team" }} Members</h3>
+                <div class="members-scroll-area dashboard-members-scroll" style="padding-right: 5px;" >
                     <div class="page-stack" style="gap: 8px;">
                         {% for member in team_members %}
                         <div class="member-row-figma pro-row" data-roster-name="{{ member.user.username }}" {% if member.user_id == current_user_id %}data-current-user="true"{% endif %} style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
@@ -178,7 +175,7 @@
                                 <p class="name-bold" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ member.user.get_full_name|default:member.user.username }}
                                     {% if member.user_id == current_user_id %}
-                                    <span style="font-size: 11px; color: #4318FF; font-weight: 700; margin-left: 6px;">(You)</span>
+                                    <span style="font-size: 14px; color: #4318FF; font-weight: 700; margin-left: 6px;">(You)</span>
                                     {% endif %}
                                 </p>
                                 <p class="role-muted" style="font-size: 11px; margin: 0; color: #A3AED0;">
@@ -200,16 +197,16 @@
             </div>
             <div class="card dashboard-card">
                 <div class="card-header dashboard-card-header">
-                    <h3 class="card-title-figma">Sprint Tasks</h3>
+                    <h3 class="dashboard-card-header">Sprint Tasks</h3>
                     <a href="{% url 'scheduler:create_schedule' %}?type=task" class="btn-sm"
-                    style="background:#4318FF; color:white; border-radius:8px; padding:4px 10px; font-size:11px; text-decoration:none;">
+                    style="background:#686ADE; color:white; border-radius:8px; padding:4px 10px; font-size:11px; text-decoration:none;">
                         + Add
                     </a>
                 </div>
 
                 <div style="padding: 10px;">
                     {% for task in dashboard_tasks %}
-                        <div style="padding: 10px; margin-bottom: 8px; background:#F7FAFF; border-left:3px solid #4318FF; border-radius:10px;">
+                        <div style="padding: 10px; margin-bottom: 8px; background:#F7FAFF; border-left:3px solid #686ADE; border-radius:10px;">
                             <p style="font-size: 13px; font-weight: 700; color:#2B3674; margin:0;">
                                 {{ task.title }}
                             </p>

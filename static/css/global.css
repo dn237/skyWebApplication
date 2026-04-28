@@ -11,12 +11,12 @@ Direction: All styles for the app go here. This includes the header, footer,
 
 /* GLOBAL SETTINGS */
 :root {
-    --top-height: 60px;      /* Height of the white top bar */
-    --bottom-height: 50px;   /* Height of the white bottom bar */
+    --top-height: 50px;      /* Height of the white top bar */
+    --bottom-height: 40px;   /* Height of the white bottom bar */
     --sidebar-width: 200px;  /* Width of the menu from Figma */
-    --sidebar-active-cut: 18px;
+    --sidebar-active-cut: 22px;
     --sidebar-active-opacity: 0.18;
-    --sidebar-active-radius: 10px;
+    --sidebar-active-radius: 12px;
     --accent-primary: #686ADE;
     --accent-primary-hover: #5C5ECC;
     --accent-tint-soft: rgba(100, 110, 220, 0.1);
@@ -116,7 +116,7 @@ a {
     box-shadow: 0 6px 14px rgba(26, 45, 117, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.14);
     color: #FFFFFF;
     font-weight: 600;
-    margin-left: calc(-1 * var(--sidebar-active-cut));
+    margin-left: calc(-2 * var(--sidebar-active-cut));
     width: calc(100% + var(--sidebar-active-cut));
     border-radius: 0 var(--sidebar-active-radius) var(--sidebar-active-radius) 0;
     padding-left: calc(20px + var(--sidebar-active-cut));
@@ -181,7 +181,8 @@ a {
     width: var(--sidebar-width);
     background: var(--sidebar-gradient);
     top: var(--top-height);
-    height: calc(100vh - var(--top-height) - var(--bottom-height));
+    height: calc(90vh - var(--top-height) - var(--bottom-height));
+    transform: translateY(6%);
     left: 0;
     display: flex;
     flex-direction: column;
@@ -190,9 +191,6 @@ a {
     z-index: 1000;
 }
 
-.sidebar-header {
-    display: none;
-}
 
 /* MENU BUTTONS */
 .sidebar-nav {
@@ -205,24 +203,24 @@ a {
     overflow-y: auto;
     width: 100%;
     padding-left: var(--sidebar-active-cut);
-    padding-right: 12px;
+    padding-right: 16px;
 }
 
 .smart-button {
     width: 100%;
-    height: 45px;
-    text-decoration: none;
-    color: white;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding-left: 20px;
-    font-size: 16px;
+    color: white;
+    text-decoration: none;
     border-radius: 12px;
+    height: 3em;
+    padding-left: 1.1em;
+    gap: 0.9em;
+    font-size: 1.06em;
 }
 
 .smart-button .material-symbols-outlined {
-    font-size: 20px;
+    font-size: 1.2em;
     line-height: 1;
 }
 
@@ -400,6 +398,7 @@ a {
     flex: 0 0 auto;
 }
 
+
 .status-row {
     color: #1A602C;
     font-weight: 600;
@@ -419,7 +418,6 @@ a {
     color: #5A60C4;
     font-size: 30px;
     margin-bottom: 10px;
-    position: center;
 }
 
 .profile-button {
@@ -699,116 +697,8 @@ a {
     width: 100%;
 }
 
-.dashboard-top-bar {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
 form.search-bar.dashboard-search {
     width: min(100%, 620px);
-}
-
-.dashboard-title-group {
-    max-width: 720px;
-}
-
-.dashboard-kicker {
-    margin: 0 0 4px;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #707EAE;
-}
-
-.dashboard-head-copy {
-    margin: 8px 0 0;
-    color: #6B7280;
-    font-size: 15px;
-    line-height: 1.5;
-}
-
-.dashboard-hero-card {
-    background: linear-gradient(135deg, #FFFFFF 0%, #FBFCFF 100%);
-    border: 1px solid #E7EBFA;
-    margin-bottom: 25px;
-}
-
-.dashboard-hero-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-width: 700px;
-}
-
-.dashboard-hero-tag {
-    display: inline-flex;
-    align-self: flex-start;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(104, 106, 222, 0.12);
-    color: #686ADE;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-}
-
-.dashboard-hero-text {
-    margin: 0;
-    color: #6B7280;
-    max-width: 640px;
-    font-size: 15px;
-    line-height: 1.6;
-}
-
-.dashboard-hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.dashboard-hero-actions .btn-action-primary.secondary {
-    margin-left: 0;
-}
-
-.dashboard-stats-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.dashboard-stat-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.dashboard-stat-copy p {
-    margin: 0;
-    color: #6B7280;
-    font-size: 13px;
-}
-
-.dashboard-stat-value {
-    display: block;
-    color: #2B3674;
-    font-size: 24px;
-    line-height: 1;
-}
-
-.dashboard-content-layout {
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    align-items: start;
-}
-
-.dashboard-main-column,
-.dashboard-sidebar-column {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
 }
 
 .dashboard-card {
@@ -829,12 +719,15 @@ form.search-bar.dashboard-search {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color: #2B3674;
+    font-size: 24px;
+    font-weight: 700;
     margin-bottom: 16px;
 }
 
-.dashboard-card-header .card-title-figma {
-    margin-bottom: 0;
-}
 
 .dashboard-card-header .btn-action-primary.btn-sm {
     padding: 10px 16px;
@@ -986,12 +879,6 @@ form.search-bar.dashboard-search {
 
 .dashboard-members-card {
     height: 100%;
-}
-
-.dashboard-members-scroll {
-    max-height: 270px;
-    overflow-y: auto;
-    padding-right: 5px;
 }
 
 @media (max-width: 1100px) {
@@ -1914,13 +1801,14 @@ form.search-bar.dashboard-search {
     margin-left: auto;
 }
 
-
 .card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 10px;
+    background-color:#ffffff84;
+
 }
 
 .card-header h3 {
@@ -2055,6 +1943,7 @@ form.search-bar.dashboard-search {
     margin: 0;
 }
 
+
 .role-muted {
     font-size: 14px;
     color: rgba(5, 12, 114, 0.5);
@@ -2122,8 +2011,7 @@ form.search-bar.dashboard-search {
     }
 
     .smart-button {
-        width: 152px;
-        font-size: 15px;
+        font-size: 0.9em;
     }
 
     .smart-button .material-symbols-outlined {
@@ -3080,10 +2968,26 @@ form.search-bar.dashboard-search {
     flex-direction: column;
 }
 
+
 .dashboard-members-scroll {
     max-height: 144px;
     overflow-y: auto;
     padding-right: 6px;
+
+}
+::-webkit-scrollbar {
+    width: 8px; /* Ширина вертикального скролла */
+    height: 10px; /* Высота горизонтального скролла */
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #b0a9e496;
+    border-radius: 10px;
+    border: 0 solid #F1F1F1;
 }
 
 .dashboard-card-header {

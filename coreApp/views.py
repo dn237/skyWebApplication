@@ -56,7 +56,9 @@ def dashboard(request):
         # "everyone except me" list.
         team_members = sorted(
             UserProfile.objects.filter(team=user_team).select_related('user'),
-            key=lambda member: (member.user_id != current_user_id, member.user.username.lower()),
+            key=lambda member: (
+                (member.user.id if member.user else None) != current_user_id,
+                member.user.username.lower() if member.user else ""),
         )
     else:
         # Do not show arbitrary users if the current user has no team.
