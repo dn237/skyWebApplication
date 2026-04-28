@@ -1960,7 +1960,7 @@ form.search-bar.dashboard-search {
     }
 
     .content-container {
-        max-width: 80%;
+        max-width: 1360px;
     }
 
     .sidebar-nav {
