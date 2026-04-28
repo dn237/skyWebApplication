@@ -21,10 +21,11 @@
         flex-wrap: wrap;
     }
 
-   .page-title {
-        font-size: 28px;
+    .scheduler-title {
+        margin: 0 0 8px 0;
+        font-size: 42px;
         font-weight: 700;
-        color: #365DA8;
+        color: #111111;
     }
 
     .scheduler-subtitle {
@@ -35,11 +36,12 @@
 
     .scheduler-btn {
         background: #5B87D8;
-        color: #FFFFFF;
+        color: #FFFFFF !important;
+        padding: 12px 22px;
         border-radius: 999px;
-        padding: 10px 18px;
         font-weight: 600;
-        border: none;
+        box-shadow: 0 8px 20px rgba(91, 135, 216, 0.22);
+        display: inline-block;
     }
 
     .scheduler-layout {
@@ -59,7 +61,6 @@
 
     .scheduler-main-card {
         min-height: 700px;
-        width: 100%;
     }
 
     .scheduler-card-top {
@@ -119,14 +120,14 @@
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 16px;
+        gap: 12px;
     }
 
     .calendar-day {
         background: #F5F7FF;
         border: 1px solid #DCE3F5;
         border-radius: 18px;
-        min-height: 150px;
+        min-height: 130px;
         padding: 12px;
         display: flex;
         flex-direction: column;
@@ -159,18 +160,12 @@
         opacity: 0.95;
     }
     .calendar-event.reminder {
-        background: #F8A5C2;
+        background: #FFB74D;  /* orange */
         color: #FFFFFF;
     }
 
     .calendar-day.today {
         border: 2px solid #5B87D8;
-    }
-
-    .empty-day {
-        background: transparent;
-        border: none;
-        box-shadow: none;
     }
 
     .scheduler-side {
@@ -219,7 +214,7 @@
     }
     .scheduler-layout {
         display: grid;
-        grid-template-columns: 240px 5fr 1.5fr;
+        grid-template-columns: 260px 3fr 1fr;
         gap: 24px;
         align-items: start;
         }
@@ -227,18 +222,15 @@
     .scheduler-actions-card {
         background: #FFFFFF;
         border-radius: 24px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
+        padding: 24px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-        gap: 16px;
     }
 
     .scheduler-actions-card h3 {
         margin: 0 0 18px 0;
         font-size: 22px;
         font-weight: 700;
-        color:#365DA8;
+        color: #5B87D8;
     }
     .schedule-popup {
         display: none;
@@ -317,27 +309,15 @@
 
     .action-btn {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 10px;
-
-        background: linear-gradient(135deg, #6C5CE7, #5B87D8);
-        color: #FFFFFF;
-
-        padding: 12px 16px;
-        border-radius: 999px;
-
+        background: #A9B4FF;
+        color: #242424 !important;
+        padding: 14px 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
         font-weight: 600;
-        font-size: 14px;
-
-        text-decoration: none;
-        border: none;
-
-        transition: all 0.2s ease;
-    }
-
-    .action-btn:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
+        font-size: 16px;
     }
 
     .action-btn span {
@@ -392,70 +372,40 @@
 <div class="scheduler-page">
     <div class="scheduler-header">
         <div>
-            <h1 class="page-main-title">Meeting Scheduler</h1>
+            <h1 class="scheduler-title">Meeting Scheduler</h1>
             <p class="scheduler-subtitle">Manage your meetings, deadlines, and upcoming events.</p>
         </div>
-        <a href="{% url 'scheduler:create_schedule' %}" class="btn-action-primary">
-            <span class="material-symbols-outlined">calendar_today</span> New Meeting
-        </a>
+        <a href="{% url 'scheduler:create_schedule' %}" class="scheduler-btn">+ New Meeting</a>
     </div>
 
     <div class="scheduler-layout">
         <div class="scheduler-actions-card">
-            <h3 class="card-title-figma quick-actions-title">Quick Actions</h3>
+            <h3>I would like to...</h3>
             
-            <a href="{% url 'scheduler:create_schedule' %}" class="btn-action-primary">
-                <span class="material-symbols-outlined">calendar_today</span>
-                New Meeting
+            <a href="{% url 'scheduler:create_schedule' %}" class="action-btn">
+                New Meeting <span>+</span>
             </a>
 
-            <a href="{% url 'scheduler:create_schedule' %}?type=reminder" class="btn-action-primary">
-                <span class="material-symbols-outlined">notifications</span>
-                Add Reminder
+            <a href="{% url 'scheduler:create_schedule' %}?type=reminder" class="action-btn">
+                Add Reminder <span>+</span>
             </a>
 
-            <a href="{% url 'scheduler:create_schedule' %}?type=task" class="btn-action-primary">
-                <span class="material-symbols-outlined">checklist</span>
-                Add Task
+            <a href="{% url 'scheduler:create_schedule' %}?type=task" class="action-btn">
+                Add Task <span>+</span>
             </a>
 
-            <a href="{% url 'scheduler:schedule_list' %}?filter=today" class="btn-action-primary {% if filter_type == 'today' %}active-filter{% endif %}">
-                <span>📅</span> Today 
+            <a href="{% url 'scheduler:schedule_list' %}?filter=today" class="action-btn {% if filter_type == 'today' %}active-filter{% endif %}">
+                Today <span>📅</span>
+            </a>
+
+            <a href="#" class="action-btn danger">
+                Delete <span>⊗</span>
             </a>
         </div>
 
     <div class="scheduler-main-card">
         <div class="scheduler-card-top">
-            <div class="scheduler-card-top">
-
-                <h2 class="card-title-figma" style="margin:0;">
-                    Calendar Overview - {{ current_month_date|date:"F Y" }}
-                </h2>
-                <div style="display:flex; gap:8px;">
-                    {% if view_type == 'week' %}
-                        <a href="?view=week&week_start={{ previous_week|date:'Y-m-d' }}" 
-                        class="scheduler-switch secondary">
-                            ←
-                        </a>
-
-                        <a href="?view=week&week_start={{ next_week|date:'Y-m-d' }}" 
-                        class="scheduler-switch secondary">
-                            →
-                        </a>
-                    {% else %}
-                        <a href="?view=month&month={{ selected_month|add:'-1' }}&year={{ selected_year }}" 
-                        class="scheduler-switch secondary">
-                            ←
-                        </a>
-
-                        <a href="?view=month&month={{ selected_month|add:'1' }}&year={{ selected_year }}" 
-                        class="scheduler-switch secondary">
-                            →
-                        </a>
-                    {% endif %}
-                </div>
-
-            </div>
+            <h2>Calendar Overview</h2>
                 {% if filter_type == 'today' %}
                     <p class="empty-text">Showing meetings for today only.</p>
                 {% endif %}
@@ -483,48 +433,43 @@
         </div>
 
         <div class="calendar-grid">
-    {% for day in calendar_days %}
+            {% for day in calendar_days %}
+                <div class="calendar-day {% if view_type == 'week' and day == today or view_type == 'month' and day == today.day %}today{% endif %}">
+                    <div class="day-number">
+                        {% if view_type == 'week' %}
+                            {{ day.day }}
+                        {% else %}
+                            {{ day }}
+                        {% endif %}
+                    </div>
 
-        {% if day %}
-            <div class="calendar-day {% if day == today %}today{% endif %}">
-                <div class="day-number">{{ day.day }}</div>
+                    {% for schedule in schedules %}
+                        {% if view_type == 'week' and schedule.date|date:"Y-m-d" == day|date:"Y-m-d" or view_type == 'month' and schedule.date.day == day %}
+                            <div class="calendar-event {% if schedule.schedule_type == 'reminder' %}reminder{% endif %}"
+                                onclick="openSchedulePopup('{{ schedule.title|escapejs }}', '{{ schedule.message|default:"No description added."|escapejs }}', '{{ schedule.date }}', '{{ schedule.time }}', '{{ schedule.platform|escapejs }}', '{% url 'scheduler:edit_schedule' schedule.id %}')">
+                                <strong>
+                                    {% if schedule.schedule_type == 'reminder' %}🔔 {% endif %}
+                                    {{ schedule.title }}
+                                </strong>
 
-                {% for schedule in schedules %}
-                    {% if schedule.date == day %}
-                        <div class="calendar-event {% if schedule.schedule_type == 'reminder' %}reminder{% endif %}"
-                            onclick="openSchedulePopup(
-                                '{{ schedule.title|escapejs }}',
-                                '{{ schedule.message|default:"No description added."|escapejs }}',
-                                '{{ schedule.date }}',
-                                '{{ schedule.time }}',
-                                '{{ schedule.platform|escapejs }}',
-                                '{% url "scheduler:edit_schedule" schedule.id %}',
-                                '{% url "scheduler:delete_schedule" schedule.id %}'
-                            )">
+                                <span>{{ schedule.time }}</span>
 
-                            <strong>
-                                {% if schedule.schedule_type == 'reminder' %}🔔 {% endif %}
-                                {% if schedule.schedule_type == 'task' %}✅ {% endif %}
-                                {{ schedule.title }}
-                            </strong>
-
-                            <span>{{ schedule.time }}</span>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-
-        {% else %}
-            <div class="calendar-day empty-day"></div>
-        {% endif %}
-
-    {% endfor %}
-</div>
+                                <a href="{% url 'scheduler:delete_schedule' schedule.id %}" 
+                                class="delete-btn"
+                                onclick="event.stopPropagation(); return confirm('Delete this item?');">
+                                ✖
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
+    </div>
 
     <div class="scheduler-side">
         <div class="scheduler-side-card">
-            <h3>Upcoming Events</h3>
+            <h3>Upcoming Meetings</h3>
 
             {% for schedule in upcoming_schedules %}
                 <div class="upcoming-item">
@@ -534,7 +479,7 @@
                     <div class="upcoming-badge">{{ schedule.schedule_type|title }}</div>
                 </div>
             {% empty %}
-                <p class="empty-text">No upcoming events.</p>
+                <p class="empty-text">No upcoming meetings.</p>
             {% endfor %}
         </div>
 
@@ -553,22 +498,16 @@
         <div class="popup-meta" id="popupPlatform"></div>
 
         <a id="popupEditLink" class="popup-edit-btn">Edit</a>
-
-        <a id="popupDeleteLink" class="popup-edit-btn" style="background:#EF4444;">
-            Delete
-        </a>
-        
     </div>
 </div>
 
 <script>
-    function openSchedulePopup(title, description, date, time, platform, editUrl, deleteUrl) {
+    function openSchedulePopup(title, description, date, time, platform, editUrl) {
         document.getElementById("popupTitle").innerText = title;
         document.getElementById("popupDescription").innerText = description;
         document.getElementById("popupDateTime").innerText = date + " • " + time;
         document.getElementById("popupPlatform").innerText = platform;
         document.getElementById("popupEditLink").href = editUrl;
-        document.getElementById("popupDeleteLink").href = deleteUrl;
 
         document.getElementById("schedulePopup").style.display = "flex";
 
