@@ -1,15 +1,27 @@
 # AUTHOR: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864
 # View logic for scheduler features (meetings, reminders, calendar display)
-
+import calendar
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Schedule
 from datetime import date, timedelta
 from .forms import ScheduleForm
 
+
 def schedule_list(request):
     today = date.today()
     filter_type = request.GET.get('filter')
     view_type = request.GET.get('view', 'month')
+
+    selected_year = int(request.GET.get('year', today.year))
+    selected_month = int(request.GET.get('month', today.month))
+
+    # Fix month overflow
+    if selected_month < 1:
+        selected_month = 12
+        selected_year -= 1
+    elif selected_month > 12:
+        selected_month = 1
+        selected_year += 1
 
     schedules = Schedule.objects.all().order_by('date', 'time')
 
@@ -17,12 +29,37 @@ def schedule_list(request):
         schedules = schedules.filter(date=today)
 
     if view_type == 'week':
-        start_of_week = today
-        end_of_week = today + timedelta(days=6)
+        week_start_param = request.GET.get('week_start')
+
+        if week_start_param:
+            start_of_week = date.fromisoformat(week_start_param)
+        else:
+            start_of_week = today - timedelta(days=today.weekday())
+
+        end_of_week = start_of_week + timedelta(days=6)
+
+        previous_week = start_of_week - timedelta(days=7)
+        next_week = start_of_week + timedelta(days=7)
+
         schedules = schedules.filter(date__range=[start_of_week, end_of_week])
         calendar_days = [start_of_week + timedelta(days=i) for i in range(7)]
     else:
-        calendar_days = list(range(1, 32))
+        first_weekday, days_in_month = calendar.monthrange(selected_year, selected_month)
+
+        calendar_days = []
+
+        for _ in range(first_weekday):
+            calendar_days.append(None)
+
+        for day in range(1, days_in_month + 1):
+            calendar_days.append(date(selected_year, selected_month, day))
+
+        previous_week = None
+        next_week = None
+        start_of_week = None
+        end_of_week = None
+
+    current_month_date = date(selected_year, selected_month, 1)
 
     upcoming_schedules = Schedule.objects.filter(date__gte=today).order_by('date', 'time')[:5]
 
@@ -33,7 +70,15 @@ def schedule_list(request):
         'filter_type': filter_type,
         'view_type': view_type,
         'calendar_days': calendar_days,
+        'selected_year': selected_year,
+        'selected_month': selected_month,
+        'current_month_date': current_month_date,
+        'previous_week': previous_week if view_type == 'week' else None,
+        'next_week': next_week if view_type == 'week' else None,
+        'week_start': start_of_week if view_type == 'week' else None,
+        'week_end': end_of_week if view_type == 'week' else None,
     })
+
 def create_schedule(request):
     schedule_type = request.GET.get('type')
 
@@ -80,6 +125,7 @@ def edit_schedule(request, id):
         'edit_mode': True,
         'schedule': schedule,
     })
+
 
 def delete_schedule(request, id):
     schedule = get_object_or_404(Schedule, id=id)

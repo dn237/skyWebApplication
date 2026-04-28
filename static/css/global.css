@@ -2071,7 +2071,7 @@ form.search-bar.dashboard-search {
     }
 
     .content-container {
-        max-width: 1360px;
+        max-width: 80%;
     }
 
     .sidebar-nav {
