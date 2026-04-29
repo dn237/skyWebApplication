@@ -104,7 +104,11 @@
             </a>
 
             <h2 style="margin-bottom:20px;">
-                {% if edit_mode %}
+                {% if edit_mode and schedule_type == 'task' %}
+                    Edit Task
+                {% elif edit_mode and schedule_type == 'reminder' %}
+                    Edit Reminder
+                {% elif edit_mode %}
                     Edit Meeting
                 {% elif schedule_type == 'reminder' %}
                     Add Reminder

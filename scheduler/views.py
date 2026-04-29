@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Schedule
 from datetime import date, timedelta
 from .forms import ScheduleForm
+from django.shortcuts import get_object_or_404, redirect
 
 
 def schedule_list(request):
@@ -112,20 +113,37 @@ def create_schedule(request):
 def edit_schedule(request, id):
     schedule = get_object_or_404(Schedule, id=id)
 
-    if request.method == 'POST':
-        form = ScheduleForm(request.POST, instance=schedule)
+    if request.method == "POST":
+        post_data = request.POST.copy()
+
+        # Keep the original type because task/reminder hides schedule_type in the form
+        if schedule.schedule_type in ["task", "reminder"]:
+            post_data["schedule_type"] = schedule.schedule_type
+
+        form = ScheduleForm(post_data, instance=schedule)
+
         if form.is_valid():
-            form.save()
-            return redirect('scheduler:schedule_list')
+            updated_schedule = form.save()
+
+            if updated_schedule.schedule_type == "task":
+                return redirect("scheduler:task_list")
+            else:
+                return redirect("scheduler:schedule_list")
     else:
         form = ScheduleForm(instance=schedule)
 
-    return render(request, 'scheduler/create_schedule.html', {
-        'form': form,
-        'edit_mode': True,
-        'schedule': schedule,
+    return render(request, "scheduler/create_schedule.html", {
+        "form": form,
+        "edit_mode": True,
+        "schedule": schedule,
+        "schedule_type": schedule.schedule_type,
     })
 
+def task_list(request):
+    tasks = Schedule.objects.filter(schedule_type='task').order_by('date', 'time')
+    return render(request, 'scheduler/task_list.html', {
+        'tasks': tasks
+    })
 
 def delete_schedule(request, id):
     schedule = get_object_or_404(Schedule, id=id)

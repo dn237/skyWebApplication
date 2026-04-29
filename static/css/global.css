@@ -6,6 +6,7 @@ Direction: All styles for the app go here. This includes the header, footer,
  The goal is to keep this file organized and modular, 
  so we can easily find and update styles as needed.
  ==============================================*/
+ /* CONTRIBUTOR: Dashboard Mini Calendar SAMIA-STUDENT4 */
  
 /* All Figma Menu styles go here --->*/
 
@@ -1915,6 +1916,13 @@ form.search-bar.dashboard-search {
     pointer-events: none; /* Passes the click through to the <a> tag */
 }
 
+.clickable-card {
+    cursor: pointer;
+}
+
+.clickable-card:hover {
+    transform: translateY(-4px);
+}
 .sidebar-column {
     display: flex;
     flex-direction: column;
@@ -3426,4 +3434,77 @@ form.search-bar.dashboard-search {
 
 .scheduler-form button:hover {
     background: var(--accent-primary-hover);
+}
+/* Static Information Pages - Samia */
+.info-page {
+    max-width: 950px;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.info-kicker {
+    margin: 0 0 6px;
+    color: #686ADE;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.info-title {
+    margin: 0 0 18px;
+    color: #2B3674;
+    font-size: 36px;
+    font-weight: 800;
+}
+
+.info-card {
+    background: #FFFFFF;
+    border: 1px solid #E7EBFA;
+    border-radius: 22px;
+    padding: 32px;
+    box-shadow: 0 12px 28px rgba(43, 54, 116, 0.08);
+}
+
+.info-intro {
+    color: #4A578E;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.info-section {
+    background: #F8FAFF;
+    border: 1px solid #EEF2FB;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+}
+
+.info-section h3 {
+    margin: 0 0 10px;
+    color: #2B3674;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.info-section p,
+.info-section li {
+    color: #5D6798;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.info-section ul {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .info-title {
+        font-size: 28px;
+    }
+
+    .info-card {
+        padding: 22px;
+    }
 }

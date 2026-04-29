@@ -22,7 +22,7 @@
             <img src="{% static 'images/sky_logo.png' %}" alt="Sky">
         </div>
         <div class="top-nav">
-            <a href="#" class="contact-support">Contact Support</a>
+            <a href="{% url 'contact' %}" class="contact-support">Contact Support</a>
             <div class="language-picker">English</div>
         </div>
     </header>
@@ -108,9 +108,9 @@
 
     <footer class="bottom-bar">
         <div class="footer-group">
-            <a href="#" class="footer-links">Privacy policy</a>
-            <a href="#" class="footer-links">Terms of Service</a>
-            <a href="#" class="footer-links">Security</a>
+            <a href="/privacy/" class="footer-links">Privacy policy</a>
+            <a href="/terms/" class="footer-links">Terms of Service</a>
+            <a href="/security/" class="footer-links">Security</a>
         </div>
     </footer>
 

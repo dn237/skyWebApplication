@@ -3,9 +3,13 @@ from django.contrib.auth.models import User
 
 class Schedule(models.Model):
     SCHEDULE_TYPES = [
-         ('meeting', 'Meeting'),
+         ('weekly', 'Weekly'),
+        ('monthly', 'Monthly'),
+        ('upcoming', 'Upcoming'),
         ('reminder', 'Reminder'),
         ('task', 'Task'),
+         ('meeting', 'Meeting')
+        ,
     ]
 
     title = models.CharField(max_length=200)

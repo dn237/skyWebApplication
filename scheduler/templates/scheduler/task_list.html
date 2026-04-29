@@ -1,0 +1,71 @@
+{# AUTHOR: SAMIA EL HAYARI RIFI | STUDENT ID: 20899864 #}
+{% extends "base.html" %}
+{% block content %}
+
+<div class="scheduler-page">
+    <div class="scheduler-header">
+        <div>
+            <h1 class="page-main-title">Sprint Tasks</h1>
+            <p class="scheduler-subtitle">View and manage all sprint tasks.</p>
+        </div>
+
+        <a href="{% url 'scheduler:create_schedule' %}?type=task" class="scheduler-btn">
+            + Add Task
+        </a>
+    </div>
+
+    <div class="scheduler-main-card">
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="upcoming-item" style="display:flex; justify-content:space-between; align-items:flex-start;">
+
+                    <!-- LEFT SIDE -->
+                    <div>
+                        <div class="upcoming-title">{{ task.title }}</div>
+                        <div class="upcoming-meta">📅 {{ task.date }} at {{ task.time }}</div>
+                        <div class="upcoming-meta">💻 {{ task.platform }}</div>
+
+                        {% if task.message %}
+                            <p class="today-date">{{ task.message }}</p>
+                        {% endif %}
+
+                        <span class="upcoming-badge">Task</span>
+                    </div>
+
+                    <!-- RIGHT SIDE (buttons) -->
+                    <div style="display:flex; gap:6px;">
+
+                        <!-- EDIT -->
+                        <a href="{% url 'scheduler:edit_schedule' task.id %}"
+                        style="background:#E9F3FF; border-radius:6px; padding:6px;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                        </a>
+
+                        <!-- DELETE -->
+                        <form method="post" action="{% url 'scheduler:delete_schedule' task.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                onclick="return confirm('Delete this task?')"
+                                style="border:none; background:#FFE2E5; border-radius:6px; padding:6px; cursor:pointer;">
+                                <span class="material-symbols-outlined" style="font-size:16px; color:#D32F2F;">delete</span>
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align:center; padding: 40px 0;">
+                <span class="material-symbols-outlined" style="font-size:48px; color:#DCE3F5;">
+                    checklist
+                </span>
+                <p style="margin-top:10px; color:#A3AED0; font-size:14px;">
+                    No tasks added yet.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
