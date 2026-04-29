@@ -2905,7 +2905,7 @@ form.search-bar.dashboard-search {
 }
 /* Dashboard Polish */
 .dashboard-shell {
-    width: calc(100vw - var(--sidebar-width) - 100px);
+    width: 100%;
     max-width: none;
     position: relative;
     margin: -10px 0 0 -8px;
@@ -3215,7 +3215,7 @@ form.search-bar.dashboard-search {
     justify-content: center;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1050px) {
     .dashboard-mesh,
     .dashboard-mesh-admin,
     .dashboard-mesh-user {
