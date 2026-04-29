@@ -1683,21 +1683,40 @@ form.search-bar.dashboard-search {
 }
 
 .dropdown-content {
-    display: none;
+    /* Change display: none to visibility/opacity for transitions */
+    display: flex; 
+    visibility: hidden;
+    opacity: 0;
+    
     position: absolute;
-    top: calc(100% + 2px); /* Positions it just below the button with a small gap */
+    top: 100%; /* Sits flush against the button container */
     left: 0;
     background-color: #f9f9f9;
-    min-width: 160px;
+    min-width: 180px;
     max-height: 220px;
     overflow-y: auto;
     border-radius: 12px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    padding: 5px 16px;
+    padding: 10px 16px;
     flex-direction: column;
     gap: 4px;
     z-index: 20;
-    transition-duration: 1s;
+
+    /* THE FIX: Smooth transition with a slight delay on closing */
+    transition: all 0.2s ease-in-out;
+    transition-delay: 0.15s; /* Stays open for 150ms after mouse leaves */
+    transform: translateY(5px);
+}
+
+/* THE BRIDGE: Prevents closing if there is a tiny gap between button and menu */
+.dropdown-content::before {
+    content: "";
+    position: absolute;
+    top: -10px; /* Extends the hover area upwards */
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
 }
 
 .dropdown-content .dropdown-option {
@@ -1733,8 +1752,13 @@ form.search-bar.dashboard-search {
     font-size: 14px;
 }
 
+
+
 .dropdown:hover .dropdown-content {
-    display: block;
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(10px);
+    transition-delay: 0s; /* Opens instantly */
 }
 
 .view-toggle-button {
@@ -3508,7 +3532,6 @@ form.search-bar.dashboard-search {
         padding: 22px;
     }
 }
-
 
 
 .btn-message-mini {
