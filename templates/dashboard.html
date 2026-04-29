@@ -195,10 +195,15 @@
             <div class="card dashboard-card">
                 {% include 'messaging/_dashboard_widget.html' %}
             </div>
-            <div class="card dashboard-card">
-                <div class="card-header dashboard-card-header">
-                    <h3 class="dashboard-card-header">Sprint Tasks</h3>
-                    <a href="{% url 'scheduler:create_schedule' %}?type=task" class="btn-sm"
+            <div class="card dashboard-card clickable-card"
+                onclick="window.location.href='{% url 'scheduler:task_list' %}'">
+
+                <div class="dashboard-card-header">
+                    <h3 class="card-title-figma">Sprint Tasks</h3>
+
+                    <a href="{% url 'scheduler:create_schedule' %}?type=task"
+                    class="btn-sm"
+                    onclick="event.stopPropagation();"
                     style="background:#686ADE; color:white; border-radius:8px; padding:4px 10px; font-size:11px; text-decoration:none;">
                         + Add
                     </a>
@@ -215,12 +220,14 @@
                             </p>
                         </div>
                     {% empty %}
-                        <div style="text-align: center; padding: 30px 0;">
-                            <span class="material-symbols-outlined" style="font-size: 40px; color: #E0E5F2;">checklist</span>
-                            <p class="muted-text" style="font-size: 12px;">No tasks added yet.</p>
+                        <div class="dashboard-task-canvas">
+                            <span class="material-symbols-outlined" style="color:#DCE3F5; font-size:36px;">checklist</span>
+                            <p class="dashboard-empty">No tasks added yet.</p>
                         </div>
                     {% endfor %}
                 </div>
+            </div>
+            
             </div>
         </div>
     </div>

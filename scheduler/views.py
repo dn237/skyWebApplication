@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Schedule
 from datetime import date, timedelta
 from .forms import ScheduleForm
+from django.shortcuts import get_object_or_404, redirect
 
 
 def schedule_list(request):
@@ -124,10 +125,21 @@ def edit_schedule(request, id):
         'form': form,
         'edit_mode': True,
         'schedule': schedule,
+        'schedule_type': schedule.schedule_type,
     })
 
+def task_list(request):
+    tasks = Schedule.objects.filter(schedule_type='task').order_by('date', 'time')
+    return render(request, 'scheduler/task_list.html', {
+        'tasks': tasks
+    })
 
 def delete_schedule(request, id):
     schedule = get_object_or_404(Schedule, id=id)
     schedule.delete()
     return redirect('scheduler:schedule_list')
+
+def delete_schedule(request, id):
+    schedule = get_object_or_404(Schedule, id=id)
+    schedule.delete()
+    return redirect('scheduler:task_list')

@@ -9,6 +9,7 @@ Responsibility: Centralized configuration (settings.py) and main URL routing.
 Note: Only edit this file when adding new apps or global middleware.
 ==========================================================================
 Author: Diana Nichvolodova | Student ID: 20165015
+Contributor: Samia Elhayaririfi | Student ID: 20899864
 """
 
 from django.contrib import admin
@@ -16,11 +17,19 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import dashboard
+from .views import dashboard, privacy, terms, security, contact
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),  # For authentication
+
+    path('', dashboard, name='dashboard'),
+
+    # SAMIA - Static pages routing (Privacy, Terms, Security, Contact)
+    path('privacy/', privacy, name='privacy'),
+    path('terms/', terms, name='terms'),
+    path('security/', security, name='security'),
+    path('contact/', contact, name='contact'),
 
     path('', dashboard, name='dashboard'), # This makes dashboard the Home Page 
     path("teams/", include("teams.urls")),  # STUDENT 1
@@ -28,6 +37,7 @@ urlpatterns = [
     path("messages/", include("messaging.urls")),  # STUDENT 3
     path("schedules/", include("scheduler.urls")),  # STUDENT 4
     path("reports/", include("reports.urls")),  # STUDENT 5
+    
 
 ]
 
