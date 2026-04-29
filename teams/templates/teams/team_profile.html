@@ -84,15 +84,28 @@
             <div class="sidebar-card-figma">
                 <h3 class="card-title-figma">Key Contacts</h3>
                 <div class="sidebar-contact">
-                    <span class="material-symbols-outlined">person</span>
-                    <div>
-                        <a href="mailto:{{ team.lead_user.email }}" class="contact-link" aria-label="Click to send me an email" data-tooltip="Click to send me an email" >
-                            <p class="name-bold">{{ team.lead_user.get_full_name }}</p>
-                            <p class="role-muted">Team Leader</p>
-                        </a>
+                    <div class="sidebar-contact" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="material-symbols-outlined">person</span>
+                            <div>
+                                <a href="mailto:{{ team.lead_user.email }}" class="contact-link">
+                                    <p class="name-bold">{{ team.lead_user.get_full_name }}</p>
+                                    <p class="role-muted">Team Leader</p>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <a href="{% url 'messages:compose' %}?to={{ team.lead_user.id }}"
+                    class="btn-message-mini" 
+                    title="Send internal message"
+                    style="text-decoration: none; margin-left: 10px;">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #4318FF;">
+                        chat_bubble
+                    </span>
+                </a>
             </div>
+        </div>
+            
 
             <a href="{% url 'teams:dependencies' team.team_id %}" class="card-link-wrapper">
                 <div class="sidebar-card-figma">

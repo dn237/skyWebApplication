@@ -4,6 +4,9 @@ These cover signup, login, logout, profile editing, and the simple user
 access page shown to admins.
 """
 
+import os
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, views as auth_views
 from django.contrib.auth.forms import AuthenticationForm
@@ -110,19 +113,48 @@ class ProfileView(LoginRequiredMixin, FormView):
         profile_obj, _ = UserProfile.objects.select_related('team', 'department').get_or_create(
             user=self.request.user
         )
+        # ---SAFETY CHECK ---
+        # If the profile has a team but the department is missing, sync it now
+        if profile_obj.team and not profile_obj.department:
+            profile_obj.department = profile_obj.team.dept
+            profile_obj.save()
         return profile_obj
-
+    
     def get_form_kwargs(self):
+        """CRITICAL: This tells the form to UPDATE the existing profile instead of creating a new one."""
         kwargs = super().get_form_kwargs()
         kwargs['instance'] = self.get_profile()
         if self.request.method == 'POST':
             kwargs['files'] = self.request.FILES
         return kwargs
 
+    def post(self, request, *args, **kwargs):
+        """Handle both standard uploads and the custom delete action."""
+        # 1. Check if the 'delete_photo' button was clicked
+        if 'delete_photo' in request.POST:
+            profile_obj = self.get_profile()
+
+            # Delete the physical file from the server
+            if profile_obj.avatar and profile_obj.avatar.name:
+                avatar_path = os.path.join(settings.MEDIA_ROOT, profile_obj.avatar.name)
+                if os.path.exists(avatar_path):
+                    os.remove(avatar_path)
+            
+            # Clear the database field
+            profile_obj.avatar = None
+            profile_obj.save()
+            
+            messages.warning(request, 'Profile picture deleted successfully.')
+            
+            # Use str() to force the lazy URL into a real string for Pylance
+            return redirect(str(self.success_url))
+
+        return super().post(request, *args, **kwargs)
+    
     def form_valid(self, form):
         form.save()
         messages.success(self.request, 'Profile picture updated successfully.')
-        return redirect('accounts:profile')
+        return redirect(str(self.success_url))
 
     def form_invalid(self, form):
         messages.error(self.request, 'Could not update profile picture. Please use a valid image file.')
