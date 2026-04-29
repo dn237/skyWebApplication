@@ -37,7 +37,7 @@ urlpatterns = [
     path("messages/", include("messaging.urls")),  # STUDENT 3
     path("schedules/", include("scheduler.urls")),  # STUDENT 4
     path("reports/", include("reports.urls")),  # STUDENT 5
-    
+    path("settings/", include("site_settings.urls")),  # STUDENT 3
 
 ]
 

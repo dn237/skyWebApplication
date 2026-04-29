@@ -2,7 +2,7 @@
 File: messaging/views.py
 Author: Yusuf (Student 3)
 Purpose: Views for inbox, conversation, compose, drafts, sent, and message actions.
-Co-authors: None
+Co-authors: Diana (Student 1) - Contributed cross-module deep-linking and auto-recipient logic.
 """
 
 from django.contrib.auth.decorators import login_required
@@ -25,18 +25,20 @@ def _get_conversation_list(user):
     partner_ids = set()
     for msg in sent_messages:
         if msg.sender == user:
-            if msg.recipient_id:
-                partner_ids.add(msg.recipient_id)
+            if msg.recipient.id:
+                partner_ids.add(msg.recipient.id)
         else:
-            partner_ids.add(msg.sender_id)
+            partner_ids.add(msg.sender.id)
     conversations = []
     for pid in partner_ids:
         partner = User.objects.get(id=pid)
         latest = sent_messages.filter(
-            Q(sender=user, recipient_id=pid) |
-            Q(sender_id=pid, recipient=user)
+            Q(sender=user, recipient__id=pid) |
+            Q(sender__id=pid, recipient=user)
         ).order_by('-created_at').first()
-        conversations.append({'partner': partner, 'latest': latest})
+        if latest:
+            conversations.append({'partner': partner, 'latest': latest})
+            
     conversations.sort(key=lambda c: c['latest'].created_at, reverse=True)
     return conversations
 
@@ -52,6 +54,7 @@ def inbox(request):
     return render(request, 'messaging/inbox.html', {
         'conversations': _get_conversation_list(request.user),
         'unread_count': unread_count,
+        'active_tab': 'inbox',
     })
 
 
@@ -95,18 +98,18 @@ def send_in_thread(request, user_id):
         )
     return redirect('messages:conversation', user_id=user_id)
 
-
 @login_required
 def compose(request):
     initial = {}
     if request.method == 'GET':
-        recipient_id = request.GET.get('recipient')
+        recipient_id = request.GET.get('recipient') or request.GET.get('to')
+        
         if recipient_id:
             try:
                 pre = User.objects.get(id=recipient_id)
                 if pre != request.user:
                     initial['recipient'] = pre
-            except User.DoesNotExist:
+            except (User.DoesNotExist, ValueError):
                 pass
 
     if request.method == 'POST':
@@ -132,13 +135,13 @@ def compose(request):
 @login_required
 def drafts(request):
     draft_list = Message.objects.filter(sender=request.user, status='draft')
-    return render(request, 'messaging/drafts.html', {'drafts': draft_list})
+    return render(request, 'messaging/drafts.html', {'drafts': draft_list, 'active_tab': 'drafts'})
 
 
 @login_required
 def sent(request):
     sent_list = Message.objects.filter(sender=request.user, status='sent')
-    return render(request, 'messaging/sent.html', {'sent_messages': sent_list})
+    return render(request, 'messaging/sent.html', {'sent_messages': sent_list, 'active_tab': 'sent'})
 
 
 @require_POST

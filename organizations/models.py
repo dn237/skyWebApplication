@@ -1,4 +1,10 @@
 # organizations/models.py
+"""
+Author: Eyup Okudan (w2117331)
+Description: Defines the Department model for the organization module.
+The head_user field is implemented as a CharField to avoid circular dependencies 
+and allow flexible manager naming as per development requirements[cite: 8, 14].
+"""
 from django.db import models
 from django.conf import settings
 

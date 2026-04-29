@@ -1,9 +1,19 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Department
+"""
+Author: Eyup Okudan (w2117331)
+Description: Manages the business logic for organizational units, including:
+- organization_list: Handles department listing and keyword search.
+- create_department: Processes the addition of new departments.
+- edit_department: Manages updates to existing department records.
+- delete_department: Handles the removal of records with confirmation.
+- department_detail: Displays specific information for a single department.
+"""
+from django.shortcuts import render, get_object_or_404, redirect
+# ... rest of your imports and views
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from django.shortcuts import redirect
-from .forms import DepartmentForm
 from django.contrib import messages
+from .models import Department
+from .forms import DepartmentForm
 
 # Updated List View with Search Logic
 def organization_list(request):
@@ -11,9 +21,11 @@ def organization_list(request):
     query = request.GET.get('q')
     
     if query:
-        # Filter departments if their name or head_user contains the query string (case-insensitive)
+        # FIX: Filter departments by dept_name or the related user's username/first_name
         departments = Department.objects.filter(
-            Q(dept_name__icontains=query) | Q(head_user__icontains=query)
+            Q(dept_name__icontains=query) | 
+            Q(head_user__username__icontains=query) |
+            Q(head_user__first_name__icontains=query)
         )
     else:
         # If no search, show all departments
@@ -37,15 +49,17 @@ def create_department(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Department successfully added!')
-            return redirect('organizations:dept') # Kaydedince listeye geri dön
+            # Redirecting to the list view after a successful save
+            return redirect('organizations:organization_list') 
     else:
         form = DepartmentForm()
     
     return render(request, 'organizations/department_form.html', {'form': form})
+
 def edit_department(request, pk):
     department = get_object_or_404(Department, pk=pk)
     if request.method == 'POST':
-        # formun içine 'instance=department' vererek mevcut bilgileri yüklüyoruz
+        # Load existing instance into the form for updating
         form = DepartmentForm(request.POST, instance=department)
         if form.is_valid():
             form.save()
@@ -54,16 +68,17 @@ def edit_department(request, pk):
     else:
         form = DepartmentForm(instance=department)
     
-    # Mevcut department_form.html'i tekrar kullanıyoruz, ekstra dosya açmaya gerek yok
+    # Reuse existing department_form.html for editing
     return render(request, 'organizations/department_form.html', {'form': form, 'department': department})
+
 def delete_department(request, pk):
     department = get_object_or_404(Department, pk=pk)
     if request.method == 'POST':
         department_name = department.dept_name
         department.delete()
-        # Silme işlemi sonrası listeye dön ve uyarı mesajı ver
+        # Redirect to the list view after deletion and display a success message
         messages.success(request, f'{department_name} successfully deleted!')
-        return redirect('organizations:dept')
+        return redirect('organizations:organization_list')
     
-    # Eğer GET isteği gelirse onay sayfasına gönder
+    # If GET request, send to the confirmation page
     return render(request, 'organizations/department_confirm_delete.html', {'department': department})

@@ -21,16 +21,16 @@ class TeamsViewTests(TestCase):
 		self.lead = User.objects.create_user(username='leaduser', password='pass') # type: ignore
 		self.member = User.objects.create_user(username='member', password='pass') # type: ignore
 		self.outsider = User.objects.create_user(username='outsider', password='pass') # type: ignore
-		self.department = Department.objects.create(dept_name='Engineering', head_user='Director')
+		self.department = Department.objects.create(dept_name='Engineering')
 
 		# Build the main team and a second team for comparison.
 		self.team = Team.objects.create(team_name='API Team', dept=self.department, lead_user=self.lead, focus_areas='APIs', skills_technologies='Django')
 		self.other_team = Team.objects.create(team_name='Platform Team')
 
 		# Profiles are how the UI knows who belongs where.
-		UserProfile.objects.create(user=self.lead, team=self.team, job_title='Team Lead')
-		UserProfile.objects.create(user=self.member, team=self.team, job_title='Engineer')
-		UserProfile.objects.create(user=self.outsider, team=self.other_team, job_title='Analyst')
+		UserProfile.objects.update_or_create(user=self.lead, defaults={'team': self.team, 'job_title': 'Team Lead'})
+		UserProfile.objects.update_or_create(user=self.member, defaults={'team': self.team, 'job_title': 'Engineer'})
+		UserProfile.objects.update_or_create(user=self.outsider, defaults={'team': self.other_team, 'job_title': 'Analyst'})
 
 	def test_team_list_shows_team(self):
 		"""The team index should render and include the created team."""

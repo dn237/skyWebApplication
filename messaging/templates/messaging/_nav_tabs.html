@@ -1,0 +1,63 @@
+{# ================================================= #}
+{# AUTHOR: YUSUF | STUDENT 3                         #}
+{# Messaging navigation tabs — include on inbox,     #}
+{# drafts, and sent pages only.                      #}
+{# Expects context var: active_tab ("inbox"|"drafts" #}
+{# |"sent"). unread_count injected by context proc.  #}
+{# ================================================= #}
+<style>
+.msg-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #F4F7FE;
+    padding-bottom: 0;
+}
+.msg-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #A3AED0;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    border-radius: 6px 6px 0 0;
+    transition: color 0.15s, border-color 0.15s;
+}
+.msg-tab:hover {
+    color: #2B3674;
+    text-decoration: none;
+}
+.msg-tab--active {
+    color: #686ADE;
+    border-bottom-color: #686ADE;
+}
+.msg-tab-badge {
+    background: #E53E3E;
+    color: white;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    line-height: 1.4;
+}
+</style>
+
+<nav class="msg-tabs">
+    <a href="{% url 'messages:inbox' %}" class="msg-tab {% if active_tab == 'inbox' %}msg-tab--active{% endif %}">
+        <span class="material-symbols-outlined" style="font-size:16px;">inbox</span>
+        Inbox
+        {% if unread_count %}<span class="msg-tab-badge">{{ unread_count }}</span>{% endif %}
+    </a>
+    <a href="{% url 'messages:drafts' %}" class="msg-tab {% if active_tab == 'drafts' %}msg-tab--active{% endif %}">
+        <span class="material-symbols-outlined" style="font-size:16px;">draft</span>
+        Drafts
+    </a>
+    <a href="{% url 'messages:sent' %}" class="msg-tab {% if active_tab == 'sent' %}msg-tab--active{% endif %}">
+        <span class="material-symbols-outlined" style="font-size:16px;">send</span>
+        Sent
+    </a>
+</nav>

@@ -9,26 +9,49 @@ The project uses a **Hub-and-Spoke architecture** with a centralized Dashboard a
 
 Follow these steps to get the project running on your local machine:
 
-1. **Clone the Repository**:
-   Open VS Code, press `Ctrl+Shift+P`, type `Git: Clone`, and paste the link.
-
-2. **Install Requirements**:
-   Open the terminal in VS Code and run:
+1. **Get the latest code**:
    ```bash
-   pip install django
+   git fetch origin
+   git checkout main
+   git pull origin main
    ```
 
-3. **Launch the System**:
-   Important: I've already included the database, so you DON'T need to run migrate or create superuser.
-   Just start the server:
+2. **Set up your environment file**:
+   ```bash
+   cp .env.example .env
+   ```
+   Open `.env` and set `DJANGO_SECRET_KEY` to any non-empty string.
+
+3. **Install all dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Build the database** (run this every time after pulling):
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Create the standard admin user**:
+   ```bash
+   python manage.py createsuperuser
+   ```
+   Use: **username:** `admin` | **password:** `dev12345`
+
+6. **Run the server**:
    ```bash
    python manage.py runserver
    ```
+   Open `http://127.0.0.1:8000/`
 
-4. **Access the Admin Panel**:
-   Go to `http://127.0.0.1:8000/admin/`
-   * **Username:** `admin`
-   * **Password:** [CHECK WHATSAPP GROUP]
+---
+
+## 🔑 Marker / Demo Login
+
+| URL | Username | Password |
+|-----|----------|----------|
+| `http://127.0.0.1:8000/admin/` | `admin` | `dev12345` |
+| `http://127.0.0.1:8000/` | `admin` | `dev12345` |
 
 ---
 

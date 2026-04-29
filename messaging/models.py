@@ -46,3 +46,17 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.sender} → {self.recipient}: {self.subject[:30]}"
+
+
+class MessagingPreference(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='messaging_prefs'
+    )
+    email_notification = models.BooleanField(default=False)
+    sound_notification = models.BooleanField(default=True)
+    do_not_disturb = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"MessagingPreference({self.user})"

@@ -25,7 +25,7 @@ class AccountsViewTests(TestCase):
 			email="admin@example.com",
 			is_staff=True,
 		)
-		self.department = Department.objects.create(dept_name="Engineering", head_user="Director")
+		self.department = Department.objects.create(dept_name="Engineering")
 		self.profile = UserProfile.objects.create(user=self.user, department=self.department, job_title="Engineer")
 
 	@patch("accounts.views.send_mail")

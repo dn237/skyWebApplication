@@ -98,7 +98,7 @@ def download_excel(request):
 
         data.append({
             "Department": str(dept) if dept else "Unassigned",
-            "Manager": dept.head_user if dept else "",
+            "Manager": (dept.head_user.get_full_name() or str(dept.head_user)) if (dept and dept.head_user) else "",
             "Team": str(team) if team else "No Team",
             "Team Leader": getattr(team, "lead_user", "") if team else "",
             "Username": u.username,
