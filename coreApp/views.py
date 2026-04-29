@@ -49,22 +49,20 @@ def dashboard(request):
     if user_profile and user_profile.team:
         user_team = user_profile.team
     
-    # Fallback: Check if they lead a team (important for heads who aren't 'members')
+    # Fallback for leaders/heads not explicitly in the "members" list
     if not user_team and request.user.is_authenticated:
         user_team = Team.objects.filter(lead_user=request.user).first()
 
     team_members = []
     if user_team:
-        team_members = UserProfile.objects.filter(
-            Q(team=user_team) | Q(user=user_team.lead_user)
-        ).select_related('user').annotate(
-            # Create a 'sort_priority' field: 0 if it's the current user, 1 otherwise
+        # Use .select_related to grab user and department data in ONE database hit
+        team_members = UserProfile.objects.filter(team=user_team).select_related('user', 'department').annotate(
             sort_priority=Case(
-                When(user=request.user, then=Value(0)),
-                default=Value(1),
-                output_field=IntegerField(),
+            When(user_id=request.user.pk, then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
             )
-        ).order_by('sort_priority', 'user__username').distinct()
+        ).order_by('sort_priority', 'user__username')
     
     # 4. PERMISSIONS
     is_leader = False

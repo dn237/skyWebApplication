@@ -21,7 +21,7 @@ def get_visible_users(user):
         return User.objects.all()
 
     # department head
-    dept = Department.objects.filter(head_user=user.username).first()
+    dept = Department.objects.filter(head_user=user).first()
     if dept:
         return User.objects.filter(profile__team__dept=dept)
 

@@ -18,7 +18,7 @@
                 <h4>{{ dept }}</h4>
 
                 <p class="text-muted">
-                    Manager: {{ dept_data.manager|default:"-" }}
+                    Manager: {{ dept_data.manager.get_full_name|default:"-" }}
                 </p>
 
                 {% for team, team_data in dept_data.teams.items %}
@@ -26,7 +26,7 @@
                         <h6>Team: {{ team }}</h6>
 
                         <p class="text-muted">
-                            Leader: {{ team_data.leader|default:"-" }}
+                            Leader: {{ team_data.leader.get_full_name|default:"-" }}
                         </p>
 
                         <table class="table table-striped table-sm">
