@@ -70,7 +70,7 @@ def dashboard(request):
         is_leader = True
 
 
-    # 4. ADMIN & CALENDAR (Samia's work)
+    # 4. ADMIN & CALENDAR (SAMIA ELHAYARIRIFI'S PART)
     admin_teams = recent_teams[:5] if (request.user.is_staff or request.user.is_superuser) else []
     today = date.today()
     upcoming_schedules = Schedule.objects.filter(date__gte=today).order_by('date', 'time')[:4]
@@ -99,3 +99,18 @@ def dashboard(request):
         'has_hidden_updates': has_hidden_updates,
         'dashboard_tasks': dashboard_tasks,
     })
+
+def privacy(request):
+    return render(request, 'privacy.html')
+
+
+def terms(request):
+    return render(request, 'terms.html')
+
+
+def security(request):
+    return render(request, 'security.html')
+
+
+def contact(request):
+    return render(request, 'contact.html')
