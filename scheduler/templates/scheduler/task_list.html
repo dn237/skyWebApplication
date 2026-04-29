@@ -5,7 +5,7 @@
 <div class="scheduler-page">
     <div class="scheduler-header">
         <div>
-            <h1 class="scheduler-title">Sprint Tasks</h1>
+            <h1 class="page-main-title">Sprint Tasks</h1>
             <p class="scheduler-subtitle">View and manage all sprint tasks.</p>
         </div>
 
@@ -56,10 +56,14 @@
                 </div>
             {% endfor %}
         {% else %}
-            <a href="{% url 'scheduler:create_schedule' %}?type=task"
-                class="btn btn-outline-primary btn-sm">
-                    Add your first task
-            </a>
+            <div style="text-align:center; padding: 40px 0;">
+                <span class="material-symbols-outlined" style="font-size:48px; color:#DCE3F5;">
+                    checklist
+                </span>
+                <p style="margin-top:10px; color:#A3AED0; font-size:14px;">
+                    No tasks added yet.
+                </p>
+            </div>
         {% endif %}
     </div>
 </div>

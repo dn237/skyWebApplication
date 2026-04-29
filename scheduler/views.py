@@ -113,19 +113,30 @@ def create_schedule(request):
 def edit_schedule(request, id):
     schedule = get_object_or_404(Schedule, id=id)
 
-    if request.method == 'POST':
-        form = ScheduleForm(request.POST, instance=schedule)
+    if request.method == "POST":
+        post_data = request.POST.copy()
+
+        # Keep the original type because task/reminder hides schedule_type in the form
+        if schedule.schedule_type in ["task", "reminder"]:
+            post_data["schedule_type"] = schedule.schedule_type
+
+        form = ScheduleForm(post_data, instance=schedule)
+
         if form.is_valid():
-            form.save()
-            return redirect('scheduler:schedule_list')
+            updated_schedule = form.save()
+
+            if updated_schedule.schedule_type == "task":
+                return redirect("scheduler:task_list")
+            else:
+                return redirect("scheduler:schedule_list")
     else:
         form = ScheduleForm(instance=schedule)
 
-    return render(request, 'scheduler/create_schedule.html', {
-        'form': form,
-        'edit_mode': True,
-        'schedule': schedule,
-        'schedule_type': schedule.schedule_type,
+    return render(request, "scheduler/create_schedule.html", {
+        "form": form,
+        "edit_mode": True,
+        "schedule": schedule,
+        "schedule_type": schedule.schedule_type,
     })
 
 def task_list(request):
@@ -138,8 +149,3 @@ def delete_schedule(request, id):
     schedule = get_object_or_404(Schedule, id=id)
     schedule.delete()
     return redirect('scheduler:schedule_list')
-
-def delete_schedule(request, id):
-    schedule = get_object_or_404(Schedule, id=id)
-    schedule.delete()
-    return redirect('scheduler:task_list')
