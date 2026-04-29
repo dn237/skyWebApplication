@@ -41,6 +41,15 @@ class UserProfile(models.Model):
 
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     job_title = models.CharField(max_length=100, blank=True, default="Team Member")
+    def save(self, *args, **kwargs):
+        """
+        Custom save to ensure department stays in sync with the team's department.
+        If a team is selected, we pull the department from that team automatically.
+        """
+        if self.team and self.team.dept:
+            self.department = self.team.dept
+        
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.username} ({self.job_title})"

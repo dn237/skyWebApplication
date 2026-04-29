@@ -116,7 +116,7 @@
             </div>
             <div class="dashboard-footer-actions dashboard-legacy-actions">
                 <a href="{% url 'teams:index' %}" class="btn-action-primary">Explore Teams</a>
-                {% if my_team and my_team.lead_user and my_team.lead_user.id == request.user.id %}
+                {% if is_leader %}
                 <a href="{% url 'teams:manage_updates' team_id=my_team.pk %}" class="btn-action-primary secondary">Manage Updates</a>
                 {% else %}
                 <a href="{% url 'messages:inbox' %}" class="btn-action-primary secondary">Open Inbox</a>

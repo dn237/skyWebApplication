@@ -39,15 +39,15 @@
                     <td>{{ u.username }}</td>
                     <td>{{ u.email }}</td>
                     <td>
-                        {% if u.userprofile and u.userprofile.team %}
-                            {{ u.userprofile.team }}
+                        {% if u.profile and u.profile.team %}
+                            {{ u.profile.team }}
                         {% else %}
                             -
                         {% endif %}
                     </td>
                     <td>
-                        {% if u.userprofile and u.userprofile.department %}
-                            {{ u.userprofile.department }}
+                        {% if u.profile and u.profile.department %}
+                            {{ u.profile.department }}
                         {% else %}
                             -
                         {% endif %}
