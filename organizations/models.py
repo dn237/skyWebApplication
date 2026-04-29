@@ -15,10 +15,10 @@ class Department(models.Model):
     )
     
     # head_user: The name of the Department Head.
-    # Stored as text to avoid circular dependency loops in the database as per CW1 rational.
+  
     head_user = models.CharField(
-        max_length=100, 
-        null=False, 
+        max_length=100,
+        null=False,
         verbose_name="Head of Department"
     )
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 # =================================================
 # AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
-# Coauthor: Anita  | STUDENT ID:
+# Coauthor: Anita  | STUDENT ID: 2076892
 # =================================================
 
 if TYPE_CHECKING:

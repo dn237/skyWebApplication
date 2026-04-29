@@ -15,23 +15,30 @@ from reportlab.lib.styles import getSampleStyleSheet
 # filter by role
 def get_visible_users(user):
 
+    # admin/superuser
+    if user.is_superuser:
+        return User.objects.all()
+
+    # department head
     dept = Department.objects.filter(head_user=user).first()
     if dept:
-        return User.objects.filter(userprofile__department=dept)
+        return User.objects.filter(profile__department=dept)
 
+    # team leader
     team = Team.objects.filter(lead_user=user).first()
     if team:
-        return User.objects.filter(userprofile__team=team)
+        return User.objects.filter(profile__team=team)
 
+    # normal user
     return User.objects.filter(id=user.id)
 
 
-# build structure function
+# build structure
 def build_structure(users):
     structure = {}
 
     for u in users:
-        profile = getattr(u, "userprofile", None)
+        profile = getattr(u, "profile", None)
 
         dept_name = str(profile.department) if profile and profile.department else "No Department"
         team_name = str(profile.team) if profile and profile.team else "No Team"
@@ -51,7 +58,6 @@ def build_structure(users):
         structure[dept_name]["teams"][team_name]["users"].append(u)
 
     # sort users A-Z
-
     for dept in structure.values():
         for team in dept["teams"].values():
             team["users"].sort(key=lambda x: x.username.lower())
@@ -62,7 +68,7 @@ def build_structure(users):
 # main view
 @login_required
 def report_view(request):
-    users = get_visible_users(request.user).select_related("userprofile")
+    users = get_visible_users(request.user).select_related("profile")
     structure = build_structure(users)
 
     return render(request, "reports/summary.html", {
@@ -73,12 +79,12 @@ def report_view(request):
 # excel export
 @login_required
 def download_excel(request):
-    users = get_visible_users(request.user).select_related("userprofile")
+    users = get_visible_users(request.user).select_related("profile")
 
     data = []
 
     for u in users:
-        profile = getattr(u, "userprofile", None)
+        profile = getattr(u, "profile", None)
 
         dept = profile.department if profile else ""
         team = profile.team if profile else ""
@@ -107,7 +113,7 @@ def download_excel(request):
 # pdf export
 @login_required
 def download_pdf(request):
-    users = get_visible_users(request.user).select_related("userprofile")
+    users = get_visible_users(request.user).select_related("profile")
     structure = build_structure(users)
 
     response = HttpResponse(content_type='application/pdf')
