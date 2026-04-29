@@ -52,6 +52,7 @@ def inbox(request):
     return render(request, 'messaging/inbox.html', {
         'conversations': _get_conversation_list(request.user),
         'unread_count': unread_count,
+        'active_tab': 'inbox',
     })
 
 
@@ -132,13 +133,13 @@ def compose(request):
 @login_required
 def drafts(request):
     draft_list = Message.objects.filter(sender=request.user, status='draft')
-    return render(request, 'messaging/drafts.html', {'drafts': draft_list})
+    return render(request, 'messaging/drafts.html', {'drafts': draft_list, 'active_tab': 'drafts'})
 
 
 @login_required
 def sent(request):
     sent_list = Message.objects.filter(sender=request.user, status='sent')
-    return render(request, 'messaging/sent.html', {'sent_messages': sent_list})
+    return render(request, 'messaging/sent.html', {'sent_messages': sent_list, 'active_tab': 'sent'})
 
 
 @require_POST

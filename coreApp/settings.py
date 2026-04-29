@@ -25,8 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-DEBUG = os.getenv('DEBUG') == 'True'
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -46,8 +45,9 @@ INSTALLED_APPS = [
     "organizations",  # STUDENT 2
     "messaging",  # STUDENT 3
     "scheduler",  # STUDENT 4
-    "reports",  # STUDENT 5 
-    "accounts",  # STUDENT 1 (for authentication)   
+    "reports",  # STUDENT 5
+    "site_settings",  # STUDENT 3 (gap-fill)
+    "accounts",  # STUDENT 1 (for authentication)
 ]
 
 MIDDLEWARE = [

@@ -61,8 +61,8 @@
                     <span class="material-symbols-outlined">group</span> User Access
                 </a>
                 {% endif %}
-                <a href="/settings/" 
-                    class="smart-button{% if request.path|slice:':10' == '/settings/' %} active{% endif %}">
+                <a href="{% url 'site_settings:settings' %}"
+                    class="smart-button{% if request.resolver_match.namespace == 'site_settings' %} active{% endif %}">
                     <span class="material-symbols-outlined">settings</span> Settings
                 </a>
             </nav>

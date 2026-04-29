@@ -20,7 +20,7 @@
                 <span class="material-symbols-outlined person-icon">person</span>
                 <div class="contact-text">
                     <span class="contact-sub">Department Head:</span>
-                    <span class="name-bold">{{ team.dept.head_user.get_full_name | default:team.dept.head_user.username }}</span>
+                    <span class="name-bold">{% if team.dept.head_user %}{{ team.dept.head_user.get_full_name|default:team.dept.head_user.username }}{% else %}—{% endif %}</span>
                 </div>
             </div>
         </div>
