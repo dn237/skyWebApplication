@@ -1,3 +1,10 @@
+"""
+Author: Eyup Okudan (w2117331)
+Description: Defines URL patterns for the organizations app, 
+mapping views to specific web addresses within the 'organizations' namespace.
+"""
+from django.urls import path
+# ... rest of your patterns
 from django.urls import path
 from . import views
 
