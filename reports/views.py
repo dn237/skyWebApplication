@@ -15,14 +15,14 @@ from reportlab.lib.styles import getSampleStyleSheet
 # filter by role
 def get_visible_users(user):
 
-    # admin/superuser
+    # admin
     if user.is_superuser:
         return User.objects.all()
 
     # department head
-    dept = Department.objects.filter(head_user=user).first()
+    dept = Department.objects.filter(head_user=user.username).first()
     if dept:
-        return User.objects.filter(profile__department=dept)
+        return User.objects.filter(profile__team__dept=dept)
 
     # team leader
     team = Team.objects.filter(lead_user=user).first()
@@ -40,18 +40,21 @@ def build_structure(users):
     for u in users:
         profile = getattr(u, "profile", None)
 
-        dept_name = str(profile.department) if profile and profile.department else "No Department"
-        team_name = str(profile.team) if profile and profile.team else "No Team"
+        team = profile.team if profile and profile.team else None
+        dept = team.dept if team and hasattr(team, "dept") else None
+
+        dept_name = str(dept) if dept else "Unassigned"
+        team_name = str(team) if team else "No Team"
 
         if dept_name not in structure:
             structure[dept_name] = {
-                "manager": getattr(profile.department, "head_user", None) if profile and profile.department else None,
+                "manager": dept.head_user if dept else None,
                 "teams": {}
             }
 
         if team_name not in structure[dept_name]["teams"]:
             structure[dept_name]["teams"][team_name] = {
-                "leader": getattr(profile.team, "lead_user", None) if profile and profile.team else None,
+                "leader": getattr(team, "lead_user", None) if team else None,
                 "users": []
             }
 
@@ -61,6 +64,9 @@ def build_structure(users):
     for dept in structure.values():
         for team in dept["teams"].values():
             team["users"].sort(key=lambda x: x.username.lower())
+
+    # move "Unassigned" to bottom
+    structure = dict(sorted(structure.items(), key=lambda x: x[0] == "Unassigned"))
 
     return structure
 
@@ -86,17 +92,14 @@ def download_excel(request):
     for u in users:
         profile = getattr(u, "profile", None)
 
-        dept = profile.department if profile else ""
-        team = profile.team if profile else ""
-
-        leader = getattr(team, "lead_user", None) if team else ""
-        manager = getattr(dept, "head_user", None) if dept else ""
+        team = profile.team if profile else None
+        dept = team.dept if team else None
 
         data.append({
-            "Department": str(dept),
-            "Manager": str(manager),
-            "Team": str(team),
-            "Team Leader": str(leader),
+            "Department": str(dept) if dept else "Unassigned",
+            "Manager": dept.head_user if dept else "",
+            "Team": str(team) if team else "No Team",
+            "Team Leader": getattr(team, "lead_user", "") if team else "",
             "Username": u.username,
             "Email": u.email,
         })
@@ -127,20 +130,17 @@ def download_pdf(request):
     for dept_name, dept_data in structure.items():
 
         content.append(Paragraph(f"<b>Department:</b> {dept_name}", styles["Heading2"]))
-
-        manager = dept_data["manager"]
-        content.append(Paragraph(f"Manager: {manager or '-'}", styles["Normal"]))
+        content.append(Paragraph(f"Manager: {dept_data['manager'] or 'Unassigned'}", styles["Normal"]))
         content.append(Spacer(1, 10))
 
         for team_name, team_data in dept_data["teams"].items():
 
             content.append(Paragraph(f"<b>Team:</b> {team_name}", styles["Heading3"]))
-
-            leader = team_data["leader"]
-            content.append(Paragraph(f"Leader: {leader or '-'}", styles["Normal"]))
+            content.append(Paragraph(f"Leader: {team_data['leader'] or 'Unassigned'}", styles["Normal"]))
 
             for u in team_data["users"]:
-                content.append(Paragraph(f"- {u.username} ({u.email})", styles["Normal"]))
+                email_part = f" ({u.email})" if u.email else ""
+                content.append(Paragraph(f"- {u.username}{email_part}", styles["Normal"]))
 
             content.append(Spacer(1, 12))
 
