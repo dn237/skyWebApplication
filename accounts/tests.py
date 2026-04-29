@@ -9,6 +9,9 @@ from django.urls import reverse
 from organizations.models import Department
 from .models import UserProfile
 
+# =================================================
+# AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
+# =================================================
 
 class AccountsViewTests(TestCase):
 	"""Tests for signup, login, logout, and profile pages."""
