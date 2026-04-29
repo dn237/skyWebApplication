@@ -20,13 +20,47 @@
 
             <form method="post" enctype="multipart/form-data" class="profile-v2-photo-form">
                 {% csrf_token %}
-                <label for="{{ avatar_form.avatar.id_for_label }}" class="profile-v2-photo-label">Update photo</label>
-                {{ avatar_form.avatar }}
-                <button type="submit" class="btn-action-primary profile-v2-photo-btn">Save Photo</button>
-                {% if avatar_form.avatar.errors %}
-                    <p class="text-danger mb-0">{{ avatar_form.avatar.errors|striptags }}</p>
+    
+                <div style="display: none;">
+                    <input type="file" name="avatar" id="id_avatar" onchange="handleFileSelect(this)">
+                </div>
+
+                <label for="id_avatar" id="photo-label" class="profile-v2-photo-label" style="cursor: pointer; transition: all 0.3s ease;">
+                    Update Photo
+                </label>
+                <button type="submit" id="save-btn" class="btn-action-primary profile-v2-photo-btn" style="display: none; background-color: #4318FF;">
+                    Confirm Upload
+                </button>
+
+                {% if profile_obj.avatar %}
+                <button type="submit" name="delete_photo" id="delete-btn" 
+                class="profile-v2-delete-btn" style="display: inline-block; border: none; background: none;
+                color: #EE5D50; cursor: pointer; font-size: 11px; font-weight: 700; margin-left: 8px; vertical-align: middle;">
+                Delete Photo</button>
                 {% endif %}
             </form>
+            <script>
+                function handleFileSelect(input) {
+                    const label = document.getElementById('photo-label');
+                    const saveBtn = document.getElementById('save-btn');
+                    const deleteBtn = document.getElementById('delete-btn');
+    
+                    if (input.files && input.files[0]) {
+                        // Change Label state
+                        label.innerText = "Selected: " + input.files[0].name;
+                        label.style.color = "#05CD99"; // Success Green
+                        label.style.backgroundColor = "#EEFDF8"; // Soft success background
+        
+                        // Show Save Button
+                        saveBtn.style.display = "inline-block";
+
+                        // Hide Delete Button (to focus on saving the new file)
+                        if (deleteBtn) {
+                            deleteBtn.style.display = "none";
+                        }
+                    }
+                }
+            </script>
 
             <h1 class="profile-v2-name">{{ user.get_full_name|default:user.username }}</h1>
             <p class="profile-v2-title">{{ profile_obj.job_title|default:"Team Member" }}</p>

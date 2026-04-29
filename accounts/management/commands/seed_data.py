@@ -1,6 +1,6 @@
 # ================================================
 # AUTHOR: DIANA NICHVOLODOVA | STUDENT ID: 20165015
-# Master Sync & Excel Data Ingestion
+# Master Sync & Excel Data Ingestion - FINAL VERSION
 # ================================================
 
 import pandas as pd
@@ -14,7 +14,7 @@ class Command(BaseCommand):
     help = 'Master command to import Excel data and repair team/profile links.'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.NOTICE("--- PHASE 1: EXCEL INGESTION ---"))
+        self.stdout.write(self.style.NOTICE("--- PHASE 1: EXCEL INGESTION (Teams & Users) ---"))
         
         try:
             df = pd.read_excel("Agile Project Module UofW - Team Registry.xlsx")
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                     username=username,
                     defaults={"first_name": lead_name}
                 )
-
+                
             # --- Create Department ---
             dept, _ = Department.objects.get_or_create(
                 dept_name=dept_name,
@@ -79,12 +79,14 @@ class Command(BaseCommand):
                     user=lead_user,
                     defaults={
                         "team": team,
+                        "department": team.dept,
                         "job_title": "Team Lead",
                     },
                 )
-                profile.save() # Triggers signals
+                profile.save()
 
-        # 2. Projects
+        # 2. Project Import
+        self.stdout.write(self.style.NOTICE("--- PHASE 2: PROJECT IMPORT ---"))
         for _, row in df.iterrows():
             team_name = str(row.get("Team Name", "")).strip()
             project_name = str(row.get("Jira Project Name", "")).strip()
@@ -97,7 +99,8 @@ class Command(BaseCommand):
             except Team.DoesNotExist:
                 continue
 
-        # 3. Dependencies
+        # 3. Dependency Mapping
+        self.stdout.write(self.style.NOTICE("--- PHASE 3: DEPENDENCY MAPPING ---"))
         for _, row in df.iterrows():
             team_name = str(row.get("Team Name", "")).strip()
             downstream = str(row.get("Downstream Dependencies", "")).strip()
@@ -111,22 +114,29 @@ class Command(BaseCommand):
             except Team.DoesNotExist:
                 continue
 
-        self.stdout.write(self.style.NOTICE("--- PHASE 2: SYSTEM REPAIR & SYNC ---"))
-        
+        # 4. Global Role Cleanup (Fixes the "Everyone is a Lead" bug)
+        self.stdout.write(self.style.NOTICE("--- PHASE 4: GLOBAL ROLE CLEANUP ---"))
+        actual_leader_ids = Team.objects.values_list('lead_user_id', flat=True)
+        # Any user profile NOT in the official lead list gets reset to Engineer
+        demoted_count = UserProfile.objects.exclude(user_id__in=actual_leader_ids).update(job_title="Engineer")
+        self.stdout.write(self.style.SUCCESS(f"Cleanup complete. {demoted_count} non-leads set to Engineer."))
+
+        # 5. Atomic Link Repair (Final Sync)
+        self.stdout.write(self.style.NOTICE("--- PHASE 5: ATOMIC LINK REPAIR ---"))
         repaired = 0
         teams = Team.objects.select_related('lead_user').all()
         
         for team in teams:
             lead = team.lead_user
             if not lead: continue
+            profile, _ = UserProfile.objects.get_or_create(user=lead)    
 
-            profile, _ = UserProfile.objects.get_or_create(user=lead)
-            
-            # Reconciliation Logic: If profile data doesn't match Team model data
-            if profile.team != team.pk or profile.job_title != "Team Lead":
+            # Check if team OR department is mismatched
+            if profile.team != team or profile.department != team.dept or profile.job_title != "Team Lead":
                 profile.team = team
+                profile.department = team.dept  # <--- ADD THIS LINE
                 profile.job_title = "Team Lead"
-                profile.save() # Re-verify via Signal
+                profile.save() 
                 repaired += 1
 
         self.stdout.write(self.style.SUCCESS(f"Master Sync Complete. Repaired {repaired} profiles."))

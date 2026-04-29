@@ -183,8 +183,8 @@
                                     <span style="font-size: 14px; color: #4318FF; font-weight: 700; margin-left: 6px;">(You)</span>
                                     {% endif %}
                                 </p>
-                                <p class="role-muted" style="font-size: 11px; margin: 0; color: {% if member.role != 'Engineer' %}#4318FF{% else %}#A3AED0{% endif %}; font-weight: {% if member.role != 'Engineer' %}700{% else %}400{% endif %};">
-                                    {{ member.role }}
+                                <p class="role-muted" style="font-size: 11px; margin: 0; color: {% if my_team.lead_user_id == member.user_id %}#4318FF{% else %}#A3AED0{% endif %}; font-weight: {% if my_team.lead_user_id == member.user_id %}700{% else %}400{% endif %};">
+                                    {% if my_team.lead_user_id == member.user_id %}Team Lead{% else %}Engineer{% endif %}
                                 </p>
                             </div>
                         </div>

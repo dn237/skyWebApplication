@@ -3508,3 +3508,26 @@ form.search-bar.dashboard-search {
         padding: 22px;
     }
 }
+
+
+
+.btn-message-mini {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background-color: #F4F7FE; 
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-message-mini:hover {
+    background-color: #E0E5F2;
+    transform: scale(1.1);
+}
+
+.btn-message-mini span:hover {
+    color: #3311CC; 
+}
