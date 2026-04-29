@@ -1,3 +1,4 @@
+# reports/views.py
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -20,7 +21,7 @@ def get_visible_users(user):
         return User.objects.all()
 
     # department head
-    dept = Department.objects.filter(head_user=user.username).first()
+    dept = Department.objects.filter(head_user=user).first()
     if dept:
         return User.objects.filter(profile__team__dept=dept)
 
@@ -106,10 +107,11 @@ def download_excel(request):
 
     df = pd.DataFrame(data)
 
-    response = HttpResponse(content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="report.xlsx"'
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="team_report.xlsx"'
 
-    df.to_excel(response, index=False)
+    # Requires 'openpyxl' installed in your .venv
+    df.to_excel(response, index=False) # type: ignore
     return response
 
 
@@ -120,12 +122,13 @@ def download_pdf(request):
     structure = build_structure(users)
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="staff_report.pdf"'
 
-    doc = SimpleDocTemplate(response)
+    doc = SimpleDocTemplate(response) # type: ignore
     styles = getSampleStyleSheet()
 
     content = []
+    content.append(Paragraph("Staff Visibility Report", styles["Title"]))
 
     for dept_name, dept_data in structure.items():
 

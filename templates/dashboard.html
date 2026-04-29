@@ -120,7 +120,7 @@
             </div>
             <div class="dashboard-footer-actions dashboard-legacy-actions">
                 <a href="{% url 'teams:index' %}" class="btn-action-primary">Explore Teams</a>
-                {% if my_team and my_team.lead_user and my_team.lead_user.id == request.user.id %}
+                {% if is_leader %}
                 <a href="{% url 'teams:manage_updates' team_id=my_team.pk %}" class="btn-action-primary secondary">Manage Updates</a>
                 {% else %}
                 <a href="{% url 'messages:inbox' %}" class="btn-action-primary secondary">Open Inbox</a>
@@ -175,6 +175,7 @@
                                 <span class="material-symbols-outlined" style="font-size: 18px; color: #A3AED0;">person</span>
                                 {% endif %}
                             </div>
+                            
                             <div class="member-meta" style="overflow: hidden;">
                                 <p class="name-bold" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ member.user.get_full_name|default:member.user.username }}
@@ -182,8 +183,8 @@
                                     <span style="font-size: 14px; color: #4318FF; font-weight: 700; margin-left: 6px;">(You)</span>
                                     {% endif %}
                                 </p>
-                                <p class="role-muted" style="font-size: 11px; margin: 0; color: #A3AED0;">
-                                    {{ member.job_title|default:"Engineer" }}
+                                <p class="role-muted" style="font-size: 11px; margin: 0; color: {% if member.role != 'Engineer' %}#4318FF{% else %}#A3AED0{% endif %}; font-weight: {% if member.role != 'Engineer' %}700{% else %}400{% endif %};">
+                                    {{ member.role }}
                                 </p>
                             </div>
                         </div>

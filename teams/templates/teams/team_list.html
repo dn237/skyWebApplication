@@ -74,7 +74,7 @@
                 <p class="team-subtitle">
                     {% if team.dept.head_user %}
                         Deparment Head: 
-                        <strong>{{team.dept.head_user}} </strong>
+                        <strong>{{ team.dept.head_user.get_full_name | default:team.dept.head_user.username }}</strong>
                     {% else %}
                         Assigning...
                     {% endif %} 
@@ -87,7 +87,7 @@
                     <p>Team Leader:
                         <strong>
                             {% if team.lead_user %}
-                                {{ team.lead_user.first_name|default:team.lead_user.username }}
+                                {{ team.lead_user.get_full_name | default:team.lead_user.username }}
                             {% else %}
                                 Assigning...
                             {% endif %}

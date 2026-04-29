@@ -54,7 +54,7 @@ for _, row in df.iterrows():
     # --- Department ---
     dept, _ = Department.objects.get_or_create(
         dept_name=dept_name,
-        defaults={"manager": manager}
+        defaults={"head_user": manager}
     )
 
     # --- Team ---

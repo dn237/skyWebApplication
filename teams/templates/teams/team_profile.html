@@ -19,8 +19,8 @@
             <div class="hero-contact-row">
                 <span class="material-symbols-outlined person-icon">person</span>
                 <div class="contact-text">
-                    <span class="contact-name">{{ team.dept.head_user|default:"N/A" }}</span>
-                    <span class="contact-sub">Department Head</span>
+                    <span class="contact-sub">Department Head:</span>
+                    <span class="name-bold">{{ team.dept.head_user.get_full_name | default:team.dept.head_user.username }}</span>
                 </div>
             </div>
         </div>

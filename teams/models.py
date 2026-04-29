@@ -58,6 +58,25 @@ class Team(models.Model):
         projects: QuerySet["Project"]
         updates: QuerySet["TeamUpdate"]
 
+    def save(self, *args, **kwargs):
+        # 1. Save the Team data first
+        super().save(*args, **kwargs)
+
+        # 2. Synchronize the Lead User's profile automatically
+        if self.lead_user:
+            # We import here to prevent circular dependency issues
+            from accounts.models import UserProfile
+            
+            # Get or create the profile for the lead
+            profile, created = UserProfile.objects.get_or_create(user=self.lead_user)
+            
+            # If the profile isn't linked to this team, link it now
+            if profile.team != self:
+                profile.team = self
+                # Optional: Update the job title to reflect the leadership role
+                profile.job_title = "Team Lead"
+                profile.save()
+
     def __str__(self):
         return self.team_name
 

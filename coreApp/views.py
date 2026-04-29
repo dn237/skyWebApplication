@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Q, Count  # <--- Added Q and Count
+from django.db.models import Q, Case, Count, IntegerField, Value, When  # <--- Added Q and Count
 from accounts.models import UserProfile
 from teams.models import Team
 from datetime import date
@@ -44,26 +44,31 @@ def dashboard(request):
     else:
         recent_teams = teams_base.order_by('-team_id')[:5]
 
-    # 3. TEAM ROSTER LOGIC (Your existing work)
+    # 3. TEAM ROSTER LOGIC
     user_team = None
-    team_members = []
-    current_user_id = request.user.id if request.user.is_authenticated else None
-
     if user_profile and user_profile.team:
         user_team = user_profile.team
-        # Show the full team roster, including the current user, so the
-        # dashboard reads like a true team membership view rather than a
-        # "everyone except me" list.
-        team_members = sorted(
-            UserProfile.objects.filter(team=user_team).select_related('user'),
-            key=lambda member: (
-                (member.user.id if member.user else None) != current_user_id,
-                member.user.username.lower() if member.user else ""),
-        )
-    else:
-        # Do not show arbitrary users if the current user has no team.
-        # An empty queryset will trigger the template's 'No teammates found' message.
-        team_members = UserProfile.objects.none()
+    
+    # Fallback for leaders/heads not explicitly in the "members" list
+    if not user_team and request.user.is_authenticated:
+        user_team = Team.objects.filter(lead_user=request.user).first()
+
+    team_members = []
+    if user_team:
+        # Use .select_related to grab user and department data in ONE database hit
+        team_members = UserProfile.objects.filter(team=user_team).select_related('user', 'department').annotate(
+            sort_priority=Case(
+            When(user_id=request.user.pk, then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+            )
+        ).order_by('sort_priority', 'user__username')
+    
+    # 4. PERMISSIONS
+    is_leader = False
+    if user_team and user_team.lead_user == request.user:
+        is_leader = True
+
 
     # 4. ADMIN & CALENDAR (SAMIA ELHAYARIRIFI'S PART)
     admin_teams = recent_teams[:5] if (request.user.is_staff or request.user.is_superuser) else []
@@ -82,8 +87,10 @@ def dashboard(request):
     return render(request, 'dashboard.html', {
         'my_team': user_team,
         'team_members': team_members,
-        'current_user_id': current_user_id,
+        'is_leader': is_leader, 
+        'current_user_id': request.user.id,
         'recent_teams': recent_teams,
+        'team_updates': team_updates,
         'admin_teams': admin_teams,
         'search_query': search_query, # <--- Pass this back to keep text in the bar
         'today': today,

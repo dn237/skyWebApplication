@@ -175,6 +175,7 @@ a {
     z-index: 1001;
 }
 
+
 /* SIDEBAR STYLE (Menu Panel) */
 .sidebar {
     border-radius: 0 30px 30px 0;
@@ -1968,7 +1969,9 @@ form.search-bar.dashboard-search {
     }
 
     .content-container {
-        max-width: 80%;
+        width: 100%;       /* Take up the whole space on small screens */
+        max-width: 1440px; /* Stop growing at 1440px */
+        margin: 0 auto;    /* Centers the container on the page */
     }
 
     .sidebar-nav {
@@ -2869,6 +2872,7 @@ form.search-bar.dashboard-search {
 .secondary-auth-button:hover {
     filter: brightness(1.06);
 }
+
 
 @media (max-width: 560px) {
     .auth-figma-shell {
