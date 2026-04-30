@@ -49,18 +49,21 @@ The following accounts are ready for testing different access levels:
 
 ## 📁 Technical Architecture & Integration
 
-The application is structured into modular apps, integrated through a central core:
+The application is structured into modular apps, integrated through a central core to ensure a unified user experience:
 
 *   **`coreApp`**: The central integration layer managing the Dashboard and Global Context Processors.
 *   **`accounts`**: Manages user identity, secure profile editing, and automated avatar lifecycle.
+*   **`organizations`**: Defines the high-level hierarchical structures and departmental foundations.
 *   **`teams`**: Handles the organizational registry, project tracking, and complex dependency mapping.
-*   **Integrated Modules**: Seamlessly integrated `messaging`, `schedules`, and `reports` modules from group contributors.
+*   **`messaging`**: Facilitates secure peer-to-peer and team-wide communication.
+*   **`scheduler`**: Manages team timelines, project deadlines, and event coordination.
+*   **`reports`**: Aggregates data across all modules to generate real-time analytics.
+*   **`site_settings`**: Controls dynamic global configurations and site-wide variables.
 
 ### High-Level Features:
 *   **Data Integrity:** Automated "Atomic Link Repair" logic ensures that user roles are always synchronized with the organizational structure.
 *   **Global Context:** Custom processors (e.g., `sidebar_profile`) ensure the user's profile and role are consistently rendered across all views.
 *   **Namespace Routing:** Standardized URL namespacing prevents routing conflicts and supports deep-linking across all modules.
-
 ---
 
 ## 🛠 Project Maintenance
