@@ -1,141 +1,80 @@
-# Sky Management System
+# 🌌 Sky Management System
+**Collaborative Agile Management Platform**
 
-This is a collaborative Django-based management platform. 
-The project uses a **Hub-and-Spoke architecture** with a centralized Dashboard and independent functional modules.
-
----
-
-## 🛠️ Quick Start Guide (For the Team)
-
-Follow these steps to get the project running on your local machine:
-
-1. **Get the latest code**:
-   ```bash
-   git fetch origin
-   git checkout main
-   git pull origin main
-   ```
-
-2. **Set up your environment file**:
-   ```bash
-   cp .env.example .env
-   ```
-   Open `.env` and set `DJANGO_SECRET_KEY` to any non-empty string.
-
-3. **Install all dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Build the database** (run this every time after pulling):
-   ```bash
-   python manage.py migrate
-   ```
-
-5. **Create the standard admin user**:
-   ```bash
-   python manage.py createsuperuser
-   ```
-   Use: **username:** `admin` | **password:** `dev12345`
-
-6. **Run the server**:
-   ```bash
-   python manage.py runserver
-   ```
-   Open `http://127.0.0.1:8000/`
+The Sky Management System is a comprehensive Django-based application designed to manage organizational hierarchies, project dependencies, and team communications. The project utilizes a **Hub-and-Spoke architecture**, centering all functional modules around a unified, data-rich Dashboard.
 
 ---
 
-## 🔑 Marker / Demo Login
+## 🚀 Setup & Installation Guide (For Examiners)
 
-| URL | Username | Password |
-|-----|----------|----------|
-| `http://127.0.0.1:8000/admin/` | `admin` | `dev12345` |
-| `http://127.0.0.1:8000/` | `admin` | `dev12345` |
+Please follow these steps to initialize the project environment and view the integrated work.
 
----
-
-## 📁 Project Structure
-
-* **coreApp/**: Manages global settings, the sidebar, and the Dashboard.
-* **templates/**: Contains `base.html`. **All students must extend this file.**
-* **Individual Folders**: Work only inside your assigned app (e.g., `messaging/`, `teams/`).
-
----
-### 👥 Team Folder Assignments
-
-To keep our database synchronized and avoid code conflicts, please work strictly within your assigned app folders:
-
-* Student 1 (Teams): Use folder teams/
-* Student 2 (Organisation): Use folder organisation/
-* Student 3 (Messages): Use folder messaging/
-* Student 4 (Schedule): Use folder schedules/
-* Student 5 (Reports & System Core): Use folders reports/ and coreApp/
-
-⚠️ IMPORTANT: Please do NOT modify any files in the coreApp/ folder. This folder contains the master settings for the entire project.
-
----
-
-## 🎨 How to Build Your Pages
-
-To ensure the sidebar and design stay consistent, start every HTML file with:
-```html
-{% extends 'base.html' %}
-
-{% block content %}
-    {% endblock %}
+### 1. Environment Configuration
+*   **Virtual Environment:** It is recommended to use a virtual environment to isolate dependencies.
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # Mac/Linux
+    venv\Scripts\activate     # Windows
+    
 ```
+*   **Install Dependencies:** All necessary libraries, including **Pandas** and **OpenPyXL** for data ingestion, are included in this file.
+    ```bash
+    pip install -r requirements.txt
+    ```
+*   **Environment Variables:** Create a `.env` file in the root directory based on the provided `.env.example` template.
+    ```bash
+    # Example for Windows
+    copy .env.example .env
+    ```
+
+### 2. Database Initialization & Automation
+While a pre-populated database (`db.sqlite3`) is included in this submission, the project features a custom automation layer to ensure data consistency across all team modules.
+*   **Apply Migrations:**
+    ```bash
+    python manage.py migrate
+    ```
+*   **Master Data Sync (Core Feature):** Run the custom management command to ingest the Excel Team Registry and repair user profiles.
+    ```bash
+    python manage.py master_sync
+    ```
+    > 💡 **Technical Note:** This script automates the population of Departments, Teams, Projects, and UserProfiles from a structured Excel dataset, serving as the "Single Source of Truth" for the entire application.
+
+### 3. Launch the Application
+*   **Run Server:**
+    ```bash
+    python manage.py runserver
+    
+```
+*   **URL:** Access the platform at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ---
 
-# 🛠 FULL GITHUB WORKFLOW GUIDE
+## 🔑 Demo Credentials
+| Access Level | Username | Password |
+|:---|:---|:---|
+| **Superuser / Admin** | `admin` | `dev12345` |
+| **Standard User** | (Generated via `master_sync`) | N/A |
 
 ---
 
-### 🏁 PHASE 1: INITIALIZATION (Do this ONLY ONCE)
-*After you have cloned the repository, you need to create your own workspace:*
+## 📁 Technical Architecture & Integration
 
-1. **Create the branch locally:**
-   ```bash
-   git checkout -b student-yourName-yourTaskName
-   ```
-2. **Make a small change** (e.g., add a comment in a file or create your app folder).
-3. **Commit and Push** (to appear in the Contributors list):
-   ```bash
-   git add .
-   git commit -m "First commit to my individual branch"
-   git push -u origin student-yourName-yourTaskName
-   ```
-   > 💡 **Note:** This links your branch to GitHub so you don't have to type the name ever again.
+The application is structured into modular apps, integrated through a central core to ensure a unified user experience:
+
+*   **`coreApp`**: The central integration layer managing the Dashboard and Global Context Processors.
+*   **`accounts`**: Manages user identity, secure profile editing, and automated avatar lifecycle.
+*   **`teams`**: Handles the organizational registry, project tracking, and complex dependency mapping.
+*   **Integrated Modules**: Seamlessly integrated `messaging`, `schedules`, and `reports` modules from group contributors.
+
+### High-Level Features:
+*   **Data Integrity:** Automated "Atomic Link Repair" logic ensures that user roles (e.g., Team Lead vs. Engineer) are always synchronized with the organizational structure.
+*   **Global Context:** Custom processors (e.g., `sidebar_profile`) ensure the user's profile and role are consistently rendered across all 15+ views.
+*   **Namespace Routing:** Standardized URL namespacing across all apps to prevent routing conflicts and support deep-linking (e.g., messaging a Team Lead directly from the Teams Registry).
 
 ---
 
-### 🔄 PHASE 2: DAILY ROUTINE (Every time you work)
-#### 📌 The Git Rule: **Pull → Commit → Push**
-*Once your branch is set up, follow this loop every time you sit down to code:*
-
-1. **STARTING YOUR WORK (Pull) 📥**
-   ```bash
-   git pull origin main
-   ```
-   *Do this first! It gets the latest updates from the Lead (new CSS, DB models) so your code stays compatible with the main project.*
-
-2. **DURING WORK (Commit) 💾**
-   ```bash
-   git add .
-   git commit -m "Brief description of what you added"
-   ```
-   *Do this often to save your progress locally. Think of it as a "save point."*
-
-3. **FINISHING YOUR WORK (Push) 🚀**
-   ```bash
-   git push
-   ```
-   > 💡 **Note:** Since your branch is already linked, this is all you need!
-
----
-
-### ⚠️ THE GOLDEN RULE
-**NEVER push directly to the `main` branch.** Always work inside your named branch. When your feature is 100% finished, open a **Pull Request** for review.
-
----
+## 🛠 Project Maintenance
+To reset the environment to its baseline state:
+1. Delete the `db.sqlite3` file.
+2. Run `python manage.py migrate`.
+3. Run `python manage.py master_sync` to re-ingest the Excel registry.
