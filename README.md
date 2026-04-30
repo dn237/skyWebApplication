@@ -7,7 +7,7 @@ The Sky Management System is a comprehensive Django-based application designed t
 
 ## 🚀 Setup & Installation Guide (For Examiners)
 
-Please follow these steps to initialize the project environment and view the integrated work.
+This project is submitted in a **complete, working state**. All environment variables and the database are pre-configured for immediate evaluation.
 
 ### 1. Environment Configuration
 *   **Virtual Environment:** It is recommended to use a virtual environment to isolate dependencies.
@@ -15,51 +15,41 @@ Please follow these steps to initialize the project environment and view the int
     python -m venv venv
     source venv/bin/activate  # Mac/Linux
     venv\Scripts\activate     # Windows
-    
-```
-*   **Install Dependencies:** All necessary libraries, including **Pandas** and **OpenPyXL** for data ingestion, are included in this file.
+    ```
+*   **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
-*   **Environment Variables:** Create a `.env` file in the root directory based on the provided `.env.example` template.
-    ```bash
-    # Example for Windows
-    copy .env.example .env
-    ```
+*   **Environment Variables:** A pre-configured `.env` file is already included in the root directory for your convenience. No further setup is required.
 
-### 2. Database Initialization & Automation
-While a pre-populated database (`db.sqlite3`) is included in this submission, the project features a custom automation layer to ensure data consistency across all team modules.
-*   **Apply Migrations:**
-    ```bash
-    python manage.py migrate
-    ```
-*   **Master Data Sync (Core Feature):** Run the custom management command to ingest the Excel Team Registry and repair user profiles.
-    ```bash
-    python manage.py master_sync
-    ```
-    > 💡 **Technical Note:** This script automates the population of Departments, Teams, Projects, and UserProfiles from a structured Excel dataset, serving as the "Single Source of Truth" for the entire application.
+### 2. Database & Data Integrity
+A pre-populated database (`db.sqlite3`) is included in this submission.
+*   **Ready-to-Run:** You do not need to run migrations or sync scripts unless you wish to reset the environment.
+*   **Automation Feature:** The project includes a custom `master_sync` command that automates the population of Departments, Teams, and UserProfiles from the included Excel dataset.
 
 ### 3. Launch the Application
 *   **Run Server:**
     ```bash
     python manage.py runserver
-    
-```
+    ```
 *   **URL:** Access the platform at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ---
 
 ## 🔑 Demo Credentials
-| Access Level | Username | Password |
+The following accounts are ready for testing different access levels:
+
+| Role | Username | Password |
 |:---|:---|:---|
 | **Superuser / Admin** | `admin` | `dev12345` |
-| **Standard User** | (Generated via `master_sync`) | N/A |
+| **Team Lead** | `dianaTeamLead` | `dev12345` |
+| **Team Member** | `dianaMemberExample` | `dev12345` |
 
 ---
 
 ## 📁 Technical Architecture & Integration
 
-The application is structured into modular apps, integrated through a central core to ensure a unified user experience:
+The application is structured into modular apps, integrated through a central core:
 
 *   **`coreApp`**: The central integration layer managing the Dashboard and Global Context Processors.
 *   **`accounts`**: Manages user identity, secure profile editing, and automated avatar lifecycle.
@@ -67,14 +57,16 @@ The application is structured into modular apps, integrated through a central co
 *   **Integrated Modules**: Seamlessly integrated `messaging`, `schedules`, and `reports` modules from group contributors.
 
 ### High-Level Features:
-*   **Data Integrity:** Automated "Atomic Link Repair" logic ensures that user roles (e.g., Team Lead vs. Engineer) are always synchronized with the organizational structure.
-*   **Global Context:** Custom processors (e.g., `sidebar_profile`) ensure the user's profile and role are consistently rendered across all 15+ views.
-*   **Namespace Routing:** Standardized URL namespacing across all apps to prevent routing conflicts and support deep-linking (e.g., messaging a Team Lead directly from the Teams Registry).
+*   **Data Integrity:** Automated "Atomic Link Repair" logic ensures that user roles are always synchronized with the organizational structure.
+*   **Global Context:** Custom processors (e.g., `sidebar_profile`) ensure the user's profile and role are consistently rendered across all views.
+*   **Namespace Routing:** Standardized URL namespacing prevents routing conflicts and supports deep-linking across all modules.
 
 ---
 
 ## 🛠 Project Maintenance
-To reset the environment to its baseline state:
+To reset the environment to its baseline state if the database becomes corrupted:
 1. Delete the `db.sqlite3` file.
 2. Run `python manage.py migrate`.
-3. Run `python manage.py master_sync` to re-ingest the Excel registry.
+3. Run `python manage.py seed_data` to re-ingest the Excel registry.
+
+---
